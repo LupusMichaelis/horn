@@ -1,6 +1,6 @@
 <?php
 /** \file
- *	Unit test classes
+ *	Run all tests !
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -27,22 +27,10 @@
  */
 
 /** \package horn\tests
-namespace horn ;
  */
-namespace horn\tests ;
+namespace horn\test ;
 
-require_once 'lib/object.php' ;
+require_once 'tests/test.php' ;
 
-/**
- *
- */
-class simple
-	extends horn\object_public
-{
-}
+new object_test ;
 
-require_once 'lib/collection.php' ;
-class collection
-	extends horn\collection
-{
-}
