@@ -43,7 +43,7 @@ class collection
 	public		function __construct(/* ... */)
 	{
 		parent::__construct() ;
-		$this->stack = null ;
+		$this->_stack = null ;
 		$this->join(func_get_args()) ;
 	}
 

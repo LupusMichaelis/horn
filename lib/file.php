@@ -1,8 +1,39 @@
 <?php
+/** \file
+ *	File management
+ *
+ *	object_public, object_protected and object_private are defined becasue you can't
+ *	change the 
+ *
+ *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \author		Lupus Michaelis <mickael@lupusmic.org>
+ *  Copyright	2009, Lupus Michaelis
+ *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
+ */
 
-define('KILO', 1024) ;
-define('MEGA', KILO * 1024) ;
-define('SIZE_LIMIT', 10 * MEGA) ;
+/*
+ *  This file is part of Horn Framework.
+ *
+ *  Horn Framework is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Horn Framework is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero Public License for more details.
+ *
+ *  You should have received a copy of the GNU Affero Public License
+ *  along with Horn Framework.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/** \package horn
+ */
+namespace horn ;
+
+require_once 'horn/lib/filesystem.php' ;
 
 /** \todo	Files have to know about filesystem issue. So, when a file is contained in
  *			another file, he'll try to write himself to filesystem. That's stupid.
@@ -11,124 +42,17 @@ define('SIZE_LIMIT', 10 * MEGA) ;
 
 /**
  */
-abstract
-class replacer
-{
-	const		PATTERN = '%s' ;
-
-	public		function __construct($all = true)
-	{
-		$this->set_pattern_format(static::PATTERN) ;
-		$this->_replace_all = $all ;
-	}
-
-	public		function set_translator(translator $translator)
-	{
-		$this->_translator = $translator ;
-	}
-
-	public		function set_pattern_format($format)
-	{
-		$this->_pattern_format = $format ;
-	}
-
-	abstract
-	public		function __invoke(& $subject, $pattern, $value) ;
-
-	protected	$_replace_all = false ;
-	protected	$_translator = null ;
-	protected	$_pattern_format = null ;
-}
-
-class replacer_plain
-	extends replacer
-{
-	const		PATTERN = '{%s}' ;
-	public		function __invoke(& $subject, $pattern, $value)
-	{
-		$pattern = sprintf(static::PATTERN, $pattern) ;
-
-		$subject = str_replace($pattern, $value, $subject, $count) ;
-		return $count ;
-	}
-}
-
-class replacer_regex
-	extends replacer
-{
-	const		PATTERN = 'µ%sµ' ;
-	public		function __invoke(& $subject, $pattern, $value)
-	{
-		/// \todo	implement a fallback to avoid delimiter collision
-		if(strpos($pattern, 'µ') !== false)
-			throw new exception('µ delimiter was found in pattern...') ;
-
-		$pattern = sprintf(self::PATTERN, $pattern) ;
-
-		$subject = preg_replace($pattern, $value, $subject, -1, $count) ;
-		return $count ;
-	}
-}
-
-/**
- *
- *	\todo	fallback mecanism on errors instead of throwing an exception ?
- */
-class translator
-{
-	public		function __construct(a_file $template)
-	{
-		$this->_template = $template ;
-		$this->set_replacer() ;
-	}
-
-	public		function process()
-	{
-		$target = clone $this->_template ;
-
-		foreach($this->_translators as $name => $value)
-			$target->replace($name, $value, $this->_replacer) ;
-
-		return $target ;
-	}
-
-	public		function set_template(a_file $template)
-	{
-		$this->_template = $template ;
-	}
-
-	public		function set_replacer(replacer $replacer = null)
-	{
-		if(is_null($replacer))
-			$replacer = new replacer_plain ;
-
-		$this->_replacer = $replacer ;
-
-		return $this ;
-	}
-
-	public		function add_tanslators(& $pairs)
-	{
-		$this->_translators = array_merge($this->_translators, $pairs) ;
-	}
-
-	/** prototype for target output */
-	protected	$_template = null ;
-
-	protected	$_translators = array() ;
-}
-
 interface i_file
 {
 	static
-	function create($filename) ;
+	function create() ;
 	static
 	function load($filename) ;
 
 	function open() ;
 	function write() ;
 	function close() ;
-	function replace($pattern, $value, replacer $replacer) ;
+#	function replace($pattern, $value, replacer $replacer) ;
 }
 
 /**
@@ -137,13 +61,16 @@ interface i_file
  */
 abstract
 class a_file
+	extends		object_protected
 	implements i_file
 {
-	const		SIZE_LIMIT = SIZE_LIMIT ;
+	const SIZE_LIMIT = 10485760 ; // 10 * MEGABI ;
+
 
 	protected	function __construct($name = null)
 	{
-		$this->set_name($name) ;
+		parent::__construct() ;
+		$this->name = $name ;
 	}
 
 	public		function __destruct()
@@ -191,20 +118,23 @@ class a_file
 	public		function assign|copy(a_file & $file) ;
 	*/
 
+	/*
 	abstract
 	public		function replace($pattern, $value, replacer $replacer) ;
+	*/
 
 	static
-	public		function create($filename)
+	public		function create()
 	{
-		$new = new static($filename) ;
+		$new = new static ;
 		return $new ;
 	}
 
 	static
 	public		function load($filename)
 	{
-		$new = static::create($filename) ;
+		$new = static::create() ;
+		$new->name = $filename ;
 		$new->_load() ;
 
 		$new->_is_loaded = true ;
@@ -218,7 +148,7 @@ class a_file
 	public		function copy(a_file $copied, $filename)
 	{
 		if(copy($copied->_name, $filename))
-			$new = static::create($filename) ;
+			$new = static::create() ;
 		else
 			$copied->_throw_cant_copy($filename) ;
 
@@ -238,26 +168,6 @@ class a_file
 		$this->write() ;
 		$this->close() ;
 		$this->open() ;
-	}
-
-	public		function set_name($name)
-	{
-		$this->_name = $name ;
-		return $this ;
-	}
-
-	public		function get_name()
-	{
-		return $this->_name ;
-	}
-
-	/// \todo	move _throw to object_base
-	protected	function _throw($fmt)
-	{
-		$args = & func_get_args() ;
-		$error = & call_user_func_array('sprintf', $args) ;
-
-		throw new exception($error) ;
 	}
 
 	protected	function _throw_file_not_exists()
@@ -284,7 +194,7 @@ class file_factory
 	public		function create($mime)
 	{
 		$class_name = self::$_registry[$mime] ;
-		$new = $mime::create() ;
+		$new = $class_name::create() ;
 
 		return $new ;
 	}
@@ -314,17 +224,14 @@ class file_factory
 	protected	$_registry = array() ;
 }
 
-/**
- *	\todo	Do a memory aware implementation (for big files).
- */
-class file_text
-	implements i_file
+class file_raw
+	extends a_file
 {
-	const		MIME_TYPE = 'text/plain' ;
+	const		MIME_TYPE = 'application/octet-stream' ;
 
 	protected	function _write()
 	{
-		file_put_contents($this->_name, $this->_text) ;
+		file_put_contents($this->name, $this->content) ;
 	}
 
 	protected	function _open()
@@ -333,16 +240,53 @@ class file_text
 
 	protected	function _load()
 	{
-		$this->_text = file_get_contents($this->_name) ;
-		$this->_encoding = mb_detect_encoding($this->_text) ;
+		$this->content = file_get_contents($this->name) ;
 	}
 
 	protected	function _close()
 	{
-		$this->_text = null ;
+		$this->content = null ;
+	}
+
+	protected	$_content ;
+}
+
+/**
+ *	\todo	Do a memory aware implementation (for big files).
+ */
+class file_text
+	extends file_raw
+{
+	const		MIME_TYPE = 'text/plain' ;
+
+	protected	function __construct($name = null)
+	{
+		parent::__construct($name) ;
+	}
+
+	protected	function _load()
+	{
+		parent::_load() ;
+		$this->_encoding = mb_detect_encoding($this->text) ;
+	}
+
+	protected	function _close()
+	{
+		parent::_close() ;
 		$this->_encoding = null ;
 	}
 
+	protected	function _set_text($content)
+	{
+		return $this->content = $content ;
+	}
+
+	protected	function & _get_text()
+	{
+		return $this->content ;
+	}
+
+	/*
 	public		function replace($pattern, $value, replacer $replacer)
 	{
 		if(is_null($replacer))
@@ -351,8 +295,8 @@ class file_text
 		$count = $replacer($this->_text, $pattern, $value) ;
 		return $count ;
 	}
+	*/
 
-	protected	$_text = null ;
 	protected	$_encoding = null ;
 }
 
@@ -373,6 +317,8 @@ class file_pdf
 {
 }
 */
+
+if(false) : ?>
 
 class composed_file
 	extends a_file
@@ -571,6 +517,9 @@ class file_odt
 	protected $_content = null ;
 }
 
-file_factory::register('file_text') ;
 file_factory::register('file_odt') ;
+<?php endif ;
+
+file_factory::register('horn\file_raw') ;
+file_factory::register('horn\file_text') ;
 

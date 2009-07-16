@@ -26,11 +26,50 @@
  *
  */
 
-/** \package horn\tests
- */
-namespace horn\test ;
+namespace horn ;
+require_once 'horn/lib/test.php' ;
 
-require_once 'tests/test.php' ;
+define('DEBUG', true) ;
 
-new object_test ;
+$available_units = array
+	( 'object'
+	, 'collection'
+	, 'string'
+	, 'file'
+	) ;
+
+if($argc == 1)
+{
+	$units = $available_units ;
+}
+else
+{
+	array_shift($argv) ;
+	$units = array_intersect($available_units, $argv) ;
+}
+
+foreach($units as $unit)
+{
+	require_once "horn/lib/{$unit}.php" ;
+	require_once "tests/{$unit}.php" ;
+
+	try
+	{
+		$unit_class = "\\horn\\test_unit_$unit" ;
+		new $unit_class ;
+	}
+	catch(\exception $e)
+	{
+		echo $e->getMessage(), "\n" ; 
+
+		if(DEBUG) throw $e ;
+	}
+}
+
+
+
+
+
+
+
 

@@ -1,6 +1,6 @@
 <?php
 /** \file
- *	Exception and error handling.
+ *	Exception 
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -35,11 +35,6 @@ namespace horn ;
  */
 class exception
 	extends \exception
-{
-}
-
-abstract
-class error_handler
 {
 }
 

@@ -38,8 +38,26 @@ require_once 'horn/lib/object.php' ;
 const KILOBI = 1024 ;
 const MEGABI = 1048576 ;
 
+class path
+	extends		object_public
+{
+	public		function __construct(string_ex $path)
+	{
+		$this->_path = $path->explode('/') ;
+	}
+
+	protected	function _set_path(string $path)
+	{
+	}
+
+	protected	$_path ;
+}
+
 class filesystem
 {
-
+	static
+	public		function exists($filename)
+	{
+	}
 }
 

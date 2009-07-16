@@ -1,6 +1,10 @@
 <?php
 /** \file
  *	Object coherent handling.
+ *	\see object_base
+ *
+ *	object_public, object_protected and object_private are defined becasue you can't
+ *	change the 
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -30,67 +34,61 @@
  */
 namespace horn ;
 
-/**
- *
- */
-class exception
-	extends \exception
-{
-}
+require_once 'horn/lib/exception.php' ;
 
 /** Ensure homogenic access to properties.
  *
- *  This is the base class for advanced object handling. Don't inherit directly from
- *  it. Use classes object_public (for world instanciable object), and object_protected
- *  (for self instanciable object only).
+ *  This is the base class for advanced object handling.
  *
- *  __set and __get will check for user defined protected assessor, with the
- *  following patterns and contracts.
+ *	\warning	Don't inherit directly from it. Use classes object_public (for world
+ *				instanciable object), and object_protected or object_private (for self
+ *				instanciable object only). In fact, change function scope when inheriting
+ *				isn't allowed. But I maybe need to do some stuff at construct time. So the
+ *				flavored object need.
+ *
+ *	When defining a new class, you can declare public attributes. Accessors will not be
+ *	called on it because of their accessibility to world. In fact, __set and __get are
+ *	called only when the accessed attribute doesnt exist or isn't in scope
+ *	(public/private awareness).
+ *
+ *	Actual name 
+ *
+ *	To ease daily use, magic methods are implemented and finalize, to avoid overloading
+ *	and constraint the following behaviour. Get $name, the variable that contains
+ *	attribute name.
+ *
+ *	Get the attribute $name :
+ *	1. Check existence of static::$name
+ *	2. If (1) is true, returns static::$name
+ *	3. Build getting $method = "_get_$name"
+ *	4. If (3) exists, call static::$method and returns.
+ *	5. Returns null
+ *	
+ *	Set the attribute $name :
+ *	
+ *
+ *	So magic methods will check for user defined protected assessor, with the following
+ *	patterns and contracts.
  *  for setter : "_set_$name" 
  *  for getter : "_get_$name" 
- *	Accessors must return 
+ *	Your function must return a reference, a copied value or null.
  *  As an example, we want to add specific meaning to parent attribute. So we
  *  have to define _set_parent and _get_parent methods. In that methods, you can
  *  process some stuff and return the value of attribute. To notice errors, you
  *  must raise an exception.
  *
- * void _set_parent(string $name, mixed $value) 
- * void _get_parent(string $name)
+ *	void _set_parent(string $name, mixed $value) 
+ *	void _get_parent(string $name)
  *
- * \todo 		document value returning and readonly access
- * When extending object_base, you can specify magic behaviour on attribute access
- * and type safe attributes. To do so, you just have to populate static class
- * variable.
- * \see self::$_attrs_readonly
- * \see self::$_attrs_type
- * \see self::$_attrs_by_value
+ *	If the attribute is readonly, consider to use _throw_readonly_attribute.
  *
- * \todo	Manage private attributes (idea : {$"p_$name"})
+ *	\todo	redonly attribute generic approach
+ *	\todo	by-value vs by-ref semantic, find an acceptable way
+ *
  */
+abstract
 class object_base
 {
-	/** List of attributes that must be returned by value instead of by
-	 * 	reference
-	static 
-	protected	$_attrs_by_value = array() ;
-	 */
-
-	/** List of attributes that must be referenced and not copied when
-	 *	copying en object.
-	static 
-	protected	$_attrs_referenced_on_copy = array() ;
-	 */
-
-	/** List of attributes that must not be set by foreigners
-	static 
-	protected	$_attrs_readonly = array() ;
-	 */
-
-	/** List of types indexed by the corresponding attribute name.
-	static 
-	protected	$_attrs_type = array(/* $name => $type * /) ;
-	 */
-
 	/** 
 	 *	\return object_base	The new object cloned from $this
 	 */
@@ -98,21 +96,19 @@ class object_base
 	public		function __clone() 
 	{ 
 		$new = new static ;
-		$new->copy($this) ;
+		$new->assign($this) ;
 
 		return $new ;
 	}
 
 	/** Getter on the $name attribute.
-	 *	\return mixed	Reference on attribute
+	 *	\param	$name	string
+	 *	\return ref		Reference on attribute
 	 */
 	final
 	public		function & __get($name) 
 	{ 
 #		var_dump(__FUNCTION__, $name, $value) ;
-		if($this->_is_attribute_readonly($name))
-			$this->_throw_readonly_attribute($name) ;
-
 		$method = "_get_$name" ; 
 		if(method_exists($this, $method))
 			return $this->$method($name) ;
@@ -123,22 +119,19 @@ class object_base
 	/** Setter on the $name attribute.
 	 *	\param $name	string	Access name of attribute.
 	 *	\param $value	mixed	New value of attribute
-	 *	\return mixed	Reference on attribute
+	 *	\return ref		Reference on attribute
 	 */
 	final
 	public		function & __set($name, $value) 
 	{ 
 #		var_dump(__FUNCTION__, $name, $value) ;
-		if($this->_is_attribute_readonly($name))
-			$this->_throw_readonly_attribute($name) ;
-
 		$method = "_set_$name" ; 
 		if(method_exists($this, $method))
 			$this->$method($value) ;
 		else
 			$this->_set($name, $value) ;
 
-		return $this->_return($name) ; 
+		return $this->__get($name) ; 
 	} 
  
 	/** Unsetter on the $name attribute.
@@ -166,34 +159,35 @@ class object_base
 		$method = "_isset_$name" ; 
 		return method_exists($this, $method)
 			? $this->$method()
-			: isset($value) ;
+			: $this->_isset($name)
+			;
 	}
 
 	/**	Assign the $object_source to $this with inheritance care. The behaviour can be custom, just override protected
-	 *	functions _copy_object, _copy_descendant and _copy_ancestor.
+	 *	functions _assign_object, _assign_descendant and _assign_ancestor.
 	 *	\param	$object_source	object_base	
 	 *	\return	object_base	Return a reference on $this.
 	 */
 	final
-	public		function copy(object_base $object_source)
+	public		function assign(object_base $object_source)
 	{
-		// optimization : we won't to copy object in it-self.
+		// optimization : we won't to assign object in it-self.
 		if($this->is_same($object_source))
 			return $this ;
 
 		if($object_source instanceof static)
-			$this->_copy_object($object_source) ;
+			$this->_assign_object($object_source) ;
 		elseif(is_a($object_source, get_class($this)))
-			$this->_copy_descendant($object_source) ;
+			$this->_assign_descendant($object_source) ;
 		elseif(is_a($this, get_class($object_source)))
-			$this->_copy_ancestor($object_source) ;
+			$this->_assign_ancestor($object_source) ;
 		else
-			$this->_throw_cant_copy_object($object_source) ;
+			$this->_throw_cant_assign_object($object_source) ;
 
 		return $this ;
 	}
 
-	/** Returns true if the compared object is stricly equal to $this.
+	/** Returns true if the compared object is strictly equal to $this.
 	 *	\param	$compared
 	 *	\return bool
 	 */
@@ -237,32 +231,13 @@ class object_base
 	public		function reset()
 	{
 		foreach($this->get_attributes_class() as $name => $default_value)
-			// Assign public name of attribute instead of protected name permits us to custom the behaviour of
-			// attributes. For exemple, if the attribute must contain an object, if the original value is null, we want
-			// assign null to the attribute, but just say to the attribute to nullify it-self.
-			if($name[0] == '_')
-			{
-				$apparent_name = substr($name, 1) ;
-				$this->$apparent_name = $default_value ;
-			}
+			$this->__set($name, $default_value) ;
 
 		return $this ;
 	}
 
-	/** Check for forbiden attributes
-	 *  \throw	exception	When at least one attribute don't begin with
-	 *  					an underscore
-	 */
-	final
-	protected	function _check_attributes()
-	{
-		$attrs = $this->get_attributes_object() ;
-		foreach($attrs as $attr)
-			if($attr[0] != '_')
-				throw new exception("Attribute '$attr' is not allowed.") ;
-	}
-
-	/** Determines actual attribute name and returns it.
+	/** Determines actual attribute name and returns it. Private and protected attributes
+	 *	are prefixed by an underscore.
 	 *  \throw	exception	When actual attribute doesn't exists.
 	 *
 	 *  \param	$name	string	The access attribute name.
@@ -271,6 +246,7 @@ class object_base
 	final
 	protected   function _actual_name($name) 
 	{ 
+#		$actual_name = "$name" ; 
 		$actual_name = "_$name" ; 
  
 		if(!array_key_exists($actual_name, get_object_vars($this)))
@@ -287,112 +263,91 @@ class object_base
 		$actual_name = $this->_actual_name($name) ; 
 
 		if($this->$actual_name instanceof self)
-			$this->$actual_name->copy($value) ;
+			$this->$actual_name->assign($value) ;
 		if(!is_null($this->$actual_name) && is_object($value))
 			$this->$actual_name = clone $value ;
 		else
 			$this->$actual_name = $value ;
+
+		return $this->$actual_name ;
 	}
 
-	/** Default behaviour on setting an attribute.
-	 *	\see self::__get
-	 *	\todo	i have a disign issue here. I can't have easy custom getter with read only and by-value semantic.
+	/** Return a reference of the attribute.
+	 *  \param	$name	string	The access attribute name.
+	 *  \return			mixed	The assign or reference of attribute
 	 */
+	final
 	protected	function & _get($name)
 	{
-		/*
 		$actual_name = $this->_actual_name($name) ; 
 
-		if(!is_null($this->$actual_name) && is_object($value))
-			$this->$actual_name = clone $value ;
-		*/
-
-		return $this->_return($name) ; 
+		return $this->$actual_name ;
 	}
 
-	/** \todo	a correct thing
+	/** Default method for checking if an attribute is set.
+	 */
+	final
+	protected	function _isset($name) 
+	{
+		$actual_name = $this->_actual_name($name) ; 
+		return isset($this->$actual_name) ;
+	}
+
+	/** Default method to unset a property.
 	 */
 	final
 	protected	function _unset($name) 
 	{
-		/*
-		if($this->$name instanceof object_base)
-			$this->$name->reset() ;
-		elseif(is_scalar($this->$name))
-		*/
-
 		$actual_name = $this->_actual_name($name) ; 
-		unset($this->$actual_name) ;
+		$this->$actual_name = null ;
+#		unset($this->$actual_name) ;
 	}
 
 	/** Generic copier for object_base
 	 */
 	final
-	protected	function _copy_object(object_base $object_source)
+	protected	function _assign_object(object_base $object_source)
 	{
 		$attrs = $this->get_attributes_object() ;
-		$this->_copy_attributes_from($attrs, $object_source) ;
+		$this->_assign_attributes_from($attrs, $object_source) ;
 	}
 
 	/** Copy attributes listed in $attrs.
 	 */
 	final
-	protected	function _copy_attributes_from($attrs, object_base $object_source)
+	protected	function _assign_attributes_from($attrs, object_base $object_source)
 	{
 		foreach($attrs as $attr_name)
-			if($attr_name[0] == '_')
-			{
-				$apparent_name = substr($attr_name, 1) ;
-				$this->$apparent_name = $object_source->$apparent_name ;
-			}
+			$this->__set($attr_name, $object_source->$apparent_name) ;
 	}
 
 	/** Generic descendant copier 
 	 *	\param	$object_source object_base
 	 */
 	final
-	protected	function _copy_descendant(object_base $object_source)
+	protected	function _assign_descendant(object_base $object_source)
 	{
-		assert('$object_source instanceof static') ;
+		if(! $object_source instanceof static)
+			$this->_throw_not_child($object_source) ;
 
 		$this->reset() ;
 		$attrs = $this->get_attributes_class($this) ;
-		$this->_copy_attributes_from($attrs, $object_source) ;
+		$this->_assign_attributes_from($attrs, $object_source) ;
 	}
 
 	/** Generic ancestor copier 
 	 */
 	final
-	protected	function _copy_ancestor(object_base $object_source)
+	protected	function _assign_ancestor(object_base $object_source)
 	{
 		$this->reset() ;
 		$attrs = $object_source->get_attributes_object() ;
-		$this->_copy_attributes_from($attrs, $object_source) ;
+		$this->_assign_attributes_from($attrs, $object_source) ;
 	}
 
-	/** Return a copy or a reference of the attribute.
-	 *  \param	$name	string	The access attribute name.
-	 *  \return			mixed	The copy or reference of attribute
-	 */
-	final
-	protected	function & _return($name)
-	{
-		$actual_name = $this->_actual_name($name) ; 
-
-		if(is_null($this->$actual_name))
-			return null ;
-
-		/*
-		return $this->_is_attribute_by_value($name)
-			? $this->_return_value($actual_name)
-			: $this->$actual_name ;
-		*/
-		return $this->$actual_name ;
-	}
-
-	/** Return a copy of value attribute instead of a reference on it
+	/** Return a assign of value attribute instead of a reference on it
 	  * \param	$actual_name	string	The actual name of native attribute.
-	  * \return	mixed	The copy of attribute value.
+	  * \return	mixed	The assign of attribute value.
 	  */
 	final
 	protected	function _return_value($actual_name)
@@ -402,26 +357,7 @@ class object_base
 			: $this->$actual_name ;
 	}
 
-	/** \warning	To call like instance method.
-	 */
-	final
-	static
-	protected	function _is_attribute_by_value($name)
-	{
-		assert('!isset($this)') ;
-		return in_array($name, static::$_attrs_by_value) ;
-	}
-
-	/**
-	 */
-	final
-	protected	function _is_attribute_readonly($name)
-	{
-		return in_array($name, static::$_attrs_readonly) ;
-	}
-
 	/** \todo
-	 */
 	final
 	protected	function _check_type($name, $value)
 	{
@@ -472,34 +408,39 @@ class object_base
 
 		return $good_type ;
 	}
+	 */
+
+	/** \throw	exception
+	 */
+	protected	function _throw_format($fmt)
+	{
+		$msg = call_user_func_array('sprintf', func_get_args()) ;
+		throw new exception($msg) ;
+	}
 
 	/** \throw	exception
 	 */
 	protected	function _throw_attribute_missing($name)
 	{
-		$msg = sprintf('Attribute \'%s\' doesn\'t exist in \'%s\'.'
-				, $name, get_class($this)) ; 
-		throw new exception($msg) ;
+		$this->_throw_format('Attribute \'%s\' doesn\'t exist in \'%s\'.', $name, get_class($this)) ; 
 	}
 
 	/** \throw exception
 	 */
-	protected	function _throw_cant_copy_object($object_source)
+	protected	function _throw_cant_assign_object($object_source)
 	{
-		$msg = sprintf('Supplied object of class \'%s\' can\'t be copied in this class \'%s\'.'
+		$this->_throw_format('Supplied object of class \'%s\' can\'t be copied in this class \'%s\'.'
 				, get_class($object_source)
 				, get_class($this)
 				) ;
-		throw new exception($msg) ;
 	}
 
 	/** \throw exception
 	 */
 	protected	function _throw_cant_set_attribute($object_source, $attr_name)
 	{
-		$msg = sprintf('Supplied object of class \'%s\' can\'t be assign to attribute \'%s\'.'
+		$this->_throw_format('Supplied object of class \'%s\' can\'t be assign to attribute \'%s\'.'
 			 , get_class($object_source), $attr_name) ;
-		throw new exception($msg) ;
 	}
 
 	/** \throw exception
@@ -533,10 +474,7 @@ class object_public
 {
 	/** 
 	 */
-	public		function __construct()
-	{
-		$this->_check_attributes() ;
-	}
+	public		function __construct() { }
 }
 
 /** Generic object class with protected constructor.
@@ -546,10 +484,7 @@ class object_protected
 {
 	/**
 	 */
-	protected	function __construct()
-	{
-		$this->_check_attributes() ;
-	}
+	protected	function __construct() { }
 }
 
 /** Generic object class with private constructor.
@@ -559,10 +494,7 @@ class object_private
 {
 	/** 
 	 */
-	private		function __construct()
-	{
-		$this->_check_attributes() ;
-	}
+	private		function __construct() { }
 }
 
 
