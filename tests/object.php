@@ -21,12 +21,12 @@ class test_unit_object
 
 	protected	function run()
 	{
-		$this->test_instantiation() ;
+		$this->test_instanciate() ;
 		$this->test_is_a($this->instance, 'horn\object_base') ;
 		$this->test_properties($this->instance) ;
 	}
 
-	protected	function provides()
+	public		function provides()
 	{
 		return new thing_public ; 
 	}

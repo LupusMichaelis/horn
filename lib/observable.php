@@ -29,40 +29,7 @@ namespace horn ;
 
 require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/collection.php' ;
-
-/**
- */
-class callback
-	extends object_public
-{
-	/**
-	 */
-	public		function __construct($native)
-	{
-		parent::__construct() ;
-		$this->native = $native ;
-	}
-
-	/**
-	 */
-	public		function __invoke()
-	{
-		return call_user_func_array($this->native, func_get_args()) ;
-	}
-
-	protected	function _set_native($native)
-	{
-		if(!is_callable($native))
-			throw new exception
-				(sprintf('Bad callback named \'%s\' supplied.', $native)) ;
-
-		$this->_native = $native ;
-	}
-
-	/**
-	 */
-	protected	$_native ;
-}
+require_once 'horn/lib/callback.php' ;
 
 /** Observable interface.
  *

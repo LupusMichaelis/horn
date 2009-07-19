@@ -32,89 +32,26 @@
 /** \package horn\tests
  */
 namespace horn\test ;
+use horn as h ;
 
 require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/collection.php' ;
-
-class test
-	extends \horn\object_public
-{
-	const		CAPTION = 'Begin test case.' ;
-
-	public		function __construct(unit $relative)
-	{
-		parent::__construct() ;
-
-		$this->unit = $relative ;
-	}
-
-	public		function __invoke()
-	{
-		$this->unit->begin(static::CAPTION) ;
-
-		try { $this->run() ; $this->on_exception_not_thrown() ; }
-		catch(\exception $e) { $this->on_exception_thrown($e) ; }
-
-		$this->unit->end() ;
-	}
-
-	/** Actual test done in there */
-	abstract
-	public		function run() ;
-
-	public		function on_exception_thrown()
-	{
-		if($this->exception_is_error())
-			$this->success = false ;
-	}
-
-	public		function on_exception_not_thrown()
-	{
-		if($this->exception_is_error())
-			$this->success = true ;
-	}
-
-	public		function speak()
-	{
-		if($this->success)
-			$this->unit->message($message_if_true) ;
-		else
-			$this->unit->error($message_if_false) ;
-	}
-
-	protected	function _set_unit(unit $relative)
-	{
-		$this->_unit = $relative ;
-	}
-
-	protected	function begin($message)
-	{
-		$this->success = null ;
-		call_user_func_array(array($this->unit, 'info'), func_get_args()) ;
-		$this->unit->counter++ ;
-	}
-
-	protected	function end()
-	{
-		if($this->success)
-			$this->unit->info('Case passed.') ;
-		elseif(is_null($this->success))
-			$this->unit->info('Case not processed ?') ;
-		else
-			$this->unit->info('Case failed !') ;
-	}
-}
+require_once 'horn/lib/callback.php' ;
 
 /**
  *
  */
 abstract
 class unit
-	extends \horn\object_public
+	extends h\object_public
 {
+	public		$success = null ;
+	public		$failures = 0 ;
+	public		$counter = 0 ;
+
 	public		function __construct()
 	{
-#		$this->_messages = new \horn\collection ;
+#		$this->_messages = new \h\collection ;
 		$this->begin() ;
 		$this->run() ;
 		$this->end() ;
@@ -169,39 +106,45 @@ class unit
 		$this->error('Unexpected exception (%s) happends.', $exception->getMessage()) ;
 	}
 
-	protected	function info($fmt)
+	public		function info($fmt)
 	{
 		echo call_user_func_array('sprintf', func_get_args()), "\n" ;
 	}
 
-	protected	function message($fmt)
+	public		function message($fmt)
 	{
-		$this->success = true ;
 		call_user_func_array(array($this, 'info'), func_get_args()) ;
 	}
 
-	protected	function error($fmt)
+	public		function error($fmt)
 	{
-		$this->success = false ;
 		$this->failures++ ;
 		call_user_func_array(array($this, 'info'), func_get_args()) ;
 	}
 
 	protected	function test($test_true, $message = 'Test case', $on_true = 'Ok', $on_false = 'Ko')
 	{
-		$test = new test($this, $message, $on_true, $on_false) ;
-		$test() ;
+		$callback = function () use ($test_true) { return $test_true ; } ;
+		$test = new test($this, h\callback($callback)) ;
 
+		$test->message = $message ;
+		$test->on_true = $on_true ;
+		$test->on_false = $on_false ;
+		$test() ;
 	}
 
-	protected	function test_instantiation()
+	protected	function test_instanciate()
 	{
-		$this->begin_case('Instantiate') ;
+		$test = new test($this, h\callback($this, 'provides')) ;
+		$test->exception_expected = true ;
+		$test() ;
 
-		try { $this->instance = $this->provides() ; }
-		catch(\exception $e) { $this->exception_unexpected($e) ; }
+#		$this->begin_case('Instantiate') ;
 
-		$this->end_case() ;
+#		try { $this->instance = $this->provides() ; }
+#		catch(\exception $e) { $this->exception_unexpected($e) ; }
+
+#		$this->end_case() ;
 	}
 
 	protected	function test_equal($left, $right)
@@ -254,9 +197,93 @@ class unit
 	{
 		$this->test(class_exists($class_name)) ;
 	}
-
-	protected	$success = null ;
-	protected	$failures = 0 ;
-	protected	$counter = 0 ;
 }
+
+class test
+	extends h\object_public
+{
+	const		CAPTION = 'Unamed test case.' ;
+
+	public		$success = null ;
+	public		$message = self::CAPTION ;
+	public		$on_true = 'Ok' ;
+	public		$on_false = 'Ko' ;
+	public		$exception_expected ;
+
+	protected	$_unit ;
+	protected	$_callback ;
+
+	private		$_catched_exception = null ;
+
+	public		function __construct(unit $relative, h\callback $callback)
+	{
+		parent::__construct() ;
+
+		$this->unit = $relative ;
+		$this->callback = $callback ;
+		$this->exception_expected = false ;
+	}
+
+	public		function __invoke()
+	{
+		$this->begin($this->message) ;
+
+		$callback = $this->callback ;
+		try { $this->success = $callback() ; $this->on_exception_not_thrown() ; }
+		catch(\exception $e) { $this->on_exception_thrown($e) ; }
+
+		$this->end() ;
+	}
+
+	/** Actual test done in there */
+	public		function run()
+	{
+		$this->callback($this) ;
+	}
+
+	public		function on_exception_thrown(\exception $e)
+	{
+		$this->_catched_exception = $e ;
+#		$this->success = $this->exception_expected ;
+	}
+
+	public		function on_exception_not_thrown()
+	{
+#		$this->success = !$this->exception_expected ;
+	}
+
+	public		function speak()
+	{
+		if($this->success)
+			$this->unit->message($this->on_true) ;
+		else
+			$this->unit->error($this->on_false) ;
+	}
+
+	protected	function _set_unit(unit $relative)
+	{
+		$this->_unit = $relative ;
+	}
+
+	protected	function begin($message)
+	{
+		$this->success = null ;
+		call_user_func_array(array($this->unit, 'info'), func_get_args()) ;
+		$this->unit->counter++ ;
+	}
+
+	protected	function end()
+	{
+		if($this->success === true)
+			$this->unit->info('Case passed.') ;
+		elseif($this->success === false)
+			$this->unit->error('Case failed !') ;
+		elseif($this->success === null)
+			$this->unit->warning('Case not processed ?') ;
+		else
+			$this->unit->warning('That\'s heavy ! Check this test case.') ;
+	}
+
+}
+
 

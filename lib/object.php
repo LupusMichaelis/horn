@@ -30,8 +30,6 @@
  *
  */
 
-/** \package horn
- */
 namespace horn ;
 
 require_once 'horn/lib/exception.php' ;

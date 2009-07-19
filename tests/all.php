@@ -36,6 +36,7 @@ $available_units = array
 	, 'collection'
 	, 'string'
 	, 'file'
+	, 'test'
 	) ;
 
 if($argc == 1)
