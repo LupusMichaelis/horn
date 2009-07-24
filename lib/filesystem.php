@@ -31,12 +31,21 @@
 
 /** \package horn
  */
-namespace horn ;
+namespace horn\filesystem ;
+use horn as h ;
 
 require_once 'horn/lib/object.php' ;
 
 const KILOBI = 1024 ;
 const MEGABI = 1048576 ;
+
+function path($string)
+{
+	if(! $string instanceof h\string)
+		$string = h\string($string) ;
+
+	$path = new path($string)
+}
 
 class path
 	extends		object_public
