@@ -43,7 +43,7 @@ class registry
 
 	public		function cd($path)
 	{
-		$current = $this->_seek_node($path) ;
+		$current = & $this->_seek_node($path) ;
 		unset($this->_current->ref) ;
 		$this->_current->ref = & $current ;
 		return $this ;
@@ -51,14 +51,15 @@ class registry
 
 	public		function get($path = '')
 	{
-		$node = $this->_seek_node($path) ;
+		$node = & $this->_seek_node($path) ;
 		return $node[0] ;
 	}
 
-	protected	function _seek_node($path)
+	public		function set($path, $value)
 	{
 		$keys = $this->_explode_path($path) ;
 
+		// If it is absolute path
 		if(strpos($path, '/') === 0)
 		{
 			$node = & $this->_registry ;
@@ -66,33 +67,6 @@ class registry
 		}
 		else
 			$node = & $this->_current->ref ;
-
-		while(is_string($key = array_shift($keys)))
-		{
-			if(!empty($key))
-				if(isset($node[$key]))
-				{
-					// reference swaping
-					unset($n) ;		$n = & $node[$key] ;
-					unset($node) ;	$node = & $n ;
-				}
-				else
-					$this->_throw_format('Couldn\'t path to (%s).', $path) ;
-		}
-
-		return $node ;
-	}
-
-	public		function set($path, $value)
-	{
-		$keys = $this->_explode_path($path) ;
-
-		if(empty($keys[0]))
-			$node = & $this->_registry ;
-		else
-			$node = & $this->_current->ref ;
-
-		array_shift($keys) ;
 
 		// go in tree as deeper as we can
 		while(is_string($key = array_shift($keys)))
@@ -121,6 +95,40 @@ class registry
 		while(is_string($key = array_shift($keys))) ;
 
 		$node[0] = $value ;
+	}
+
+	public		function childs($path = '')
+	{
+		$node = & $this->_seek_node($path) ;
+		return array_filter(array_keys($node), 'is_string') ;
+	}
+
+	protected	function & _seek_node($path)
+	{
+		$keys = $this->_explode_path($path) ;
+
+		if(strpos($path, '/') === 0)
+		{
+			$node = & $this->_registry ;
+			array_shift($keys) ;
+		}
+		else
+			$node = & $this->_current->ref ;
+
+		while(is_string($key = array_shift($keys)))
+		{
+			if(!empty($key))
+				if(isset($node[$key]))
+				{
+					// reference swaping
+					unset($n) ;		$n = & $node[$key] ;
+					unset($node) ;	$node = & $n ;
+				}
+				else
+					$this->_throw_format('Couldn\'t path to (%s).', $path) ;
+		}
+
+		return $node ;
 	}
 
 	protected	function _explode_path($path)
