@@ -11,59 +11,59 @@ class test_unit_string
 {
 	public		$instance = null ;
 
-	protected	function run()
+	public		function run()
 	{
-		$this->test_instantiation() ;
-		$this->test_is_a($this->instance, 'horn\object_base') ;
-		$this->test_is_a($this->instance, 'horn\object_public') ;
-		$this->test_is_a($this->instance, 'horn\string') ;
+		$this->_test_instantiation() ;
+		$this->_test_is_a($this->instance, 'horn\object_base') ;
+		$this->_test_is_a($this->instance, 'horn\object_public') ;
+		$this->_test_is_a($this->instance, 'horn\string') ;
 
-		$this->test_empty($this->instance) ;
+		$this->_test_empty($this->instance) ;
 
-		$this->test_append($this->instance) ;
-		$this->test_prepend($this->instance) ;
+		$this->_test_append($this->instance) ;
+		$this->_test_prepend($this->instance) ;
 
-		$this->test_head($this->instance) ;
+		$this->_test_head($this->instance) ;
 	}
 
-	protected	function provides()
+	public		function provides()
 	{
 		return new string ; 
 	}
 
-	protected	function test_empty(string $o)
+	protected	function _test_empty(string $o)
 	{
-		$this->begin_case('Tests on an empty string.') ;
-		$this->test($o->length() == 0) ;
-		$this->end_case() ;
+		$this->_begin_case('Tests on an empty string.') ;
+		$this->_test($o->length() == 0) ;
+		$this->_end_case() ;
 	}
 
-	protected	function test_append(string $o)
+	protected	function _test_append(string $o)
 	{
-		$this->begin_case('Tests appending on string.') ;
-		$this->test($o->length() == 0) ;
+		$this->_begin_case('Tests appending on string.') ;
+		$this->_test($o->length() == 0) ;
 		
 		$subject = 'Some string that\'s fine.' ;
 
 		try { $o->append(string($subject)) ; $this->expected() ; }
 		catch(\exception $e) { $this->exception_unexpected($e) ; }
 
-		$this->test($o->length() == strlen($subject)) ;
+		$this->_test($o->length() == strlen($subject)) ;
 
 		$this->end_case() ;
 	}
 
-	protected	function test_prepend(string $o)
+	protected	function _test_prepend(string $o)
 	{
-		$this->begin_case('Tests prepending on string.') ;
-		$this->test($o->length() == 0) ;
+		$this->_begin_case('Tests prepending on string.') ;
+		$this->_test($o->length() == 0) ;
 		
 		$subject = 'Some string that\'s fine.' ;
 
-		try { $o->prepend(string($subject)) ; $this->expected() ; }
-		catch(\exception $e) { $this->exception_unexpected($e) ; }
+		try { $o->prepend(string($subject)) ; $this->_expected() ; }
+		catch(\exception $e) { $this->_exception_unexpected($e) ; }
 
-		$this->test($o->length() == strlen($subject)) ;
+		$this->_test($o->length() == strlen($subject)) ;
 
 		$this->end_case() ;
 	}

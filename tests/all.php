@@ -62,6 +62,7 @@ foreach($units as $unit)
 	catch(\exception $e)
 	{
 		echo $e->getMessage(), "\n" ; 
+		echo $e->getTraceAsString(), "\n" ; 
 
 		if(DEBUG) throw $e ;
 	}

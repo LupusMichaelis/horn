@@ -30,14 +30,25 @@ namespace horn ;
 require_once 'horn/lib/object.php' ;
 
 class registry
-	extends object_public
+	extends		object_public
+	implements	\ArrayAccess
 {
-	protected	$_registry = array(0 => null) ;
+	protected	$_tree = array(0 => null) ;
 	protected	$_current ;
+
+	static
+	public		function load($array)
+	{
+		$registry = new self ;
+		$registry->_tree = $array ;
+		$registry->cd('/') ;
+
+		return $registry ;
+	}
 
 	public		function __construct()
 	{
-		$ref = & $this->_registry ;
+		$ref = & $this->_tree ;
 		$this->_current = (object) array('ref' => &$ref) ;
 	}
 
@@ -49,20 +60,39 @@ class registry
 		return $this ;
 	}
 
-	public		function get($path = '')
+	public		function offsetExists($path)
 	{
-		$node = & $this->_seek_node($path) ;
-		return $node[0] ;
+		try
+		{
+			$node = & $this->_seek_node($path) ;
+			return is_array($node) ;
+		}
+		catch(exception $e)
+		{
+			return false ;
+		}
 	}
 
-	public		function set($path, $value)
+	public		function offsetGet($path)
+	{
+		$node = & $this->_seek_node($path) ;
+		return isset($node[0]) ? $node[0] : null ;
+	}
+
+	public		function offsetUnset($path)
+	{
+		$node = & $this->_seek_node($path) ;
+		$node = null ;
+	}
+
+	public		function offsetSet($path, $value)
 	{
 		$keys = $this->_explode_path($path) ;
 
 		// If it is absolute path
 		if(strpos($path, '/') === 0)
 		{
-			$node = & $this->_registry ;
+			$node = & $this->_tree ;
 			array_shift($keys) ;
 		}
 		else
@@ -109,7 +139,7 @@ class registry
 
 		if(strpos($path, '/') === 0)
 		{
-			$node = & $this->_registry ;
+			$node = & $this->_tree ;
 			array_shift($keys) ;
 		}
 		else
@@ -118,7 +148,7 @@ class registry
 		while(is_string($key = array_shift($keys)))
 		{
 			if(!empty($key))
-				if(isset($node[$key]))
+				if(isset($node[$key]) && is_array($node[$key]))
 				{
 					// reference swaping
 					unset($n) ;		$n = & $node[$key] ;

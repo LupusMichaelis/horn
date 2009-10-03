@@ -28,6 +28,11 @@ namespace horn ;
 
 require_once 'horn/lib/object.php' ;
 
+function is_collection($variable)
+{
+	return is_array($variable) || $variable instanceof \iterator ;
+}
+
 /**	An object that implements array behaviour in a consistent way.
   * \todo		make a compatible collection range class
   *				that allows laziness

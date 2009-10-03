@@ -30,6 +30,8 @@
  *
  */
 
+/* :%s/\$this->_throw_format(\(.*\), \(.*\)) ;$/throw new exception(sprintf(\1, \2)) ;/g
+ */
 namespace horn ;
 
 require_once 'horn/lib/exception.php' ;
@@ -410,10 +412,17 @@ class object_base
 
 	/** \throw	exception
 	 */
+	protected	function _throw($msg)
+	{
+		throw new exception($msg) ;
+	}
+
+	/** \throw	exception
+	 */
 	protected	function _throw_format($fmt)
 	{
 		$msg = call_user_func_array('sprintf', func_get_args()) ;
-		throw new exception($msg) ;
+		$this->_throw($msg) ;
 	}
 
 	/** \throw	exception

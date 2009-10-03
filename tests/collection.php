@@ -10,83 +10,88 @@ class test_unit_collection
 {
 	public		$instance = null ;
 
-	protected	function provides()
+	public		function __construct()
+	{
+		parent::__construct('Object') ;
+	}
+
+	public		function provides()
 	{
 		return new collection ;
 	}
 
-	protected	function run()
+	public		function run()
 	{
-		$this->test_instantiation() ;
-		$this->test_array($this->instance) ;
+		$this->_test_instanciate() ;
+		$this->_test_array($this->provides()) ;
 	}
 
-	protected	function test_array(collection $o)
+	protected	function _test_array(collection $o)
 	{
-		$this->test_stack($o) ;
-		$this->test_equal($o->count(), 0) ;
-		$this->test_add($o) ;
+		$this->_test_stack($o) ;
+		$this->_test_equal($o->count(), 0) ;
+		$this->_test_add($o) ;
 	}
 
-	protected	function test_stack(collection $o)
+	protected	function _test_stack(collection $o)
 	{
-		$this->begin_case('Properties') ;
+		$this->_begin('Properties') ;
 
-		$this->test_stack_getter($o) ;
-		$this->test_stack_setter($o) ;
+		$this->_test_stack_getter($o) ;
+		$this->_test_stack_setter($o) ;
 
-		$this->end_case() ;
+		$this->_end() ;
 	}
 
-	protected	function test_stack_getter(collection $o)
+	protected	function _test_stack_getter(collection $o)
 	{
-		$this->begin_case('Trying to get readonly stack.') ;
+		$this->_begin('Trying to get readonly stack.') ;
 
-		try { $o->stack ; $this->unexpected() ; }
-		catch(\exception $e) { $this->exception_expected($e) ; }
+		try { $o->stack ; $this->_unexpected() ; }
+		catch(\exception $e) { $this->_exception_was_expected($e) ; }
 
-		$this->end_case() ;
+		$this->_end() ;
 	}
 
-	protected	function test_stack_setter(collection $o)
+	protected	function _test_stack_setter(collection $o)
 	{
-		$this->begin_case('Trying to set readonly stack.') ;
+		$this->_begin('Trying to set readonly stack.') ;
 
-		try { $o->stack = array() ; $this->unexpected() ; }
-		catch(\exception $e) { $this->exception_expected($e) ; }
+		try { $o->stack = array() ; $this->_unexpected() ; }
+		catch(\exception $e) { $this->_exception_was_expected($e) ; }
 
-		$this->end_case() ;
+		$this->_end() ;
 	}
 
-	protected	function test_add(collection $o)
+	protected	function _test_add(collection $o)
 	{
-		$this->begin_case('Push an element to a collection.') ;
-		try { $o[] = 'toto' ; $this->expected() ; }
+		$this->_begin('Push an element to a collection.') ;
+		try { $o[] = 'toto' ; $this->_expected() ; }
 		catch(\exception $e) { $this->exception_unexpected($e) ; }
-		$this->end_case() ;
+		$this->_end() ;
 		
-		$this->test_equal($o->count(), 1) ;
+		$this->_test_equal($o->count(), 1) ;
 		
-		$this->begin_case('Add an element with a numeric index to a collection.') ;
-		try { $o[10] = 'toto' ; $this->expected() ; }
+		$this->_begin('Add an element with a numeric index to a collection.') ;
+		try { $o[10] = 'toto' ; $this->_expected() ; }
 		catch(\exception $e) { $this->exception_unexpected($e) ; }
-		$this->end_case() ;
+		$this->_end() ;
 		
-		$this->test_equal($o->count(), 2) ;
+		$this->_test_equal($o->count(), 2) ;
 		
-		$this->begin_case('Add an element referenced by a key to a collection.') ;
-		try { $o['key'] = 'toto' ; $this->expected() ; }
+		$this->_begin('Add an element referenced by a key to a collection.') ;
+		try { $o['key'] = 'toto' ; $this->_expected() ; }
 		catch(\exception $e) { $this->exception_unexpected($e) ; }
-		$this->end_case() ;
+		$this->_end() ;
 		
-		$this->test_equal($o->count(), 3) ;
+		$this->_test_equal($o->count(), 3) ;
 		
-		$this->begin_case('Add an element by push method to a collection.') ;
-		try { $o->push('toto') ; $this->expected() ; }
+		$this->_begin('Add an element by push method to a collection.') ;
+		try { $o->push('toto') ; $this->_expected() ; }
 		catch(\exception $e) { $this->exception_unexpected($e) ; }
-		$this->end_case() ;
+		$this->_end() ;
 		
-		$this->test_equal($o->count(), 4) ;
+		$this->_test_equal($o->count(), 4) ;
 
 	}
 
