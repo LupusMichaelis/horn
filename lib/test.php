@@ -46,7 +46,6 @@ abstract
 class unit
 	extends h\object_public
 {
-	public		$success = null ;
 	public		$failures = 0 ;
 	public		$counter = 0 ;
 
@@ -73,7 +72,7 @@ class unit
 
 	protected	function _begin($message)
 	{
-		if(! $message instanceof h\string && !is_string($message))
+		if(!h\is_string($message))
 			$this->_throw('Non-string parameter given.') ;
 
 		$this->info('Begin unit test (%s).', $message) ;
@@ -250,24 +249,24 @@ class test
 
 	private		$_catched_exception = null ;
 
-	public		function __construct(unit $relative, h\callback $callback)
+	public		function __construct(unit $relative, h\callback $callback, $exception_expected = false)
 	{
 		parent::__construct() ;
 
 		$this->unit = $relative ;
 		$this->callback = $callback ;
-		$this->exception_expected = false ;
+		$this->exception_expected = $exception_expected ;
 	}
 
 	public		function __invoke()
 	{
-		$this->begin($this->message) ;
+		$this->_begin($this->message) ;
 
 		$callback = $this->callback ;
 		try { $this->success = $callback() ; $this->on_exception_not_thrown() ; }
 		catch(\exception $e) { $this->on_exception_thrown($e) ; }
 
-		$this->end() ;
+		$this->_end() ;
 	}
 
 	/** Actual test done in there */
@@ -301,14 +300,14 @@ class test
 		$this->_unit = $relative ;
 	}
 
-	protected	function begin($message)
+	protected	function _begin($message)
 	{
 		$this->success = null ;
 		call_user_func_array(array($this->unit, 'info'), func_get_args()) ;
 		$this->unit->counter++ ;
 	}
 
-	protected	function end()
+	protected	function _end()
 	{
 		if($this->success === true)
 			$this->unit->info('Case passed.') ;

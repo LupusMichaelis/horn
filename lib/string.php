@@ -30,6 +30,15 @@ namespace horn ;
 require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/collection.php' ;
 
+/** Check if the provided variable is a string or not
+ *  \param	any		$variable
+ *	\return	bool
+ */
+function is_string($variable)
+{
+	return $variable instanceof string || \is_string($variable) ;
+}
+
 /** Cast $converted in a string_ex
  */
 function string($converted)

@@ -48,8 +48,16 @@ class collection
 	public		function __construct(/* ... */)
 	{
 		parent::__construct() ;
-		$this->_stack = null ;
+		$this->_stack = array() ;
 		$this->join(func_get_args()) ;
+	}
+
+	/** Get a copy of the stack as a scalar.
+	 *	\return array
+	 */
+	public		function get_stack()
+	{
+		return (array) $this->_stack ;
 	}
 
 	/** Merge the argument list in a new collection.
