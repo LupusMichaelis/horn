@@ -15,8 +15,10 @@ class thing_public
 }
 
 class test_unit_object
-	extends test\unit
+	extends test\unit_object
 {
+	protected	$_instance = null ;
+
 	public		function __construct($message = 'Object')
 	{
 		parent::__construct($message) ;
@@ -24,8 +26,7 @@ class test_unit_object
 
 	public		function run()
 	{
-		$this->_test_instanciate() ;
-		$this->_test_is_a($this->provides(), 'horn\object_base') ;
+		parent::run() ;
 		$this->_test_properties($this->provides()) ;
 	}
 
@@ -55,9 +56,17 @@ class test_unit_object
 			, 'isset_private'
 			) ;
 
+		$exception_expected = null ;
 		foreach($methods as $test_method)
-			try { $this->{"_test_$test_method"}($o) ; }
-			catch(\exception $exception) { $this->error('Oops') ; }
+			try
+			{
+				$this->{"_test_$test_method"}($o) ;
+				$this->_exception_not_thrown($exception_expected) ;
+			}
+			catch(\exception $exception)
+			{
+				$this->_exception_thrown($exception_expected) ;
+			}
 
 		$this->_end() ;
 	}
@@ -66,8 +75,10 @@ class test_unit_object
 	{
 		$this->_begin('Trying to get undefined property.') ;
 
-		try { $o->undefined ; $this->exception_not_thrown() ; }
-		catch(exception $e) { $this->_exception_was_expected($e) ; } ;
+		$expected_exception = '\exception' ;
+
+		try { $o->undefined ; $this->_exception_not_thrown($expected_exception) ; }
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -76,8 +87,10 @@ class test_unit_object
 	{
 		$this->_begin('Trying to get public property.') ;
 
-		try { $o->public ; $this->_expected() ; }
-		catch(exception $e) { $this->_exception_was_expected($e) ; } ;
+		$expected_exception = null ;
+
+		try { $o->public ; $this->_exception_not_thrown($expected_exception) ; }
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -86,8 +99,10 @@ class test_unit_object
 	{
 		$this->_begin('Trying to get property protected.') ;
 
-		try { $o->protected ; $this->_exception_was_expected() ; }
-		catch(exception $e) { $this->_exception_unexpected($e) ; } ;
+		$expected_exception = '\exception' ;
+
+		try { $o->protected ; $this->_exception_not_thrown($expected_exception) ; }
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -96,8 +111,14 @@ class test_unit_object
 	{
 		$this->_begin('Trying to get property private.') ;
 
-		try { $o->private ; $this->_exception_unexpected() ; }
-		catch(exception $e) { $this->_exception_was_expected($e) ; } ;
+		$expected_exception = '\exception' ;
+
+		try
+		{
+			$o->private ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -106,8 +127,14 @@ class test_unit_object
 	{
 		$this->_begin('Trying to set undefined property.') ;
 
-		try { $o->undefined = 'content' ; $this->exception_not_thrown() ; }
-		catch(exception $e) { $this->_exception_was_expected($e) ; } ;
+		$expected_exception = '\exception' ;
+
+		try
+		{
+			$o->undefined = 'content' ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -116,8 +143,14 @@ class test_unit_object
 	{
 		$this->_begin('Trying to set public property.') ;
 
-		try { $o->public = 'content' ; $this->_expected() ; }
-		catch(exception $e) { $this->_exception_was_expected($e) ; } ;
+		$expected_exception = '\exception' ;
+
+		try
+		{
+			$o->public = 'content' ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -126,8 +159,10 @@ class test_unit_object
 	{
 		$this->_begin('Trying to set property protected.') ;
 
-		try { $o->protected = 'content' ; $this->_expected() ; }
-		catch(exception $e) { $this->_exception_unexpected($e) ; } ;
+		$expected_exception = '\exception' ;
+
+		try { $o->protected = 'content' ; $this->_exception_not_thrown($expected_exception) ; }
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -136,8 +171,14 @@ class test_unit_object
 	{
 		$this->_begin('Trying to set property private.') ;
 
-		try { $o->private = 'content' ; $this->_exception_unexpected() ; }
-		catch(exception $e) { $this->_exception_was_expected($e) ; } ;
+		$expected_exception = '\exception' ;
+
+		try
+		{
+			$o->private = 'content' ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -146,8 +187,14 @@ class test_unit_object
 	{
 		$this->_begin('Isset undefined property.') ;
 
-		try { isset($o->undefined) ; $this->exception_not_thrown() ; }
-		catch(exception $e) { $this->_exception_was_expected($e) ; } ;
+		$expected_exception = null ;
+
+		try
+		{
+			isset($o->undefined) ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -156,8 +203,14 @@ class test_unit_object
 	{
 		$this->_begin('Isset public property.') ;
 
-		try { isset($o->public) ; $this->_expected() ; }
-		catch(exception $e) { $this->_exception_was_expected($e) ; } ;
+		$expected_exception = null ;
+
+		try
+		{
+			isset($o->public) ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -166,8 +219,14 @@ class test_unit_object
 	{
 		$this->_begin('Isset property protected.') ;
 
-		try { isset($o->protected) ; $this->_expected() ; }
-		catch(exception $e) { $this->_exception_unexpected($e) ; } ;
+		$expected_exception = null ;
+
+		try
+		{
+			isset($o->protected) ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
@@ -176,8 +235,14 @@ class test_unit_object
 	{
 		$this->_begin('Isset property private.') ;
 
-		try { isset($o->private) ; $this->_exception_unexpected() ; }
-		catch(exception $e) { $this->_exception_was_expected($e) ; } ;
+		$expected_exception = null ;
+
+		try
+		{
+			isset($o->private) ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}

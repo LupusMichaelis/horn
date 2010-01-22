@@ -6,29 +6,48 @@ require_once 'horn/lib/file.php' ;
 require_once 'horn/lib/test.php' ;
 
 class test_unit_file
-	extends test\unit
+	extends test\unit_object
 {
 	public		$instance = null ;
 
-	protected	function provides()
+	public		function __construct($message = 'File')
+	{
+		parent::__construct($message) ;
+	}
+
+	public		function provides()
 	{
 		return file_factory::create('application/octet-stream') ;
 	}
 
-	protected	function run()
+	public		function run()
 	{
-		$this->test_instantiation() ;
-		$this->test_virtual($this->instance) ;
+		$this->instance = $this->_test_instanciate() ;
+
+		$expected_exception = null ;
+
+		try
+		{
+			$this->_test_virtual($this->instance) ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
 	}
 
-	protected	function test_virtual(object_base $o)
+	protected	function _test_virtual(object_base $o)
 	{
-		$this->begin_case('Set a virtual file.') ;
+		$this->_begin('Set a virtual file.') ;
 
-		try { $o->name = 'toto.txt' ; $this->expected() ; }
-		catch(\exception $e) { $this->exception_unexpected($e) ; }
+		$expected_exception = null ;
 
-		$this->end_case() ;
+		try
+		{
+			$o->name = 'toto.txt' ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
+
+		$this->_end() ;
 	}
 }
 

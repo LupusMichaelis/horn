@@ -5,10 +5,8 @@ namespace horn ;
 require_once 'horn/lib/string.php' ;
 require_once 'horn/lib/test.php' ;
 
-require_once 'tests/object.php' ;
-
 class test_unit_string
-	extends test_unit_object
+	extends test\unit_object
 {
 	public		$instance = null ;
 
@@ -50,8 +48,14 @@ class test_unit_string
 		
 		$subject = 'Some string that\'s fine.' ;
 
-		try { $o->append(string($subject)) ; $this->_expected() ; }
-		catch(\exception $e) { $this->_exception_unexpected($e) ; }
+		$expected_exception = null ;
+
+		try
+		{
+			$o->append(string($subject)) ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(\exception $e) { $this->__exception_thrown($e, $expected_exception) ; }
 
 		$this->_test($o->length() == strlen($subject)) ;
 
@@ -63,13 +67,20 @@ class test_unit_string
 		$this->_begin('Tests prepending on string.') ;
 		$this->_test($o->length() == 0) ;
 		
+		$expected_exception = null ;
+
 		$subject = 'Some string that\'s fine.' ;
 
-		try { $o->prepend(string($subject)) ; $this->_expected() ; }
-		catch(\exception $e) { $this->_exception_unexpected($e) ; }
+		try
+		{
+			$o->prepend(string($subject)) ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(\exception $e) { $this->__exception_thrown($e, $expected_exception) ; }
 
 		$this->_test($o->length() == strlen($subject)) ;
 
 		$this->_end() ;
 	}
 }
+

@@ -32,11 +32,11 @@ require_once 'horn/lib/test.php' ;
 define('DEBUG', true) ;
 
 $available_units = array
-	( 'object'
+	( 'test'
+	, 'object'
 	, 'collection'
 	, 'string'
-	, 'file'
-	, 'test'
+#	, 'file'
 	) ;
 
 if($argc == 1)

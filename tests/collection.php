@@ -6,7 +6,7 @@ require_once 'horn/lib/collection.php' ;
 require_once 'horn/lib/test.php' ;
 
 class test_unit_collection
-	extends test\unit
+	extends test\unit_object
 {
 	public		$instance = null ;
 
@@ -47,8 +47,10 @@ class test_unit_collection
 	{
 		$this->_begin('Trying to get readonly stack.') ;
 
-		try { $o->stack ; $this->_unexpected() ; }
-		catch(\exception $e) { $this->_exception_was_expected($e) ; }
+		$expected_exception = null ;
+
+		try { $o->stack ; $this->_exception_not_thrown($expected_exception) ; }
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
 
 		$this->_end() ;
 	}
@@ -57,38 +59,58 @@ class test_unit_collection
 	{
 		$this->_begin('Trying to set readonly stack.') ;
 
-		try { $o->stack = array() ; $this->_unexpected() ; }
-		catch(\exception $e) { $this->_exception_was_expected($e) ; }
+		$expected_exception = null ;
+
+		try { $o->stack = array() ; $this->_exception_not_thrown($expected_exception) ; }
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
 
 		$this->_end() ;
 	}
 
 	protected	function _test_add(collection $o)
 	{
+		/* None of tests ought to throw an exception */
+		$expected_exception = null ;
+
 		$this->_begin('Push an element to a collection.') ;
-		try { $o[] = 'toto' ; $this->_expected() ; }
-		catch(\exception $e) { $this->exception_unexpected($e) ; }
+		try
+		{
+			$o[] = 'toto' ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
 		$this->_end() ;
 		
 		$this->_test_equal($o->count(), 1) ;
 		
 		$this->_begin('Add an element with a numeric index to a collection.') ;
-		try { $o[10] = 'toto' ; $this->_expected() ; }
-		catch(\exception $e) { $this->exception_unexpected($e) ; }
+		try
+		{
+			$o[10] = 'toto' ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
 		$this->_end() ;
 		
 		$this->_test_equal($o->count(), 2) ;
 		
 		$this->_begin('Add an element referenced by a key to a collection.') ;
-		try { $o['key'] = 'toto' ; $this->_expected() ; }
-		catch(\exception $e) { $this->exception_unexpected($e) ; }
+		try {
+			$o['key'] = 'toto' ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
 		$this->_end() ;
 		
 		$this->_test_equal($o->count(), 3) ;
 		
 		$this->_begin('Add an element by push method to a collection.') ;
-		try { $o->push('toto') ; $this->_expected() ; }
-		catch(\exception $e) { $this->exception_unexpected($e) ; }
+		try
+		{
+			$o->push('toto') ;
+			$this->_exception_not_thrown($expected_exception) ;
+		}
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
 		$this->_end() ;
 		
 		$this->_test_equal($o->count(), 4) ;

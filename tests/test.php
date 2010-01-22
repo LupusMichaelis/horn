@@ -6,8 +6,13 @@ require_once 'horn/lib/horn.php' ;
 require_once 'horn/lib/test.php' ;
 
 class test_unit_test
-	extends test\unit
+	extends test\unit_object
 {
+	public		function __construct($message = 'Test')
+	{
+		parent::__construct($message) ;
+	}
+
 	public		function run()
 	{
 		$this->_test(true) ;
@@ -28,6 +33,15 @@ class test_unit_test
 		$this->_test_is_object(new \stdclass) ;
 		$this->_test_is_a(new \stdclass, '\stdclass') ;
 	}
+
+	/** This test case checks its own behaviour, so it doesn't have to provide any thing.
+	 *	\todo	Think about a separation of concerns between general and object oriented behaviour test case.
+	 */
+	public		function provides()
+	{
+		return null ;
+	}
+
 }
 
 

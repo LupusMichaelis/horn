@@ -39,197 +39,6 @@ require_once 'horn/lib/string.php' ;
 require_once 'horn/lib/collection.php' ;
 require_once 'horn/lib/callback.php' ;
 
-/**
- *
- */
-abstract
-class unit
-	extends h\object_public
-{
-	public		$failures = 0 ;
-	public		$counter = 0 ;
-
-	public		function __construct($name)
-	{
-		$this->_begin($name) ;
-		$this->run() ;
-		$this->_end() ;
-
-		unset($this) ;
-	}
-
-	public		function __destruct()
-	{
-		$this->info('Statistics success(%d/%d)'
-				, $this->counter - $this->failures, $this->counter) ;
-	}
-
-	abstract
-	public		function run() ;
-
-	abstract
-	public		function provides() ;
-
-	protected	function _begin($message)
-	{
-		if(!h\is_string($message))
-			$this->_throw('Non-string parameter given.') ;
-
-		$this->info('Begin unit test (%s).', $message) ;
-	}
-
-	protected	function _end()
-	{
-		$this->info("End unit test.\n") ;
-	}
-
-	protected	function _expected()
-	{
-		$this->message('Correct behaviour.') ;
-	}
-
-	protected	function _exception_was_expected(\exception $exception)
-	{
-		$this->message('Exception \'%s\' thrown.', $exception->getMessage()) ;
-	}
-
-	protected	function _exception_not_thrown()
-	{
-		$this->error('Expected exception was not thrown.') ;
-	}
-
-	protected	function _exception_unexpected(\exception $exception)
-	{
-		$this->error('Unexpected exception (%s) happends.', $exception->getMessage()) ;
-	}
-
-	public		function info($fmt)
-	{
-		echo call_user_func_array('sprintf', func_get_args()), "\n" ;
-	}
-
-	public		function message($fmt)
-	{
-		call_user_func_array(array($this, 'info'), func_get_args()) ;
-	}
-
-	public		function error($fmt)
-	{
-		$this->failures++ ;
-		call_user_func_array(array($this, 'info'), func_get_args()) ;
-	}
-
-	protected	function _test($test_true, $messages = array())
-	{
-		$callback = function () use ($test_true) { return $test_true ; } ;
-		$this->_do_test($callback, $messages) ;
-	}
-
-	protected	function _do_test($callback, $messages = array())
-	{
-		if(!h\is_collection($messages))
-			$this->_throw('variable \'messages\' is not a collection.') ;
-
-		if(empty($messages[0])) $messages[0] = 'Test case' ;
-		if(empty($messages[true])) $messages[true] = 'Ok' ;
-		if(empty($messages[false])) $messages[false] = 'Ko' ;
-		
-		$test = new test($this, h\callback($callback)) ;
-		$test->message = $messages[0] ;
-		$test->on_true = $messages[true] ;
-		$test->on_false = $messages[false] ;
-
-		$test() ;
-	}
-
-	protected	function _test_instanciate()
-	{
-		/* todo
-		$callback = h\callback($this, 'provides') ;
-		$this->_do_test($callback) ;
-		*/
-	}
-
-	protected	function _test_equal($left, $right)
-	{
-		$messages = array
-			( 'Testing equality.'
-			, true => 'Equality ok.'
-			, false => sprintf('Not equal (%d != %d).', $left, $right)
-			) ;
-		$this->_test($left == $right, $messages) ;
-	}
-
-	protected	function _test_is_set($variable)
-	{
-		$messages = array('Testing is set value.') ;
-		$this->_test(isset($variable), $messages) ;
-	}
-
-	protected	function _test_is_empty($variable)
-	{
-		$messages = array('Testing is empty variable.') ;
-		$this->_test(is_empty($variable), $messages) ;
-	}
-
-	protected	function _test_is_null($variable)
-	{
-		$messages = array('Testing is null value.') ;
-		$this->_test(is_null($variable), $messages) ;
-	}
-
-	protected	function _test_is_scalar($variable)
-	{
-		$messages = array('Testing is a scalar.') ;
-		$this->_test(is_scalar($variable), $messages) ;
-	}
-
-	protected	function _test_is_resource($variable)
-	{
-		$messages = array('Testing is a resource.') ;
-		$this->_test(is_resource($variable), $messages) ;
-	}
-
-	protected	function _test_is_integer($variable)
-	{
-		$messages = array('Testing is an integer.') ;
-		$this->_test(is_integer($variable), $messages) ;
-	}
-
-	protected	function _test_is_float($variable)
-	{
-		$messages = array('Testing is a float.') ;
-		$this->_test(is_float($variable), $messages) ;
-	}
-
-	protected	function _test_is_string($variable)
-	{
-		$messages = array('Testing is a string.') ;
-		$this->_test(is_string($variable), $messages) ;
-	}
-
-	protected	function _test_is_object($variable)
-	{
-		$messages = array('Testing is an object.') ;
-		$this->_test(is_object($variable), $messages) ;
-	}
-
-	protected	function _test_is_a($object, $class)
-	{
-		$this->_test_class_exists($class) ;
-		$this->_test_is_object($object) ;
-		$messages = array
-			( sprintf('Testing is an instance of \'%s\'.', $class)
-			); 
-		$this->_test(is_a($object, $class), $messages) ;
-	}
-
-	protected	function _test_class_exists($class_name)
-	{
-		$this->_test(class_exists($class_name)) ;
-	}
-}
-
 /** Test management.
  *	This class provides a way to handle test running. The test is actually done in a test_unit object.
  */
@@ -321,3 +130,228 @@ class test
 }
 
 
+/**
+ *
+ */
+abstract
+class unit
+	extends h\object_public
+{
+	public		$failures = 0 ;
+	public		$success = 0 ;
+	public		$counter = 0 ;
+
+	public		function __construct($name)
+	{
+		$this->_begin($name) ;
+		$this->run() ;
+		$this->_end() ;
+
+		unset($this) ;
+	}
+
+	public		function __destruct()
+	{
+		$this->info('Statistics success(%d/%d)'
+				, $this->counter - $this->failures, $this->counter) ;
+	}
+
+	abstract
+	public		function run() ;
+
+	abstract
+	public		function provides() ;
+
+	protected	function _begin($message)
+	{
+		if(!h\is_string($message))
+			$this->_throw('Non-string parameter given.') ;
+
+		$this->info('Begin unit test (%s).', $message) ;
+	}
+
+	protected	function _end()
+	{
+		$this->info("End unit test.\n") ;
+	}
+
+	/**
+	 *	@param	exception			(\exception)	The exception thrown
+	 *	@param	$exception_class	(\string|null)	The exception class name if exception was expected, else null.
+	 */
+	protected	function _exception_thrown(\exception $exception, $exception_class)
+	{
+		if(is_null($exception_class))
+		{
+			$message = sprintf('Unexpected exception (%s) thrown.', get_class($exception)) ;
+			$this->error($message) ;
+		}
+		elseif($exception instanceof $exception_class)
+		{
+			$message = sprintf('Exception (%s) thrown as expected.', get_class($exception)) ;
+			$this->message($message) ;
+		}
+		else
+		{
+			$message = sprintf
+				( 'Unexpected exception of type (%s) thrown instead of (%s).'
+				, get_class($exception)
+				, $exception_class
+				) ;
+			$this->error($message) ;
+		}
+	}
+
+	/**
+	 *	@param	$exception_class	(\string|null)	The exception class name if exception was expected, else null.
+	 */
+	protected	function _exception_not_thrown($exception_class)
+	{
+		if(is_null($exception_class))
+			$this->message('No exception thrown.') ;
+		else
+			$this->error(sprintf('Exception (%s) does\'nt thrown.', $exception_class)) ;
+	}
+
+	public		function info($fmt)
+	{
+		echo call_user_func_array('sprintf', func_get_args()), "\n" ;
+	}
+
+	public		function message($fmt)
+	{
+		call_user_func_array(array($this, 'info'), func_get_args()) ;
+	}
+
+	public		function error($fmt)
+	{
+		$this->failures++ ;
+		call_user_func_array(array($this, 'info'), func_get_args()) ;
+	}
+
+	protected	function _test($test_true, $messages = array())
+	{
+		$callback = function () use ($test_true) { return $test_true ; } ;
+		$this->_do_test($callback, $messages) ;
+	}
+
+	protected	function _do_test($callback, $messages = array())
+	{
+		if(!h\is_collection($messages))
+			$this->_throw('variable \'messages\' is not a collection.') ;
+
+		if(empty($messages[0]))		$messages[0] = 'Test case' ;
+		if(empty($messages[true]))	$messages[true] = 'Ok' ;
+		if(empty($messages[false]))	$messages[false] = 'Ko' ;
+		
+		$test = new test($this, h\callback($callback)) ;
+		$test->message = $messages[0] ;
+		$test->on_true = $messages[true] ;
+		$test->on_false = $messages[false] ;
+
+		$this->success = $test() ;
+	}
+
+	protected	function _test_equal($left, $right)
+	{
+		$messages = array
+			( 'Testing equality.'
+			, true => 'Equality ok.'
+			, false => sprintf('Not equal (%d != %d).', $left, $right)
+			) ;
+		$this->_test($left == $right, $messages) ;
+	}
+
+	protected	function _test_is_set($variable)
+	{
+		$messages = array('Testing is set value.') ;
+		$this->_test(isset($variable), $messages) ;
+	}
+
+	protected	function _test_is_empty($variable)
+	{
+		$messages = array('Testing is empty variable.') ;
+		$this->_test(is_empty($variable), $messages) ;
+	}
+
+	protected	function _test_is_null($variable)
+	{
+		$messages = array('Testing is null value.') ;
+		$this->_test(is_null($variable), $messages) ;
+	}
+
+	protected	function _test_is_scalar($variable)
+	{
+		$messages = array('Testing is a scalar.') ;
+		$this->_test(is_scalar($variable), $messages) ;
+	}
+
+	protected	function _test_is_resource($variable)
+	{
+		$messages = array('Testing is a resource.') ;
+		$this->_test(is_resource($variable), $messages) ;
+	}
+
+	protected	function _test_is_integer($variable)
+	{
+		$messages = array('Testing is an integer.') ;
+		$this->_test(is_integer($variable), $messages) ;
+	}
+
+	protected	function _test_is_float($variable)
+	{
+		$messages = array('Testing is a float.') ;
+		$this->_test(is_float($variable), $messages) ;
+	}
+
+	protected	function _test_is_string($variable)
+	{
+		$messages = array('Testing is a string.') ;
+		$this->_test(is_string($variable), $messages) ;
+	}
+
+	protected	function _test_is_object($variable)
+	{
+		$messages = array('Testing is an object.') ;
+		$this->_test(is_object($variable), $messages) ;
+	}
+
+	protected	function _test_is_a($object, $class)
+	{
+		$this->_test_class_exists($class) ;
+		$this->_test_is_object($object) ;
+		$messages = array
+			( sprintf('Testing is an instance of \'%s\'.', $class)
+			); 
+		$this->_test(is_a($object, $class), $messages) ;
+	}
+
+	protected	function _test_class_exists($class_name)
+	{
+		$this->_test(class_exists($class_name)) ;
+	}
+}
+
+/**
+ *
+ */
+abstract
+class unit_object
+	extends unit
+{
+	public		function run()
+	{
+		$this->_test_instanciate() ;
+		$this->_test_is_a($this->provides(), 'horn\object_base') ;
+	}
+
+	protected	function _test_instanciate()
+	{
+		$instance = $this->provides() ;
+
+		$this->_begin('Instantiate') ;
+		$this->_test_is_object($instance) ;
+		$this->_end() ;
+	}
+
+}

@@ -44,11 +44,11 @@ function path($string)
 	if(! $string instanceof h\string)
 		$string = h\string($string) ;
 
-	$path = new path($string)
+	$path = new path($string) ;
 }
 
 class path
-	extends		object_public
+	extends		h\object_public
 {
 	public		function __construct(string_ex $path)
 	{
