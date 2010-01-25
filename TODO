@@ -3,12 +3,12 @@ lib/acl.php
 lib/application.php
 lib/envelope.php
 lib/host.php
-lib/http.php
+lib/url.php
 lib/http.url.php
+lib/http.php
 lib/inet.php
 lib/intervale.php
 lib/my.sql.php
 lib/regex-defs.php
 lib/regex.php
 lib/session.php
-lib/url.php

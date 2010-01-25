@@ -22,17 +22,15 @@ class test_unit_object
 	public		function __construct($message = 'Object')
 	{
 		parent::__construct($message) ;
+		
+		$this->providers[] = function () { return new thing_public ; } ;
 	}
 
 	public		function run()
 	{
 		parent::run() ;
-		$this->_test_properties($this->provides()) ;
-	}
-
-	public		function provides()
-	{
-		return new thing_public ; 
+		foreach($this->providers as $provider)
+			$this->_test_properties($provider()) ;
 	}
 
 	protected	function _test_properties(object_base $o)

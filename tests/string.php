@@ -8,30 +8,29 @@ require_once 'horn/lib/test.php' ;
 class test_unit_string
 	extends test\unit_object
 {
-	public		$instance = null ;
-
 	public		function __construct($message = 'String')
 	{
 		parent::__construct($message) ;
+
+		$this->providers[] = function() { return new string ; } ;
 	}
 
 	public		function run()
 	{
 		parent::run() ;
 
-		$this->_test_is_a($this->provides(), 'horn\string') ;
+		foreach($this->providers as $provider)
+		{
+			$instance = $provider() ;
+			$this->_test_is_a($instance, 'horn\string') ;
 
-		$this->_test_empty($this->provides()) ;
+			$this->_test_empty($instance) ;
 
-		$this->_test_append($this->provides()) ;
-		$this->_test_prepend($this->provides()) ;
+			$this->_test_append($instance) ;
+			$this->_test_prepend($instance) ;
 
-#		$this->_test_head($this->provides()) ;
-	}
-
-	public		function provides()
-	{
-		return new string ; 
+#			$this->_test_head($instance) ;
+		}
 	}
 
 	protected	function _test_empty(string $o)

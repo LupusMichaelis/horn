@@ -1,1 +1,8 @@
 Unit test
+	Improve design
+	Maybe my _test base method are not well named. In SimpleTest, they use
+	'assert' to name this base methods.
+	Make the logging system more usefull (parsable output, HTML, etc)
+
+Integrate the modules listed in TODO list
+

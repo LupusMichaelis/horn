@@ -36,6 +36,7 @@ $available_units = array
 	, 'object'
 	, 'collection'
 	, 'string'
+	, 'time'
 #	, 'file'
 	) ;
 

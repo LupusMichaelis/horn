@@ -141,6 +141,8 @@ class unit
 	public		$success = 0 ;
 	public		$counter = 0 ;
 
+	protected	$_providers = array() ;
+
 	public		function __construct($name)
 	{
 		$this->_begin($name) ;
@@ -158,9 +160,6 @@ class unit
 
 	abstract
 	public		function run() ;
-
-	abstract
-	public		function provides() ;
 
 	protected	function _begin($message)
 	{
@@ -342,16 +341,21 @@ class unit_object
 	public		function run()
 	{
 		$this->_test_instanciate() ;
-		$this->_test_is_a($this->provides(), 'horn\object_base') ;
+
+		foreach($this->providers as $provider)
+			$this->_test_is_a($provider(), 'horn\object_base') ;
 	}
 
 	protected	function _test_instanciate()
 	{
-		$instance = $this->provides() ;
+		foreach($this->providers as $provider)
+		{
+			$instance = $provider() ;
 
-		$this->_begin('Instantiate') ;
-		$this->_test_is_object($instance) ;
-		$this->_end() ;
+			$this->_begin('Instantiate') ;
+			$this->_test_is_object($instance) ;
+			$this->_end() ;
+		}
 	}
 
 }

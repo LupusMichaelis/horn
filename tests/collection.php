@@ -13,17 +13,14 @@ class test_unit_collection
 	public		function __construct()
 	{
 		parent::__construct('Object') ;
-	}
 
-	public		function provides()
-	{
-		return new collection ;
+		$this->providers[] = function () { return new collection ; } ;
 	}
 
 	public		function run()
 	{
-		$this->_test_instanciate() ;
-		$this->_test_array($this->provides()) ;
+		foreach($this->providers as $provider)
+			$this->_test_array($provider()) ;
 	}
 
 	protected	function _test_array(collection $o)
