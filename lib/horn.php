@@ -28,7 +28,7 @@
 
 /** \package horn
  */
-namespace horn ;
+namespace horn\lib ;
 
 function dump($variable)
 {

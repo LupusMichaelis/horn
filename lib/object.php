@@ -32,7 +32,7 @@
 
 /* :%s/\$this->_throw_format(\(.*\), \(.*\)) ;$/throw new exception(sprintf(\1, \2)) ;/g
  */
-namespace horn ;
+namespace horn\lib ;
 
 require_once 'horn/lib/exception.php' ;
 

@@ -32,16 +32,16 @@ class request
 		$native = new self ;
 		$native->header['host'] = $_SERVER['HTTP_HOST'] ;
 
-		$native->request->method = self::$c_methods[$_SERVER['REQUEST_METHOD']] ;
-		$native->request->uri = $_SERVER['REQUEST_URI'] ;
-		$native->request->version = $_SERVER['SERVER_PROTOCOL'] ;
+		$native->method = self::$c_methods[$_SERVER['REQUEST_METHOD']] ;
+		$native->uri = $_SERVER['REQUEST_URI'] ;
+		$native->version = $_SERVER['SERVER_PROTOCOL'] ;
 
 		return $native ;
 	}
 }
 
 class header
-	extends \horn\collection
+	extends \horn\lib\collection
 {
 }
 

@@ -43,7 +43,7 @@ require_once 'horn/lib/callback.php' ;
  *	This class provides a way to handle test running. The test is actually done in a test_unit object.
  */
 class test
-	extends h\object_public
+	extends h\lib\object_public
 {
 	const		CAPTION = 'Unamed test case.' ;
 
@@ -58,7 +58,7 @@ class test
 
 	private		$_catched_exception = null ;
 
-	public		function __construct(unit $relative, h\callback $callback, $exception_expected = false)
+	public		function __construct(unit $relative, h\lib\callback $callback, $exception_expected = false)
 	{
 		parent::__construct() ;
 
@@ -135,7 +135,7 @@ class test
  */
 abstract
 class unit
-	extends h\object_public
+	extends h\lib\object_public
 {
 	public		$failures = 0 ;
 	public		$success = 0 ;
@@ -163,7 +163,7 @@ class unit
 
 	protected	function _begin($message)
 	{
-		if(!h\is_string($message))
+		if(!h\lib\is_string($message))
 			$this->_throw('Non-string parameter given.') ;
 
 		$this->info('Begin unit test (%s).', $message) ;
@@ -236,14 +236,14 @@ class unit
 
 	protected	function _do_test($callback, $messages = array())
 	{
-		if(!h\is_collection($messages))
+		if(!h\lib\is_collection($messages))
 			$this->_throw('variable \'messages\' is not a collection.') ;
 
 		if(empty($messages[0]))		$messages[0] = 'Test case' ;
 		if(empty($messages[true]))	$messages[true] = 'Ok' ;
 		if(empty($messages[false]))	$messages[false] = 'Ko' ;
 		
-		$test = new test($this, h\callback($callback)) ;
+		$test = new test($this, h\lib\callback($callback)) ;
 		$test->message = $messages[0] ;
 		$test->on_true = $messages[true] ;
 		$test->on_false = $messages[false] ;

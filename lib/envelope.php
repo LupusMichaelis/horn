@@ -27,7 +27,7 @@
 
 /** \package	horn
  */
-namespace horn ;
+namespace horn\lib ;
 
 require_once 'horn/lib/object.php' ;
 

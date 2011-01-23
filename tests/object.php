@@ -7,7 +7,7 @@ require_once 'horn/lib/test.php' ;
 
 // Test class
 class thing_public
-	extends object_public
+	extends lib\object_public
 {
 	public		$public ;
 	protected	$_protected ;

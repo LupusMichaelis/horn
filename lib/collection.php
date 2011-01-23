@@ -24,7 +24,7 @@
  *  along with Horn Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace horn ;
+namespace horn\lib ;
 
 require_once 'horn/lib/object.php' ;
 
