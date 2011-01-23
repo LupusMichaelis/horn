@@ -12,8 +12,8 @@ class simple_router
 
 	public		function __construct(\horn\lib\http\request $in, \horn\lib\http\response $out)
 	{
-		parent::__construct($in, $out) ;
 		$this->_routes = new collection ;
+		parent::__construct($in, $out) ;
 	}
 
 	public		function add_route($path, $class_name)
