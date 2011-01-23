@@ -2,35 +2,36 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/http/request.php' ;
-require_once 'horn/lib/router.php' ;
+require_once 'horn/lib/app.php' ;
+require_once 'horn/lib/http/message.php' ;
 
-class router
-	extends \horn\lib\object_public
+class simple_router
+	extends app
 {
-	protected $_routes ;
-	protected $_request ;
-	protected $_response ;
+	private		$_routes ;
 
 	public		function __construct(\horn\lib\http\request $in, \horn\lib\http\response $out)
 	{
+		parent::__construct($in, $out) ;
 		$this->_routes = new collection ;
-		$this->_request = $in ;
-		$this->_response = $out ;
+	}
+
+	public		function add_route($path, $class_name)
+	{
+		$this->_routes[$path] = $class_name ;
 	}
 
 	public		function run()
 	{
 		try
 		{
-			$app = $this->routes[$this->request->uri] ;
+			$app = $this->_routes[$this->request->uri] ;
 			$app = new $app($this->request, $this->response) ;
-			return $app->run() ;
+			$app->run() ;
 		}
 		catch(\horn\lib\exception $e)
 		{
-			return http\response(500, 'Internal server error') ;
+			$this->status(500, 'Internal Server Error') ;
 		}
 
 	}

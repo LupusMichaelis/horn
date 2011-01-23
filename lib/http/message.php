@@ -22,13 +22,6 @@ class message
 class request
 	extends message
 {
-	static $c_methods = array
-		( 'POST' => self::POST
-		, 'GET' => self::GET
-		, 'PUT' => self::PUT
-		, 'DELETE' => self::DELETE
-		) ;
-
 	const	POST = 'POST' ;
 	const	GET = 'GET' ;
 	const	PUT = 'PUT' ;
@@ -49,12 +42,24 @@ class request
 		$native = new self ;
 		$native->header['host'] = $_SERVER['HTTP_HOST'] ;
 
-		$native->method = self::$c_methods[$_SERVER['REQUEST_METHOD']] ;
+		$native->method = self::get_method($_SERVER['REQUEST_METHOD']) ;
 		$native->uri = $_SERVER['REQUEST_URI'] ;
 		$native->version = $_SERVER['SERVER_PROTOCOL'] ;
 
 		return $native ;
 	}
+
+	static public function get_method($candidate)
+	{
+		static $methods = array
+			( 'POST' => self::POST
+			, 'GET' => self::GET
+			, 'PUT' => self::PUT
+			, 'DELETE' => self::DELETE
+			) ;
+		return $methods[$candidate] ;
+	}
+
 }
 
 class response

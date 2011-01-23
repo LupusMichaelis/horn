@@ -2,20 +2,13 @@
 
 namespace horn\apps ;
 
-require_once 'horn/lib/object.php' ;
+require_once 'horn/lib/app.php' ;
+require_once 'horn/lib/router.php' ;
+require_once 'horn/lib/http/message.php' ;
 
 class info
-	extends \horn\lib\object_public
+	extends \horn\lib\app
 {
-	protected	$_request ;
-	protected	$_response ;
-
-	public		function __construct(\horn\lib\http\request $in, \horn\lib\http\response $out)
-	{
-		$this->_request = $in ;
-		$this->_response = $out ;
-	}
-
 	public		function run()
 	{
 		ob_start() ;
