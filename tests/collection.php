@@ -114,6 +114,17 @@ class test_unit_collection
 
 	}
 
+	function _test_undefined_offset(collection $o)
+	{
+		$this->_begin('Trying to access undefined offset.') ;
+
+		$expected_exception = 'exception' ;
+
+		try { $v = $o[0] ; $this->_exception_not_thrown($expected_exception) ; }
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
+
+		$this->_end() ;
+	}
 }
 
 

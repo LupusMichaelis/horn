@@ -249,8 +249,10 @@ class collection
 		if($key instanceof string_ex)
 			$key = (string) $key ;
 
-		// \todo maybe throw exception when key doesn't exists ?
-		return $this->offsetExists($key) ? $this->_stack[$key] : null ;
+		if(!$this->offsetExists($key))
+			$this->_throw_offset_does_not_exists($key) ;
+
+		return $this->_stack[$key] ;
 	}
 
 	public		function offsetSet($key, $value)
@@ -299,6 +301,11 @@ class collection
 	protected	function _get_stack()
 	{
 		$this->_throw_readonly_attribute('stack') ;
+	}
+
+	protected	function _throw_offset_does_not_exists($key)
+	{
+		$this->_throw_format('Key \'%s\' doesn\'t exist', $key) ;
 	}
 
 	/** array	Actual data that is accessed through collection
