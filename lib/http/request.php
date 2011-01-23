@@ -4,11 +4,24 @@ namespace horn\lib\http ;
 
 require_once 'horn/lib/collection.php' ;
 
-class request
+class message
+	extends \horn\lib\object_public
 {
 	public	$header ;
 	public	$body ;
 
+	public function __construct()
+	{
+		parent::__construct() ;
+
+		$this->header = new header ;
+		$this->body = new body ;
+	}
+}
+
+class request
+	extends message
+{
 	static $c_methods = array
 		( 'POST' => self::POST
 		, 'GET' => self::GET
@@ -21,10 +34,14 @@ class request
 	const	PUT = 'PUT' ;
 	const	DELETE = 'DELETE' ;
 
-	public function __construct()
+	public	$method ;
+	public	$uri ;
+	public	$version ;
+
+	public		function __construct()
 	{
-		$this->header = new header ;
-		$this->body = new body ;
+		//$this->_uri = new url ;
+		parent::__construct() ;
 	}
 
 	static public function create_native()
@@ -40,12 +57,18 @@ class request
 	}
 }
 
+class response
+	extends message
+{
+}
+
 class header
 	extends \horn\lib\collection
 {
 }
 
 class body
+	extends \horn\lib\object_public
 {
 	public	$content ;
 }
