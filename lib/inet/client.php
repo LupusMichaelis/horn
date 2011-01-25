@@ -27,12 +27,95 @@
 
 namespace horn\lib\inet ;
 
-require_once 'horn/lib/url.php' ;
 require_once 'horn/lib/inet/host.php' ;
 require_once 'horn/lib/string.php' ;
 require_once 'horn/lib/collection.php' ;
 require_once 'horn/lib/regex.php' ;
 require_once 'horn/lib/regex-defs.php' ;
+
+/** \brief		HTTP handling
+  *
+  * \bug		HTTPS not handle
+  */
+class webproxy
+	extends		object_protected
+{
+	protected	$_url ;
+	protected	$_socket ;
+
+	/** \brief
+	 *	\todo		Test what kind of URL is privide
+	 */
+	static public function from_url(url $url)
+	{
+		$new = new self ;
+		$new->url = $url ;
+		$new->socket = curl_init($url) ;
+		return $new ;
+	}
+
+	static public	function duplicate(webproxy $from)
+	{
+		$new = new self ;
+		$new->url = clone $from->url ;
+		$new->socket = $from->copy_socket() ;
+
+		return $new ;
+	}
+
+	/**  \brief		Avoid arbitrary webproxy
+	  */
+	protected	function __construct()
+	{
+		parent::__construct() ;
+	}
+
+	protected	function _set_socket($socket)
+	{
+		$this->_socket = is_resource($socket)
+			? curl_copy_handle($socket)
+			: null ;
+	}
+
+	public		function __destruct()
+	{
+		if(is_resource($this->socket))
+			curl_close($this->socket) ;
+	}
+
+	public			function refresh()
+	{
+		curl_close($this->socket) ;
+		$this->_socket = curl_init($this->url) ;
+	}
+
+	public		function open()
+	{
+		curl_exec($con) ;
+	}
+
+	public		function ping()
+	{
+		curl_setopt($this->socket, CURLOPT_NOBODY, true) ;
+		curl_setopt($this->socket, CURLOPT_FOLLOWLOCATION, false) ;
+		curl_exec($this->socket) ;
+		if(curl_errno($this->socket))
+			return curl_error($this->socket) ;
+		else
+			return curl_getinfo($this->socket, CURLINFO_HTTP_CODE) ;
+	}
+}
+
+
+	public		function __tostring()
+	{
+		return $this->literal->__tostring() ;
+	}
+}
+
+class urn extends uri
+{
+}
 
 /** \brief URL describes in RFC 1738
   * \code
@@ -41,8 +124,7 @@ require_once 'horn/lib/regex-defs.php' ;
   * \endcode
   *
   */
-class url
-	extends \horn\lib\uri
+class url extends uri
 {
 	const ERR_MALFORMED				= 'URL\'s not valid.' ;
 
@@ -61,7 +143,7 @@ class url
 	 */
 	public		function normalize()
 	{
-		if($this->scheme instanceof \horn\lib\string)
+		if($this->scheme instanceof string_ex)
 			$this->scheme->lowcase() ;
 		else
 			return false ;
@@ -80,7 +162,7 @@ class url
 	{
 		$scheme_sep_pos = $this->literal->search(':') ;
 		if($scheme_sep_pos < 0)
-			$this->_throw(self::ERR_SCHEME_NO) ;
+			throw new exception(self::ERR_SCHEME_NO) ;
 
 		$this->scheme = $this->literal->head($scheme_sep_pos - 1) ;
 		$this->locator = $this->literal->tail($scheme_sep_pos + 1) ;
@@ -135,7 +217,7 @@ class url_inet extends url
 			$this->host = host::new_inet6($this->literal->slice
 				($pieces['host'][0], $pieces['host'][1])) ;
 		else
-			$this->_throw(self::ERR_NO_HOST) ;
+			throw new exception(self::ERR_NO_HOST) ;
 
 		if(!is_null($pieces['port']))
 			$this->port = $this->literal->slice
@@ -164,7 +246,7 @@ class path
 	protected	$_literal ;
 	protected	$_nodes ;
 
-	public		function __construct(\horn\lib\string $source)
+	public		function __construct(string_ex $source)
 	{
 		$this->literal = $source ;
 		$this->nodes = new collection ;
@@ -203,9 +285,10 @@ class url_db
 	{
 		parent::parse() ;
 
-		$this->space = new \horn\lib\string($this->path) ;
+		$this->space = new string_ex($this->path) ;
 		$this->space = $this->space->tail(1) ;
 	}
 }
+
 
 

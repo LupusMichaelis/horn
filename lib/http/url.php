@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -25,18 +25,19 @@
  *
  */
 
+namespace horn\lib\http ;
 
-require_once 'horn/lib/url.php' ;
+require_once 'horn/lib/inet/url.php' ;
 
 /**
  *	\code
- *	http://<user>:<pass>@<host>:<port>/<path>?<searchpart>
+ *	(https|http)://<user>:<pass>@<host>:<port>/<path>?<searchpart>
  *	\endcode
  */
-class url_http
-	extends		url_inet
+class url
+	extends		\horn\lib\inet\url
 {
-	public		function __construct(string_ex $literal)
+	public		function __construct(\horn\lib\string $literal)
 	{
 		parent::__construct($literal) ;
 		$this->port = 80 ;
@@ -44,7 +45,7 @@ class url_http
 
 	protected	function is_scheme_supported()
 	{
-		return $this->scheme->to_lower() == 'http' ;
+		return in_array($this->scheme->to_lower(), array('http', 'https')) ;
 	}
 
 	public		function normalize()
@@ -68,10 +69,10 @@ class url_http
 		$this->location->reset() ;
 		$this->location->append('//') ;
 
-		if($this->username instanceof string_ex)
+		if($this->username instanceof \horn\lib\string)
 		{
 			$this->location->append($this->username) ;
-			if($this->password instanceof string_ex)
+			if($this->password instanceof \horn\lib\string)
 				$this->location->append_list(':', $this->password) ;
 
 			$this->location->append('@') ;
@@ -88,20 +89,10 @@ class url_http
 		if($this->path instanceof path)
 			$this->location->append($this->path->as_string()) ;
 
-		if($this->search instanceof string_ex)
+		if($this->search instanceof \horn\lib\string)
 			$this->location->append_list('?', $this->search) ;
 
 		parent::sync_literal() ;
 	}
 
 }
-
-class url_https
-	extends		url_http
-{
-	protected function is_scheme_supported()
-	{
-		return $this->scheme == 'https' ;
-	}
-}
-

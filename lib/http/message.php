@@ -4,6 +4,23 @@ namespace horn\lib\http ;
 
 require_once 'horn/lib/collection.php' ;
 
+class uri
+	extends \horn\lib\object_public
+{
+	protected	$_path ;
+	protected	$_searchpart ;
+
+	public		function __construct($raw)
+	{
+		$qmark = strpos($raw, '?') ;
+		$qmark = $qmark === false ? strlen($raw) : $qmark ; 
+		$this->path = substr($raw, 0, $qmark) ;
+		$this->searchpart = substr($raw, $qmark) ;
+
+		parent::__construct() ;
+	}
+}
+
 class message
 	extends \horn\lib\object_public
 {
@@ -22,18 +39,18 @@ class message
 class request
 	extends message
 {
-	const	POST = 'POST' ;
-	const	GET = 'GET' ;
-	const	PUT = 'PUT' ;
-	const	DELETE = 'DELETE' ;
+	const		POST = 'POST' ;
+	const		GET = 'GET' ;
+	const		PUT = 'PUT' ;
+	const		DELETE = 'DELETE' ;
 
-	public	$method ;
-	public	$uri ;
-	public	$version ;
+	public		$method ;
+	protected	$_uri ;
+	public		$version ;
 
 	public		function __construct()
 	{
-		//$this->_uri = new url ;
+		$this->_uri = new uri('/') ;
 		parent::__construct() ;
 	}
 
@@ -43,7 +60,7 @@ class request
 		$native->header['host'] = $_SERVER['HTTP_HOST'] ;
 
 		$native->method = self::get_method($_SERVER['REQUEST_METHOD']) ;
-		$native->uri = $_SERVER['REQUEST_URI'] ;
+		$native->uri = new uri($_SERVER['REQUEST_URI']) ;
 		$native->version = $_SERVER['SERVER_PROTOCOL'] ;
 
 		return $native ;
