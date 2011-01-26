@@ -26,7 +26,7 @@
  *
  */
 
-namespace horn ;
+//use horn\lib as h ;
 require_once 'horn/lib/test.php' ;
 
 define('DEBUG', true) ;
@@ -57,8 +57,10 @@ foreach($units as $unit)
 
 	try
 	{
-		$unit_class = "\\horn\\test_unit_$unit" ;
-		new $unit_class ;
+		$unit_class = "\\tests\\test_suite_$unit" ;
+		$uc = new $unit_class ;
+		# $uc() ;
+		$uc->run() ;
 	}
 	catch(\exception $e)
 	{

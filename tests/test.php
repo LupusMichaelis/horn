@@ -1,14 +1,16 @@
 <?php
 
-namespace horn ;
+namespace tests ;
+use horn\lib as h ;
+use horn\lib\test as t ;
 
 require_once 'horn/lib/horn.php' ;
 require_once 'horn/lib/test.php' ;
 
-class test_unit_test
-	extends test\unit_object
+class test_suite_test
+	extends t\suite
 {
-	public		function __construct($message = 'Test')
+	public		function __construct($message = 'Autotest')
 	{
 		parent::__construct($message) ;
 	}
@@ -32,6 +34,8 @@ class test_unit_test
 		$this->_test_class_exists('\stdclass') ;
 		$this->_test_is_object(new \stdclass) ;
 		$this->_test_is_a(new \stdclass, '\stdclass') ;
+
+		// $this->_test_th
 	}
 
 	/** This test case checks its own behaviour, so it doesn't have to provide any thing.

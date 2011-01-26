@@ -1,21 +1,23 @@
 <?php
 
-namespace horn ;
+namespace tests ;
+use horn\lib as h ;
+use horn\lib\test as t ;
 
 require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/test.php' ;
 
 // Test class
 class thing_public
-	extends lib\object_public
+	extends h\object_public
 {
 	public		$public ;
 	protected	$_protected ;
 	private		$_private ;
 }
 
-class test_unit_object
-	extends test\unit_object
+class test_suite_object
+	extends t\suite_object
 {
 	protected	$_instance = null ;
 
@@ -33,7 +35,7 @@ class test_unit_object
 			$this->_test_properties($provider()) ;
 	}
 
-	protected	function _test_properties(object_base $o)
+	protected	function _test_properties(h\object_base $o)
 	{
 		$this->_begin('Properties') ;
 
@@ -61,27 +63,27 @@ class test_unit_object
 				$this->{"_test_$test_method"}($o) ;
 				$this->_exception_not_thrown($exception_expected) ;
 			}
-			catch(\exception $exception)
+			catch(\exception $e)
 			{
-				$this->_exception_thrown($exception_expected) ;
+				$this->_exception_thrown($e, $exception_expected) ;
 			}
 
 		$this->_end() ;
 	}
 
-	protected	function _test_getter_undefined(object_base $o)
+	protected	function _test_getter_undefined(h\object_base $o)
 	{
 		$this->_begin('Trying to get undefined property.') ;
 
 		$expected_exception = '\exception' ;
 
 		try { $o->undefined ; $this->_exception_not_thrown($expected_exception) ; }
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
+		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
 
 		$this->_end() ;
 	}
 
-	protected	function _test_getter_public(object_base $o)
+	protected	function _test_getter_public(h\object_base $o)
 	{
 		$this->_begin('Trying to get public property.') ;
 
@@ -93,7 +95,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_getter_protected(object_base $o)
+	protected	function _test_getter_protected(h\object_base $o)
 	{
 		$this->_begin('Trying to get property protected.') ;
 
@@ -105,7 +107,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_getter_private(object_base $o)
+	protected	function _test_getter_private(h\object_base $o)
 	{
 		$this->_begin('Trying to get property private.') ;
 
@@ -121,7 +123,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_setter_undefined(object_base $o)
+	protected	function _test_setter_undefined(h\object_base $o)
 	{
 		$this->_begin('Trying to set undefined property.') ;
 
@@ -137,7 +139,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_setter_public(object_base $o)
+	protected	function _test_setter_public(h\object_base $o)
 	{
 		$this->_begin('Trying to set public property.') ;
 
@@ -153,7 +155,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_setter_protected(object_base $o)
+	protected	function _test_setter_protected(h\object_base $o)
 	{
 		$this->_begin('Trying to set property protected.') ;
 
@@ -165,7 +167,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_setter_private(object_base $o)
+	protected	function _test_setter_private(h\object_base $o)
 	{
 		$this->_begin('Trying to set property private.') ;
 
@@ -181,7 +183,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_isset_undefined(object_base $o)
+	protected	function _test_isset_undefined(h\object_base $o)
 	{
 		$this->_begin('Isset undefined property.') ;
 
@@ -197,7 +199,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_isset_public(object_base $o)
+	protected	function _test_isset_public(h\object_base $o)
 	{
 		$this->_begin('Isset public property.') ;
 
@@ -213,7 +215,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_isset_protected(object_base $o)
+	protected	function _test_isset_protected(h\object_base $o)
 	{
 		$this->_begin('Isset property protected.') ;
 
@@ -229,7 +231,7 @@ class test_unit_object
 		$this->_end() ;
 	}
 
-	protected	function _test_isset_private(object_base $o)
+	protected	function _test_isset_private(h\object_base $o)
 	{
 		$this->_begin('Isset property private.') ;
 
