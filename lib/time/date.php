@@ -29,9 +29,21 @@ namespace horn\lib ;
 
 require_once 'horn/lib/collection.php' ;
 
-// WTF ! Why must I set the timzone, why set the tz is safer than using
-// system setting ? Must I set the clock at every scrip invokation ?
-date_default_timezone_set('Europe/Paris') ;
+function today()
+{
+	$aday = getdate() ;
+	return new date($aday['year'], $aday['mon'], $aday['mday']) ;
+}
+
+function tomorrow()
+{
+	return today()->tomorrow() ;
+}
+
+function yesterday()
+{
+	return today()->yesterday() ;
+}
 
 class date
 	extends		object_public
@@ -83,31 +95,6 @@ class date
 	{
 		return strftime($fmt
 				, mktime(0, 0, 0, $this->month, $this->day, $this->year)) ;
-	}
-
-	static
-	protected	$today = null ;
-	static		function new_today()
-	{
-		if(is_null(self::$today))
-		{
-			$aday = getdate() ;
-			self::$today = new self($aday['year'], $aday['mon'], $aday['mday']) ;
-		}
-
-		return self::$today ;
-	}
-
-	static		function new_tomorrow()
-	{
-		self::new_today() ;
-		return self::$today->tomorrow() ;
-	}
-
-	static		function new_yesterday()
-	{
-		self::new_today() ;
-		return self::$today->yesterday() ;
 	}
 
 	/** \todo think about l10n
@@ -198,24 +185,6 @@ class date
 	protected	function compute_timestamp()
 	{
 		$this->timestamp = mktime(0, 0, 0, $this->month, $this->day, $this->year) ;
-	}
-}
-
-class time
-	extends		object_public
-{
-	protected	$_second ;
-	protected	$_minute ;
-	protected	$_hour ;
-
-	public		function __construct($second = null, $minute = 0, $hour = 0)
-	{
-		if(is_null($second))
-			$second = time() ;
-
-		$this->second = $second ;
-		$this->minute = $minute ;
-		$this->hour = $hour ;
 	}
 }
 
@@ -336,49 +305,5 @@ class week
 	{
 		return !($offset < 0 && 7 < $offset) ;
 	}
-}
-
-class date_time
-	extends		object_public
-{
-	public		function __construct()
-	{
-		$this->_date = new date ;
-		$this->_time = new time_ex ;
-	}
-
-	static		function from_date(date $day)
-	{
-		$new = self ;
-		$new->_date->copy($day) ;
-
-		return $new ;
-	}
-
-	static		function from_time(time_ex $time)
-	{
-		$new = self ;
-		$new->_time->copy($time) ;
-
-		return $new ;
-	}
-
-	static		function from_date_time(date $day, time_ex $time)
-	{
-		$new = self ;
-		$new->_day->copy($day) ;
-		$new->_time->copy($time) ;
-
-		return $new ;
-	}
-
-	protected	$_date ;
-	protected	$_time ;
-}
-
-
-class duration
-	extends object_public
-{
 }
 

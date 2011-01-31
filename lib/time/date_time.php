@@ -1,9 +1,9 @@
 <?php
-/** Time handling classes.
+/** Datetime
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2009, Lupus Michaelis
+ *  Copyright	2010, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -27,11 +27,45 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/time/time.php' ;
-require_once 'horn/lib/time/date.php' ;
+require_once 'horn/lib/object.php' ;
 
-// WTF ! Why must I set the timzone, why set the tz is safer than using
-// system setting ? Must I set the clock at every scrip invokation ?
-date_default_timezone_set('Europe/Paris') ;
+class date_time
+	extends		object_public
+{
+	public		function __construct()
+	{
+		$this->_date = new date ;
+		$this->_time = new time ;
 
+		parent::__construct() ;
+	}
+
+	static		function from_date(date $day)
+	{
+		$new = self ;
+		$new->_date->copy($day) ;
+
+		return $new ;
+	}
+
+	static		function from_time(time $time)
+	{
+		$new = self ;
+		$new->time = $time ;
+
+		return $new ;
+	}
+
+	static		function from_date_time(date $day, time $time)
+	{
+		$new = self ;
+		$new->_day->copy($day) ;
+		$new->_time->copy($time) ;
+
+		return $new ;
+	}
+
+	protected	$_date ;
+	protected	$_time ;
+}
 

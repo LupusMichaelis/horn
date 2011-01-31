@@ -1,43 +1,52 @@
 <?php
 
-namespace horn ;
+namespace tests ;
+use horn\lib as h ;
+use horn\lib\test as t ;
 
 require_once 'horn/lib/test.php' ;
+//require_once 'horn/lib/date.php' ;
+require_once 'horn/lib/time.php' ;
 
-class test_unit_time
-	extends test\unit_object
+class test_suite_time
+	extends t\suite_object
 {
 	public		function __construct($message = 'Time')
 	{
 		parent::__construct($message) ;
 
-		$this->providers[] = function () { return new time ; } ;
-		$this->providers[] = function () { return date::new_today() ; } ;
-		$this->providers[] = function () { return date::new_tomorrow() ; } ;
-		$this->providers[] = function () { return date::new_yesterday() ; } ;
+		//$this->providers[] = function () { return new h\time ; } ;
+		$this->providers[] = function () { return h\today() ; } ;
+		$this->providers[] = function () { return h\tomorrow() ; } ;
+		$this->providers[] = function () { return h\yesterday() ; } ;
 
 	}
 
 	public		function run()
 	{
 		parent::run() ;
+		foreach($this->providers as $provider)
+		{
+			$instance = $provider() ;
+			$this->_test_today($instance) ;
+		}
 	}
 
-	protected	function _test_today()
+	protected	function _test_today(h\date $o)
 	{
-		$this->_begin('Testing today') ;
-
-		$today = date::today() ;
-
-		$this->_test_object($today) ;
-
-		$this->_test($today->check()) ;
-
-		$this->_test_equal($today->day, date('d')) ;
-		$this->_test_equal($today->month, date('m')) ;
-		$this->_test_equal($today->year, date('Y')) ;
-
-		$this->_end() ;
+		$messages = array('Testing today') ;
+		$suite = $this ;
+		$callback = function () use ($o, $suite)
+			{
+				$today = h\today() ;
+				//$suite->_test_object($today) ;
+				return $today->check() ;
+				//$suite->_test($today->check()) ;
+				//$suite->_test_equal($today->day, \date('d')) ;
+				//$suite->_test_equal($today->month, \date('m')) ;
+				//$suite->_test_equal($today->year, \date('Y')) ;
+			} ;
+		$this->add_test($callback, $messages) ;
 	}
 
 }

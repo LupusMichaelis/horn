@@ -1,5 +1,5 @@
 <?php
-/** Time handling classes.
+/** Time handling
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -27,11 +27,27 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/time/time.php' ;
-require_once 'horn/lib/time/date.php' ;
 
-// WTF ! Why must I set the timzone, why set the tz is safer than using
-// system setting ? Must I set the clock at every scrip invokation ?
-date_default_timezone_set('Europe/Paris') ;
+class time
+	extends		object_public
+{
+	protected	$_second ;
+	protected	$_minute ;
+	protected	$_hour ;
 
+	public		function __construct($second = null, $minute = 0, $hour = 0)
+	{
+		if(is_null($second))
+			$second = time() ;
+
+		$this->second = $second ;
+		$this->minute = $minute ;
+		$this->hour = $hour ;
+	}
+}
+
+class duration
+	extends object_public
+{
+}
 
