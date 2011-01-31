@@ -47,8 +47,10 @@ class context
 	public		function on_exception_thrown(\exception $e)
 	{
 		$this->_catched_exception = $e ;
+		// XXX for now, we just check if the exception was expected. Have to test if the
+		// thrown exception is ok
 		// $this->success = in_array(get_class($e), $this->expected_exception) ;
-		$this->success = is_null($this->expected_exception) ;
+		$this->success = (bool) $this->expected_exception ;
 	}
 
 	public		function on_exception_not_thrown()
