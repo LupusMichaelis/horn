@@ -22,17 +22,17 @@ class context
 	public		$message = self::CAPTION ;
 	public		$on_true = 'Ok' ;
 	public		$on_false = 'Ko' ;
-	public		$exception_expected ;
+	public		$expected_exception = array() ;
 
 	protected	$_callback ;
 	private		$_catched_exception = null ;
 
-	public		function __construct(h\callback $callback, $exception_expected = false)
+	public		function __construct(h\callback $callback, $expected_exception = false)
 	{
 		parent::__construct() ;
 
 		$this->callback = $callback ;
-		$this->exception_expected = $exception_expected ;
+		$expected_exception and $this->expected_exception = $expected_exception ;
 	}
 
 	public		function __invoke()
@@ -40,17 +40,19 @@ class context
 		$callback = $this->callback ;
 		try { $this->success = $callback() ; $this->on_exception_not_thrown() ; }
 		catch(\exception $e) { $this->on_exception_thrown($e) ; }
+
+		return $this ;
 	}
 
 	public		function on_exception_thrown(\exception $e)
 	{
 		$this->_catched_exception = $e ;
-		$this->success = $this->exception_expected ;
+		$this->success = $this->expected_exception ;
 	}
 
 	public		function on_exception_not_thrown()
 	{
-		if($this->exception_expected)
+		if($this->expected_exception)
 			$this->success = false ;
 	}
 }

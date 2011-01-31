@@ -37,7 +37,7 @@ class test_suite_object
 
 	protected	function _test_properties(h\object_base $o)
 	{
-		$this->_begin('Properties') ;
+		#$this->_begin('Properties') ;
 
 		$methods = array
 			( 'getter_undefined'
@@ -58,193 +58,105 @@ class test_suite_object
 
 		$exception_expected = null ;
 		foreach($methods as $test_method)
-			try
-			{
-				$this->{"_test_$test_method"}($o) ;
-				$this->_exception_not_thrown($exception_expected) ;
-			}
-			catch(\exception $e)
-			{
-				$this->_exception_thrown($e, $exception_expected) ;
-			}
+			$this->{"_test_$test_method"}($o) ;
 
-		$this->_end() ;
+		//$this->_end() ;
 	}
 
 	protected	function _test_getter_undefined(h\object_base $o)
 	{
-		$this->_begin('Trying to get undefined property.') ;
-
-		$expected_exception = '\exception' ;
-
-		try { $o->undefined ; $this->_exception_not_thrown($expected_exception) ; }
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$messages = array('Trying to get undefined property.') ;
+		$expected_exception = '\horn\exception' ;
+		$callback = function () use ($o) { return $o->undefined ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_getter_public(h\object_base $o)
 	{
-		$this->_begin('Trying to get public property.') ;
-
+		$messages = array('Trying to get public property.') ;
 		$expected_exception = null ;
-
-		try { $o->public ; $this->_exception_not_thrown($expected_exception) ; }
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$callback = function () use ($o) { return $o->public ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_getter_protected(h\object_base $o)
 	{
-		$this->_begin('Trying to get property protected.') ;
-
-		$expected_exception = '\exception' ;
-
-		try { $o->protected ; $this->_exception_not_thrown($expected_exception) ; }
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$messages = array('Trying to get protected property.') ;
+		$expected_exception = '\horn\exception' ;
+		$callback = function () use ($o) { return $o->protected ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_getter_private(h\object_base $o)
 	{
-		$this->_begin('Trying to get property private.') ;
-
-		$expected_exception = '\exception' ;
-
-		try
-		{
-			$o->private ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$messages = array('Trying to get private property.') ;
+		$expected_exception = '\horn\exception' ;
+		$callback = function () use ($o) { return $o->private ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_setter_undefined(h\object_base $o)
 	{
-		$this->_begin('Trying to set undefined property.') ;
-
-		$expected_exception = '\exception' ;
-
-		try
-		{
-			$o->undefined = 'content' ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$messages = array('Trying to set undefined property.') ;
+		$expected_exception = '\horn\exception' ;
+		$callback = function () use ($o) { return $o->undefined = 'content' ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_setter_public(h\object_base $o)
 	{
-		$this->_begin('Trying to set public property.') ;
-
-		$expected_exception = '\exception' ;
-
-		try
-		{
-			$o->public = 'content' ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$messages = array('Trying to set public property.') ;
+		$expected_exception = null ;
+		$callback = function () use ($o) { return $o->public = 'content' ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_setter_protected(h\object_base $o)
 	{
-		$this->_begin('Trying to set property protected.') ;
-
-		$expected_exception = '\exception' ;
-
-		try { $o->protected = 'content' ; $this->_exception_not_thrown($expected_exception) ; }
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$messages = array('Trying to set protected property.') ;
+		$expected_exception = '\horn\exception' ;
+		$callback = function () use ($o) { return $o->property = 'content' ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_setter_private(h\object_base $o)
 	{
-		$this->_begin('Trying to set property private.') ;
-
-		$expected_exception = '\exception' ;
-
-		try
-		{
-			$o->private = 'content' ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$messages = array('Trying to set private property.') ;
+		$expected_exception = '\horn\exception' ;
+		$callback = function () use ($o) { return $o->private = 'content' ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_isset_undefined(h\object_base $o)
 	{
-		$this->_begin('Isset undefined property.') ;
-
+		$messages = array('Trying to test undefined property') ;
 		$expected_exception = null ;
-
-		try
-		{
-			isset($o->undefined) ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$callback = function () use ($o) { return !isset($o->undefined) ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_isset_public(h\object_base $o)
 	{
-		$this->_begin('Isset public property.') ;
-
+		$messages = array('Trying to test public property') ;
 		$expected_exception = null ;
-
-		try
-		{
-			isset($o->public) ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$callback = function () use ($o) { return isset($o->public) ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_isset_protected(h\object_base $o)
 	{
-		$this->_begin('Isset property protected.') ;
-
-		$expected_exception = null ;
-
-		try
-		{
-			isset($o->protected) ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$messages = array('Trying to test protected property') ;
+		$expected_exception = '\horn\exception' ;
+		$callback = function () use ($o) { return !isset($o->protected) ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_isset_private(h\object_base $o)
 	{
-		$this->_begin('Isset property private.') ;
-
-		$expected_exception = null ;
-
-		try
-		{
-			isset($o->private) ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(exception $e) { $this->_exception_thrown($e, $expected_exception) ; } ;
-
-		$this->_end() ;
+		$messages = array('Trying to test private property') ;
+		$expected_exception = '\horn\exception' ;
+		$callback = function () use ($o) { return !isset($o->private) ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 }
 

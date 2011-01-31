@@ -17,7 +17,7 @@ class test_suite_test
 
 	public		function run()
 	{
-		$this->_test(true) ;
+		$this->assert(true) ;
 
 		$this->_test_equal(1, 1) ;
 		$this->_test_is_scalar(1) ;

@@ -26,8 +26,11 @@
  *
  */
 
-//use horn\lib as h ;
+use horn\lib as h ;
+use horn\lib\test as t ;
+
 require_once 'horn/lib/test.php' ;
+require_once 'horn/lib/test/cli.php' ;
 
 define('DEBUG', true) ;
 
@@ -61,6 +64,7 @@ foreach($units as $unit)
 		$uc = new $unit_class ;
 		# $uc() ;
 		$uc->run() ;
+		t\cli_renderer($uc) ;
 	}
 	catch(\exception $e)
 	{
