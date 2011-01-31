@@ -25,7 +25,7 @@ class context
 	public		$expected_exception = array() ;
 
 	protected	$_callback ;
-	private		$_catched_exception = null ;
+	protected	$_catched_exception = null ;
 
 	public		function __construct(h\callback $callback, $expected_exception = false)
 	{
@@ -47,7 +47,8 @@ class context
 	public		function on_exception_thrown(\exception $e)
 	{
 		$this->_catched_exception = $e ;
-		$this->success = $this->expected_exception ;
+		// $this->success = in_array(get_class($e), $this->expected_exception) ;
+		$this->success = is_null($this->expected_exception) ;
 	}
 
 	public		function on_exception_not_thrown()
