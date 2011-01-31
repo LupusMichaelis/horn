@@ -1,18 +1,20 @@
 <?php
 
-namespace horn ;
+namespace tests ;
+use horn\lib as h ;
+use horn\lib\test as t ;
 
 require_once 'horn/lib/string.php' ;
 require_once 'horn/lib/test.php' ;
 
-class test_unit_string
-	extends test\unit_object
+class test_suite_string
+	extends t\suite_object
 {
 	public		function __construct($message = 'String')
 	{
 		parent::__construct($message) ;
 
-		$this->providers[] = function() { return new string ; } ;
+		$this->providers[] = function() { return new h\string ; } ;
 	}
 
 	public		function run()
@@ -22,7 +24,7 @@ class test_unit_string
 		foreach($this->providers as $provider)
 		{
 			$instance = $provider() ;
-			$this->_test_is_a($instance, 'horn\string') ;
+			$this->_test_is_a($instance, '\horn\lib\string') ;
 
 			$this->_test_empty($instance) ;
 
@@ -33,53 +35,37 @@ class test_unit_string
 		}
 	}
 
-	protected	function _test_empty(string $o)
+	protected	function _test_empty(h\string $o)
 	{
-		$this->_begin('Tests on an empty string.') ;
-		$this->_test($o->length() == 0) ;
-		$this->_end() ;
+		$messages = array('Tests on an empty string.') ;
+		$callback = function () use ($o) { return $o->length() === 0 ; } ;
+		$this->add_test($callback, $messages) ;
 	}
 
-	protected	function _test_append(string $o)
+	protected	function _test_append(h\string $o)
 	{
-		$this->_begin('Tests appending on string.') ;
-		$this->_test($o->length() == 0) ;
-		
-		$subject = 'Some string that\'s fine.' ;
-
-		$expected_exception = null ;
-
-		try
-		{
-			$o->append(string($subject)) ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(\exception $e) { $this->__exception_thrown($e, $expected_exception) ; }
-
-		$this->_test($o->length() == strlen($subject)) ;
-
-		$this->_end() ;
+		$messages = array('Tests appending on string.') ;
+		$callback = function () use ($o) 
+			{
+				$subject = 'Some string that\'s fine.' ;
+				$size = $o->length() ;
+				$o->append(h\string($subject)) ;
+				return $o->length() === ($size + strlen($subject)) ;
+			} ;
+		$this->add_test($callback, $messages) ;
 	}
 
-	protected	function _test_prepend(string $o)
+	protected	function _test_prepend(h\string $o)
 	{
-		$this->_begin('Tests prepending on string.') ;
-		$this->_test($o->length() == 0) ;
-		
-		$expected_exception = null ;
-
-		$subject = 'Some string that\'s fine.' ;
-
-		try
-		{
-			$o->prepend(string($subject)) ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(\exception $e) { $this->__exception_thrown($e, $expected_exception) ; }
-
-		$this->_test($o->length() == strlen($subject)) ;
-
-		$this->_end() ;
+		$messages = array('Tests prepending on string.') ;
+		$callback = function () use ($o) 
+			{
+				$subject = 'Some string that\'s fine.' ;
+				$size = $o->length() ;
+				$o->prepend(h\string($subject)) ;
+				return $o->length() === ($size + strlen($subject)) ;
+			} ;
+		$this->add_test($callback, $messages) ;
 	}
 }
 
