@@ -14,6 +14,14 @@ class thing_public
 	public		$public ;
 	protected	$_protected ;
 	private		$_private ;
+
+	public		function __construct()
+	{
+		$this->_object = new h\object_public ;
+		parent::__construct() ;
+	}
+
+	protected	$_object ;
 }
 
 class test_suite_object
@@ -54,6 +62,8 @@ class test_suite_object
 			, 'isset_public'
 			, 'isset_protected'
 			, 'isset_private'
+
+			, 'assign_object'
 			) ;
 
 		$exception_expected = null ;
@@ -158,6 +168,17 @@ class test_suite_object
 		$expected_exception = null ;
 		$callback = function () use ($o) { return !isset($o->private) ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
+	}
+
+	protected	function _test_assign_object(h\object_base $o)
+	{
+		$messages = array('Assign value to typed attribute') ;
+		$callback = function () use ($o)
+			{
+				$o->object = new h\object_public ;
+				return true ;
+			} ;
+		$this->add_test($callback, $messages) ;
 	}
 }
 
