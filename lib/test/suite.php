@@ -172,7 +172,7 @@ class suite_object
 		$this->_test_instanciate() ;
 
 		foreach($this->providers as $provider)
-			$this->_test_is_a($provider(), 'h\object_base') ;
+			$this->_test_is_a($provider(), 'horn\lib\object_base') ;
 	}
 
 	protected	function _test_instanciate()
