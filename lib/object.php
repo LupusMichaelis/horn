@@ -289,7 +289,8 @@ class object_base
 	final
 	protected	function _isset($name) 
 	{
-		$actual_name = $this->_actual_name($name) ; 
+		try { $actual_name = $this->_actual_name($name) ; }
+		catch(exception $e) { return false ; }
 		return isset($this->$actual_name) ;
 	}
 
