@@ -1,12 +1,14 @@
 <?php
 
-namespace horn ;
+namespace tests ;
+use horn\lib as h ;
+use horn\lib\test as t ;
 
 require_once 'horn/lib/collection.php' ;
 require_once 'horn/lib/test.php' ;
 
-class test_unit_collection
-	extends test\unit_object
+class test_suite_collection
+	extends t\suite_object
 {
 	public		$instance = null ;
 
@@ -14,7 +16,7 @@ class test_unit_collection
 	{
 		parent::__construct('Object') ;
 
-		$this->providers[] = function () { return new collection ; } ;
+		$this->providers[] = function () { return new h\collection ; } ;
 	}
 
 	public		function run()
@@ -23,64 +25,52 @@ class test_unit_collection
 			$this->_test_array($provider()) ;
 	}
 
-	protected	function _test_array(collection $o)
+	protected	function _test_array(h\collection $o)
 	{
 		$this->_test_stack($o) ;
 		$this->_test_equal($o->count(), 0) ;
 		$this->_test_add($o) ;
 	}
 
-	protected	function _test_stack(collection $o)
+	protected	function _test_stack(h\collection $o)
 	{
-		$this->_begin('Properties') ;
-
 		$this->_test_stack_getter($o) ;
 		$this->_test_stack_setter($o) ;
-
-		$this->_end() ;
 	}
 
-	protected	function _test_stack_getter(collection $o)
+	protected	function _test_stack_getter(h\collection $o)
 	{
-		$this->_begin('Trying to get readonly stack.') ;
-
-		$expected_exception = null ;
-
-		try { $o->stack ; $this->_exception_not_thrown($expected_exception) ; }
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
-
-		$this->_end() ;
+		$messages = array('Trying to get readonly stack.') ;
+		$expected_exception = '\horn\lib\exception' ;
+		$callback = function () use ($o)
+			{ $o->stack ; return true ; } ;
+		//$callback() ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
-	protected	function _test_stack_setter(collection $o)
+	protected	function _test_stack_setter(h\collection $o)
 	{
-		$this->_begin('Trying to set readonly stack.') ;
-
-		$expected_exception = null ;
-
-		try { $o->stack = array() ; $this->_exception_not_thrown($expected_exception) ; }
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
-
-		$this->_end() ;
+		$messages = array('Trying to set readonly stack.') ;
+		$expected_exception = '\horn\lib\exception' ;
+		$callback = function () use ($o)
+			{ $o->stack = array() ; return false ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
-	protected	function _test_add(collection $o)
+	protected	function _test_add(h\collection $o)
 	{
-		/* None of tests ought to throw an exception */
-		$expected_exception = null ;
-
-		$this->_begin('Push an element to a collection.') ;
-		try
-		{
-			$o[] = 'toto' ;
-			$this->_exception_not_thrown($expected_exception) ;
-		}
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
-		$this->_end() ;
+		$messages = array('Push an element to a h\collection.') ;
+		$callback = function () use ($o)
+			{
+				$o[] = 'toto' ;
+				return $o->count() === 1 ;
+				//$this->_test_equal($o->count(), 1) ;
+			} ;
+		$this->add_test($callback, $messages) ;
 		
-		$this->_test_equal($o->count(), 1) ;
+		/*
 		
-		$this->_begin('Add an element with a numeric index to a collection.') ;
+		$messages = array('Add an element with a numeric index to a h\collection.') ;
 		try
 		{
 			$o[10] = 'toto' ;
@@ -91,7 +81,7 @@ class test_unit_collection
 		
 		$this->_test_equal($o->count(), 2) ;
 		
-		$this->_begin('Add an element referenced by a key to a collection.') ;
+		$messages = array('Add an element referenced by a key to a h\collection.') ;
 		try {
 			$o['key'] = 'toto' ;
 			$this->_exception_not_thrown($expected_exception) ;
@@ -101,7 +91,7 @@ class test_unit_collection
 		
 		$this->_test_equal($o->count(), 3) ;
 		
-		$this->_begin('Add an element by push method to a collection.') ;
+		$messages = array('Add an element by push method to a h\collection.') ;
 		try
 		{
 			$o->push('toto') ;
@@ -112,18 +102,18 @@ class test_unit_collection
 		
 		$this->_test_equal($o->count(), 4) ;
 
+		*/
+
 	}
 
-	function _test_undefined_offset(collection $o)
+	function _test_undefined_offset(h\collection $o)
 	{
-		$this->_begin('Trying to access undefined offset.') ;
+		$messages = array('Trying to access undefined offset.') ;
+		$expected_exception = '\horn\lib\exception' ;
 
-		$expected_exception = 'exception' ;
-
-		try { $v = $o[0] ; $this->_exception_not_thrown($expected_exception) ; }
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
-
-		$this->_end() ;
+		$callback = function () use ($o)
+			{ $v = $o[0] ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 }
 
