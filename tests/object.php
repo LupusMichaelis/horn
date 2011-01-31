@@ -66,7 +66,7 @@ class test_suite_object
 	protected	function _test_getter_undefined(h\object_base $o)
 	{
 		$messages = array('Trying to get undefined property.') ;
-		$expected_exception = '\horn\exception' ;
+		$expected_exception = '\horn\lib\exception' ;
 		$callback = function () use ($o) { return $o->undefined ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
@@ -75,15 +75,15 @@ class test_suite_object
 	{
 		$messages = array('Trying to get public property.') ;
 		$expected_exception = null ;
-		$callback = function () use ($o) { return $o->public ; } ;
+		$callback = function () use ($o) { $o->public ; return true ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
 	protected	function _test_getter_protected(h\object_base $o)
 	{
 		$messages = array('Trying to get protected property.') ;
-		$expected_exception = '\horn\exception' ;
-		$callback = function () use ($o) { return $o->protected ; } ;
+		$expected_exception = null ;
+		$callback = function () use ($o) { $o->protected ; return true ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
@@ -98,8 +98,8 @@ class test_suite_object
 	protected	function _test_setter_undefined(h\object_base $o)
 	{
 		$messages = array('Trying to set undefined property.') ;
-		$expected_exception = '\horn\exception' ;
-		$callback = function () use ($o) { return $o->undefined = 'content' ; } ;
+		$expected_exception = '\horn\lib\exception' ;
+		$callback = function () use ($o) { $o->undefined = 'content' ; return false ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
@@ -132,6 +132,7 @@ class test_suite_object
 		$messages = array('Trying to test undefined property') ;
 		$expected_exception = null ;
 		$callback = function () use ($o) { return !isset($o->undefined) ; } ;
+		assert($callback()) ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
@@ -146,7 +147,7 @@ class test_suite_object
 	protected	function _test_isset_protected(h\object_base $o)
 	{
 		$messages = array('Trying to test protected property') ;
-		$expected_exception = '\horn\exception' ;
+		$expected_exception = null ;
 		$callback = function () use ($o) { return !isset($o->protected) ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
@@ -154,7 +155,7 @@ class test_suite_object
 	protected	function _test_isset_private(h\object_base $o)
 	{
 		$messages = array('Trying to test private property') ;
-		$expected_exception = '\horn\exception' ;
+		$expected_exception = null ;
 		$callback = function () use ($o) { return !isset($o->private) ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
