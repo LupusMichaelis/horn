@@ -8,14 +8,22 @@ function cli_renderer(t\suite $suite)
 {
 	$howmany = count($suite->cases) ;
 	$count = 0 ;
+	$errors = 0 ;
+	$out = array() ;
 	foreach($suite->cases as $case)
 	{
+		//assert(!is_null($case->success)) ;
+
 		++$count ;
-		printf("[%d/%d] %s (%s)\n"
+		$out[] = sprintf('[%d/%d] %s (%s)'
 			, $count, $howmany
 			, $case->message
 			, $case->success ? $case->on_true : $case->on_false) ;
+		$case->success or ++$errors ;
 	}
+
+	print "\n".implode($out, "\n")."\n" ;
+	printf('[%s] (%d/%d)', $suite->name, $count - $errors, $count) ;
 }
 
 /*
