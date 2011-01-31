@@ -72,6 +72,8 @@ class suite
 		$test->on_false = $messages['false'] ;
 		$test->expected_exception = $expected_exception ;
 
+		$test() ;
+
 		$this->cases->push($test) ;
 	}
 
