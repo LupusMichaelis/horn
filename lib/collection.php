@@ -235,20 +235,25 @@ class collection
 	/* interface Countable */
 	public		function count()	{ return count($this->_stack) ; }
 
+	protected	function _filter_key($candidate)
+	{
+		if(\is_integer($candidate) || \is_string($candidate))
+			$filtered = $candidate ;
+		elseif(is_null($candidate))
+			$filtered = null ;
+		else
+			$filtered = (string) $candidate ;
+		return $filtered ;
+	}
+
 	/* interface ArrayAccess */
 	public		function offsetExists($key)
 	{
-		if($key instanceof string_ex)
-			$key = (string) $key ;
-
-		return array_key_exists($key, $this->_stack) ;
+		return array_key_exists($this->_filter_key($key), $this->_stack) ;
 	}
 	
 	public		function offsetGet($key)
 	{
-		if($key instanceof string_ex)
-			$key = (string) $key ;
-
 		if(!$this->offsetExists($key))
 			$this->_throw_offset_does_not_exists($key) ;
 
@@ -259,17 +264,15 @@ class collection
 	{
 		if(is_null($key))
 			$this->_stack[] = $value ;
-		elseif($key instanceof string_ex)
-			$this->_stack[(string) $key] = $value ;
 		else
-			$this->_stack[$key] = $value ;
+			$this->_stack[$this->_filter_key($key)] = $value ;
 
 		return $this->current() ;
 	}
 
 	public		function offsetUnset($key)
 	{
-		unset($this->_stack[$key]) ;
+		unset($this->_stack[$this->_filter_key($key)]) ;
 	}
 
 	/** Clean current elements of the collection, then copy each elements of the
