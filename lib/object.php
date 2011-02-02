@@ -90,14 +90,22 @@ require_once 'horn/lib/exception.php' ;
 abstract
 class object_base
 {
-	/** 
+	/** Clone current object and returns it. If a _clone method
+	 *	exists on the object, it will be used to create the new 
+	 *	object. This _clone member function is mandatory if the
+	 *	ctor takes arguments.
 	 *	\return object_base	The new object cloned from $this
 	 */
 	final
 	public		function __clone() 
 	{ 
-		$new = new static ;
-		$new->assign($this) ;
+		if(method_exists($this, '_clone'))
+			$new = $this->_clone() ;
+		else
+		{
+			$new = new static ;
+			$new->assign($this) ;
+		}
 
 		return $new ;
 	}
@@ -281,7 +289,6 @@ class object_base
 	protected	function & _get($name)
 	{
 		$actual_name = $this->_actual_name($name) ; 
-
 		return $this->$actual_name ;
 	}
 
