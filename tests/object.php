@@ -24,6 +24,12 @@ class thing_public
 	protected	$_object ;
 }
 
+class thing_of
+	extends thing_public
+{
+}
+
+
 class test_suite_object
 	extends t\suite_object
 {
@@ -34,6 +40,7 @@ class test_suite_object
 		parent::__construct($message) ;
 		
 		$this->providers[] = function () { return new thing_public ; } ;
+		$this->providers[] = function () { return new thing_of ; } ;
 	}
 
 	public		function run()
