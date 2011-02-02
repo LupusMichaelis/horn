@@ -34,6 +34,7 @@
  */
 namespace horn\lib ;
 
+require_once 'horn/lib/horn.php' ;
 require_once 'horn/lib/exception.php' ;
 
 /** Ensure homogenic access to properties.
@@ -246,10 +247,10 @@ class object_base
 	final
 	protected   function _actual_name($name) 
 	{ 
-#		$actual_name = "$name" ; 
-		$actual_name = "_$name" ; 
+		$attrs = $this->get_attributes_object() ;
+		$actual_name = in_array($name, $attrs) ? $name : "_$name" ;
  
-		if(!array_key_exists($actual_name, get_object_vars($this)))
+		if(!in_array($actual_name, $this->get_attributes_object()))
 			$this->_throw_attribute_missing($name) ;
 
 		return $actual_name ;
@@ -319,7 +320,10 @@ class object_base
 	protected	function _assign_attributes_from($attrs, object_base $object_source)
 	{
 		foreach($attrs as $attr_name)
+		{
+			$apparent_name = $this->_actual_name($attr_name) ;
 			$this->__set($attr_name, $object_source->$apparent_name) ;
+		}
 	}
 
 	/** Generic descendant copier 
