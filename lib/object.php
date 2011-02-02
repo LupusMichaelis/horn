@@ -415,7 +415,7 @@ class object_base
 	 */
 	protected	function _throw($msg)
 	{
-		throw new exception($msg) ;
+		throw new exception($msg, dump($this)) ;
 	}
 
 	/** \throw	exception
@@ -455,21 +455,21 @@ class object_base
 	 */
 	protected	function _throw_unexpected()
 	{
-		throw new exception('Unexpected happend.') ;
+		$this->_throw('Unexpected happend.') ;
 	}
 
 	/** \throw exception
 	 */
 	protected	function _throw_readonly_attribute($name)
 	{
-		throw new exception("Attribute '$name' is readonly.") ;
+		$this->_throw("Attribute '$name' is readonly.") ;
 	}
 
 	/** \throw exception
 	 */
 	protected	function _throw_missing_method($name)
 	{
-		throw new exception("Instance method '$name' is missing.") ;
+		$this->_throw("Instance method '$name' is missing.") ;
 	}
 
 }  

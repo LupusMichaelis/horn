@@ -36,5 +36,10 @@ namespace horn\lib ;
 class exception
 	extends \exception
 {
+	public		function __construct($msg, $that)
+	{
+		parent::__construct($msg) ;
+		$this->throwee = $that ;
+	}
 }
 
