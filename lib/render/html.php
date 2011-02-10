@@ -10,29 +10,31 @@ class html
 	extends object_public
 {
 	protected	$_document ;
-	protected	$_title ;
-
 	private		$_helpers ;
 
 	public		function __construct()
 	{
-		$template = '<html><head><title></title></head><body></body></html>' ;
+		$template = '<html><head><title><body>' ;
 		$this->_document = \DomDocument::loadHTML($template) ;
 		$this->_document->formatOutput = true ;
-		$this->_title = new string ;
 		$this->_helpers = new collection ;
+	}
+
+	protected	function & _get_title()
+	{
+		$title = $this->document->getElementsByTagName('title')->item(0) ;
+		return $title ;
 	}
 
 	protected	function _set_title(string $text)
 	{
-		$titleElement = $this->document->getElementsByTagName('title')->item(0) ;
+		$titleElement = $this->title ;
 		$newTitleTxt = $this->document->createTextNode($text) ;
 		$oldTitleTxt = $titleElement->childNodes->item(0) ;
 		if($oldTitleTxt)
 			$titleElement->replaceChild($newTitleTxt, $oldTitleTxt) ;
 		else
 			$titleElement->appendChild($newTitleTxt) ;
-		$this->_title = $text ;
 	}
 
 	public		function __tostring()
@@ -45,10 +47,16 @@ class html
 		$this->_helpers[$name] = $callback ;
 	}
 
+	protected	function & _get_body()
+	{
+		$body = $this->document->getElementsByTagName('body')->item(0) ;
+		return $body ;
+	}
+
 	public		function render($name, $thing)
 	{
 		$render = $this->_helpers[$name] ;
-		$render($this->document->getElementsByTagName('body')->item(0), $thing) ;
+		$render($this->body, $thing) ;
 	}
 
 }
