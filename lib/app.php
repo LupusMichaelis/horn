@@ -17,7 +17,7 @@ function render(http\response $out)
 	ob_end_flush() ;
 }
 
-function app(http\request $in, http\response $out, $routing)
+function run(http\request $in, http\response $out, $routing)
 {
 	ksort($routing) ;
 	foreach($routing as $key => $value)
