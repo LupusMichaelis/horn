@@ -5,7 +5,19 @@ namespace horn\lib ;
 require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/http/message.php' ;
 
-function app(\horn\lib\http\request $in, \horn\lib\http\response $out, $routing)
+function render(http\response $out)
+{
+	ob_start() ;
+	echo $out->body->content ;
+
+	header($out->status) ;
+	foreach($out->header as $name => $value)
+		header("$name: $value") ; // XXX escape
+
+	ob_end_flush() ;
+}
+
+function app(http\request $in, http\response $out, $routing)
 {
 	ksort($routing) ;
 	foreach($routing as $key => $value)
@@ -29,7 +41,7 @@ class app
 	abstract
 	public		function run() ;
 
-	public		function __construct(\horn\lib\http\request $in, \horn\lib\http\response $out)
+	public		function __construct(http\request $in, http\response $out)
 	{
 		$this->_request = $in ;
 		$this->_response = $out ;
