@@ -37,7 +37,7 @@ class uri
 {
 	protected	$_literal ;
 
-	public		function __construct(\horn\lib\string $literal)
+	public		function __construct(string $literal)
 	{
 		parent::__construct() ;
 
@@ -81,7 +81,7 @@ class url extends uri
 	 */
 	public		function normalize()
 	{
-		if($this->scheme instanceof \horn\lib\string)
+		if($this->scheme instanceof string)
 			$this->scheme->lowcase() ;
 		else
 			return false ;
