@@ -10,7 +10,7 @@ class simple_router
 {
 	private		$_routes ;
 
-	public		function __construct(\horn\lib\http\request $in, \horn\lib\http\response $out)
+	public		function __construct(http\request $in, http\response $out)
 	{
 		$this->_routes = new collection ;
 		parent::__construct($in, $out) ;
@@ -31,7 +31,9 @@ class simple_router
 		}
 		catch(\horn\lib\exception $e)
 		{
-			$this->status(500, 'Internal Server Error') ;
+			//$this->status(500, 'Internal Server Error') ;
+			//$this->response->body->content = dump($e) ;
+			throw $e ;
 		}
 
 	}
