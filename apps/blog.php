@@ -35,6 +35,10 @@ class blog
 
 		$doc = new $types[$type] ;
 		$doc->title = h\string('My new blog') ;
+		$doc->register('post', '\horn\apps\render_post') ;
+
+		foreach($this->posts as $post)
+			$doc->render('post', $post) ;
 
 		$this->response->body->content = $doc ;
 		//$this->response->set_content_type($type, 'utf-8') ;
@@ -61,3 +65,9 @@ class post
 	}
 }
 
+function render_post(\domelement $canvas, post $post)
+{
+	$od = $canvas->ownerDocument ;
+	$e = $od->createElement('p', $post->title) ;
+	return $canvas->appendChild($e) ;
+}
