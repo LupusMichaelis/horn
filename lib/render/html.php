@@ -18,6 +18,8 @@ class html
 		$this->_document = \DomDocument::loadHTML($template) ;
 		$this->_document->formatOutput = true ;
 		$this->_helpers = new collection ;
+
+		parent::__construct() ;
 	}
 
 	protected	function & _get_title()
@@ -47,16 +49,16 @@ class html
 		$this->_helpers[$name] = $callback ;
 	}
 
-	protected	function & _get_body()
-	{
-		$body = $this->document->getElementsByTagName('body')->item(0) ;
-		return $body ;
-	}
-
 	public		function render($name, $thing)
 	{
 		$render = $this->_helpers[$name] ;
 		$render($this->body, $thing) ;
+	}
+
+	protected	function & _get_body()
+	{
+		$body = $this->document->getElementsByTagName('body')->item(0) ;
+		return $body ;
 	}
 
 }
