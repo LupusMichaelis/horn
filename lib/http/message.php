@@ -10,7 +10,7 @@ class uri
 	protected	$_path ;
 	protected	$_searchpart ;
 
-	public		function __construct($raw)
+	public		function __construct($raw='')
 	{
 		$qmark = strpos($raw, '?') ;
 		$qmark = $qmark === false ? strlen($raw) : $qmark ; 
@@ -18,6 +18,11 @@ class uri
 		$this->searchpart = substr($raw, $qmark) ;
 
 		parent::__construct() ;
+	}
+
+	public		function __tostring()
+	{
+		return '' ;
 	}
 }
 
@@ -29,10 +34,10 @@ class message
 
 	public function __construct()
 	{
-		parent::__construct() ;
-
 		$this->header = new header ;
 		$this->body = new body ;
+
+		parent::__construct() ;
 	}
 }
 
@@ -82,6 +87,7 @@ class request
 class response
 	extends message
 {
+	public		$status ;
 }
 
 class header
