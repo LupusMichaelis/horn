@@ -4,6 +4,7 @@ namespace horn\apps ;
 use \horn\lib as h ;
 
 require_once 'horn/lib/collection.php' ;
+require_once 'horn/lib/string.php' ;
 
 require_once 'horn/lib/app.php' ;
 require_once 'horn/lib/render/html.php' ;
@@ -25,7 +26,12 @@ class blog
 	static
 	public		function desired_mime_type(h\http\request $in = null)
 	{
-		return 'text/html' ;
+		$types = array
+			( 'html' => 'text/html'
+			, 'rss' => 'application/application/rss+xml'
+			) ;
+		$path = h\string($in->uri->path) ;
+		return $types[(string) $path->tail(1)] ;
 	}
 
 	public		function prepare_renderer()
