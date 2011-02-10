@@ -18,6 +18,7 @@ class html
 	{
 		$template = '<html><head><title></title></head><body></body></html>' ;
 		$this->_document = \DomDocument::loadHTML($template) ;
+		$this->_document->formatOutput = true ;
 		$this->_title = new string ;
 		$this->_helpers = new collection ;
 	}
