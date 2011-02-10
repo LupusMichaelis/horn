@@ -27,7 +27,7 @@ class blog
 		$types = array('text/html' => '\horn\lib\html') ;
 
 		$doc = new $types[$type] ;
-		$doc->title = 'My new blog' ;
+		$doc->title = h\string('My new blog') ;
 
 		$this->response->body->content = $doc ;
 		//$this->response->set_content_type($type, 'utf-8') ;
