@@ -21,6 +21,21 @@ class thing_public
 		parent::__construct() ;
 	}
 
+	protected	function _isset_virtual()
+	{
+		return isset($this->_private) ;
+	}
+
+	protected	function _set_virtual($new_value)
+	{
+		$this->_private = $new_value ;
+	}
+
+	protected	function &_get_virtual()
+	{
+		return $this->_private ;
+	}
+
 	protected	$_object ;
 }
 
@@ -55,21 +70,11 @@ class test_suite_object
 		#$this->_begin('Properties') ;
 
 		$methods = array
-			( 'getter_undefined'
-			, 'getter_public'
-			, 'getter_protected'
-			, 'getter_private'
-
-			, 'setter_undefined'
-			, 'setter_public'
-			, 'setter_protected'
-			, 'setter_private'
-
-			, 'isset_undefined'
-			, 'isset_public'
-			, 'isset_protected'
-			, 'isset_private'
-
+			( 'getter_undefined', 'setter_undefined', 'isset_undefined'
+			, 'getter_public', 'setter_public', 'isset_public'
+			, 'getter_protected', 'setter_protected', 'isset_protected'
+			, 'getter_private', 'setter_private', 'isset_private'
+			, 'getter_virtual', 'setter_virtual', 'isset_virtual'
 			, 'assign_object'
 			) ;
 
@@ -101,6 +106,14 @@ class test_suite_object
 		$messages = array('Trying to get protected property.') ;
 		$expected_exception = null ;
 		$callback = function () use ($o) { $o->protected ; return true ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
+	}
+
+	protected	function _test_getter_virtual(h\object_base $o)
+	{
+		$messages = array('Trying to get virtual property.') ;
+		$expected_exception = null ;
+		$callback = function () use ($o) { $o->virtual ; return true ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
@@ -136,6 +149,14 @@ class test_suite_object
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
+	protected	function _test_setter_virtual(h\object_base $o)
+	{
+		$messages = array('Trying to set virtual property.') ;
+		$expected_exception = null ;
+		$callback = function () use ($o) { return $o->virtual = 'content' ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
+	}
+
 	protected	function _test_setter_private(h\object_base $o)
 	{
 		$messages = array('Trying to set private property.') ;
@@ -166,6 +187,14 @@ class test_suite_object
 		$messages = array('Trying to test protected property') ;
 		$expected_exception = null ;
 		$callback = function () use ($o) { return !isset($o->protected) ; } ;
+		$this->add_test($callback, $messages, $expected_exception) ;
+	}
+
+	protected	function _test_isset_virtual(h\object_base $o)
+	{
+		$messages = array('Trying to test virtual property') ;
+		$expected_exception = null ;
+		$callback = function () use ($o) { return isset($o->virtual) ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
