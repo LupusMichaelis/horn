@@ -19,6 +19,8 @@ class blog
 	{
 		$this->posts = new h\collection ;
 		$this->posts->push(post::create('First post', 'This is a very first post')) ;
+		$this->posts->push(post::create('Second post', 'This is a most recent post')) ;
+		$this->posts->push(post::create('Third post', 'This is an awful last post')) ;
 
 		$this->prepare_renderer() ;
 		return $this ;
@@ -31,7 +33,7 @@ class blog
 			( 'html' => 'text/html'
 			, 'rss' => 'application/rss+xml'
 			) ;
-		$path = h\string($in->uri->path) ;
+		$path = is_null($in) ? 'html' : h\string($in->uri->path) ;
 		return $types[(string) $path->tail(1)] ;
 	}
 
