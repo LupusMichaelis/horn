@@ -294,9 +294,9 @@ class collection
 					$this[$k] = clone $v ;
 #				$this[$k] = $v ;
 				else
-					throw new exception('Don\'t know how to copy current value') ;
+					$this->_throw('Don\'t know how to copy current value') ;
 		elseif(!is_null($rhs))
-			throw new exception('Bad type.') ;
+			$this->_throw('Bad type.') ;
 
 		return $this ;
 	}
