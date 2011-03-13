@@ -155,7 +155,7 @@ class string
 	public		function head($offset)
 	{
 		if($offset > $this->length())
-			throw new exception(sprintf(self::ERR_OVERRUN, null, $offset, $this->length())) ;
+			$this->_throw_format(self::ERR_OVERRUN, null, $offset, $this->length()) ;
 
 		return new static(substr($this->_scalar, 0, $offset+1)) ;
 	}
@@ -169,7 +169,7 @@ class string
 	public		function tail($offset)
 	{
 		if($offset > $this->length()-1)
-			throw new exception(sprintf(self::ERR_OVERRUN, $offset, null, $this->length())) ;
+			$this->_throw_format(self::ERR_OVERRUN, $offset, null, $this->length()) ;
 
 		return new static(substr($this->_scalar, $offset)) ;
 	}
@@ -192,10 +192,10 @@ class string
 	{
 		$len = strlen($this->_scalar) ;
 		if($begin > $end)
-			throw new exception(sprintf(self::ERR_INVERT, $begin, $end)) ;
+			$this->_throw_format(self::ERR_INVERT, $begin, $end) ;
 
 		if($begin > $len or $end > $len)
-			throw new exception(sprintf(self::ERR_OVERRUN, $begin, $end, $len)) ;
+			$this->_throw_format(self::ERR_OVERRUN, $begin, $end, $len) ;
 
 		return new static(substr($this->_scalar, $begin, $end - $begin)) ;
 	}
