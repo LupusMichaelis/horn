@@ -33,8 +33,14 @@ class blog
 			( 'html' => 'text/html'
 			, 'rss' => 'application/rss+xml'
 			) ;
-		$path = is_null($in) ? 'html' : h\string($in->uri->path) ;
-		return $types[(string) $path->tail(1)] ;
+		$suffix = 'html' ;
+		if(!is_null($in))
+		{
+			$path = h\string($in->uri->path) ;
+			$offset = $path->search('.') ;
+			$offset > -1 and $suffix = $path->tail(++$offset) ;
+		}
+		return $types[(string) $suffix] ;
 	}
 
 	public		function prepare_renderer()
