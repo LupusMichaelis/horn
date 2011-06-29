@@ -31,6 +31,8 @@ class test_suite_string
 			$this->_test_append($instance) ;
 			$this->_test_prepend($instance) ;
 
+			//$this->_test_search(null) ;
+
 #			$this->_test_head($instance) ;
 		}
 	}
@@ -64,6 +66,18 @@ class test_suite_string
 				$size = $o->length() ;
 				$o->prepend(h\string($subject)) ;
 				return $o->length() === ($size + strlen($subject)) ;
+			} ;
+		$this->add_test($callback, $messages) ;
+	}
+
+	protected	function _test_search(h\string $o)
+	{
+		$messages = array('Tests find value in a string.') ;
+		$callback = function ()
+			{
+				$subject = 'Some string that\'s fine.' ;
+				$offset = $o->search('i') ;
+				return $offset === 8 ;
 			} ;
 		$this->add_test($callback, $messages) ;
 	}
