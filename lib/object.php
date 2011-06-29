@@ -178,13 +178,13 @@ class object_base
 	 *	\return	object_base	Return a reference on $this.
 	 */
 	final
-	public		function assign(object_base $object_source)
+	public		function assign(object_base $object_source = null)
 	{
-		// optimization : we won't to assign object in it-self.
-		if($this->is_same($object_source))
-			return $this ;
-
-		if($object_source instanceof static)
+		if(is_null($object_source))
+			$this->reset() ;
+		elseif($this->is_same($object_source))
+			/* optimization : we won't to assign object in it-self. */ ;
+		elseif($object_source instanceof static)
 			$this->_assign_object($object_source) ;
 		elseif(is_a($object_source, get_class($this)))
 			$this->_assign_descendant($object_source) ;
@@ -215,6 +215,12 @@ class object_base
 	}
 
 	final
+	public		function get_attributes_default_values()
+	{
+		return get_class_vars(get_class($this)) ;
+	}
+
+	final
 	public		function get_attributes_class()
 	{
 		return array_keys(get_class_vars(get_class($this))) ;
@@ -239,7 +245,7 @@ class object_base
 	final
 	public		function reset()
 	{
-		foreach($this->get_attributes_class() as $name => $default_value)
+		foreach($this->get_attributes_default_values() as $name => $default_value)
 			$this->__set($name, $default_value) ;
 
 		return $this ;
