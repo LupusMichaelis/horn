@@ -27,10 +27,20 @@
 namespace horn\lib ;
 
 require_once 'horn/lib/object.php' ;
+require_once 'horn/lib/string.php' ;
 
 function is_collection($variable)
 {
 	return is_array($variable) || $variable instanceof \iterator ;
+}
+
+function collection(/* ... */)
+{
+	$collection = new collection ;
+	$args = func_get_args() ; 
+	foreach($args as $arg)
+		$collection->push($arg) ;
+	return $collection ;
 }
 
 /**	An object that implements array behaviour in a consistent way.
@@ -81,17 +91,17 @@ class collection
 
 	/** Iterate the collection and sticks string representation of elements each
 	 *  to others with the given glue parameter. 
-	 *
+	 *	\bug	Assume we have a collection of strings
 	 *  \param	$glue		mixed	A castable in string.
-	 *  \return	string_ex			The imploded representation of the current
+	 *  \return	string			The imploded representation of the current
 	 *  							collection
 	 */
 	public		function implode($glue)
 	{
-		if(!($glue instanceof string_ex))
-			$glue = new string_ex($glue) ;
+		if(!($glue instanceof string))
+			$glue = new string($glue) ;
 
-		$crunch = new string_ex ;
+		$crunch = new string ;
 		$length = $this->count() ;
 		$i = 0 ;
 		foreach($this as $bit)
@@ -101,7 +111,7 @@ class collection
 			if($i < $length - 1)
 				$crunch->append($glue) ;
 
-			$i++ ;
+			++$i ;
 		}
 
 		return $crunch ;
@@ -120,7 +130,7 @@ class collection
 	}
 
 	/**
-	 *  \param	$needle	mixed		The thing we are searching.
+	 *  \param	$needle	mixed		The thing we are searching as a value.
 	 *  \param	$strict	bool		Ensure strict comparaision
 	 *  \return	(null|array)		Corresponding index set to the value.
 	 */
