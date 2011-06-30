@@ -52,9 +52,7 @@ class date
 	protected	$_month ;
 	protected	$_day ;
 
-	protected	$_timestamp ;
-
-	public		function __construct($year, $month, $day)
+	public		function __construct($year=0, $month=0, $day=0)
 	{
 		$this->_day = (int) $day ;
 		$this->_month = (int) $month ;
@@ -63,6 +61,12 @@ class date
 		parent::__construct() ;
 
 		$this->compute_timestamp() ;
+	}
+
+	protected	function &_get_timestamp()
+	{
+		$timestamp = $this->compute_timestamp() ;
+		return $timestamp ;
 	}
 
 	static
@@ -184,7 +188,7 @@ class date
 
 	protected	function compute_timestamp()
 	{
-		$this->timestamp = mktime(0, 0, 0, $this->month, $this->day, $this->year) ;
+		return mktime(0, 0, 0, $this->month, $this->day, $this->year) ;
 	}
 }
 

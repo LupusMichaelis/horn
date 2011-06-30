@@ -28,6 +28,8 @@
 namespace horn\lib ;
 
 require_once 'horn/lib/object.php' ;
+require_once 'horn/lib/time/date.php' ;
+require_once 'horn/lib/time/time.php' ;
 
 class date_time
 	extends		object_public
