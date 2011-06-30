@@ -26,6 +26,7 @@
  */
 
 namespace horn\lib\inet ;
+using \horn\lib as h ;
 
 require_once 'horn/lib/url.php' ;
 require_once 'horn/lib/inet/host.php' ;
@@ -45,7 +46,6 @@ class url
 	extends \horn\lib\uri
 {
 	const ERR_MALFORMED				= 'URL\'s not valid.' ;
-
 	const ERR_SCHEME_NO				= 'Scheme not found.' ;
 	const ERR_SCHEME_BAD			= 'Malformed scheme.' ;
 	const ERR_SCHEME_NOT_SUPPORTED	= 'Scheme is not supported.' ;
