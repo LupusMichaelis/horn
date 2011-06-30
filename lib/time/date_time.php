@@ -31,6 +31,17 @@ require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/time/date.php' ;
 require_once 'horn/lib/time/time.php' ;
 
+function now()
+{
+	$aday = getdate() ;
+	$now = new date_time ;
+	$now->date = new date($aday['year'], $aday['mon'], $aday['mday']) ;
+	$now->time = new time($aday['hours'], $aday['minutes'], $aday['seconds']) ;
+
+	return $now ;
+}
+
+
 class date_time
 	extends		object_public
 {
