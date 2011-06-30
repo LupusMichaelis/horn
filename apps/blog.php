@@ -63,22 +63,37 @@ class blog
 	}
 }
 
+require_once 'horn/lib/time/date_time.php' ;
+require_once 'horn/lib/string.php' ;
+
 class post
 	extends h\object_public
 {
-	public		$title ;
-	public		$description ;
-	public		$created ;
-	public		$modified ;
+	protected	$_title ;
+	protected	$_description ;
+	protected	$_created ;
+	protected	$_modified ;
 
 	// public	$owner ;
+	public		function __construct()
+	{
+		$this->title = new h\string ;
+		$this->description = new h\string ;
+		$this->created = new h\date_time ;
+		$this->modified = new h\date_time ;
+
+		parent::__construct() ;
+	}
 
 	static
 	public		function create($title, $description)
 	{
 		$new = new static ;
-		$new->title = $title ;
-		$new->description = $description ;
+		$new->title = h\string($title) ;
+		$new->description = h\string($description) ;
+		$new->created = h\now() ;
+		$new->modified = h\now() ;
+
 		return $new ;
 	}
 }
@@ -86,8 +101,14 @@ class post
 function render_post_html(\domelement $canvas, post $post)
 {
 	$od = $canvas->ownerDocument ;
-	$e = $od->createElement('p', $post->title) ;
-	return $canvas->appendChild($e) ;
+	$div = $canvas->appendChild($od->createElement('div')) ;
+	$div->appendChild($od->createElement('h2', $post->title)) ;
+	$meta = $div->appendChild($od->createElement('p')) ;
+	$meta->appendChild($od->createElement('span', (string) $post->created)) ;
+	$meta->appendChild($od->createElement('span', (string) $post->modified)) ;
+	$div->appendChild($od->createElement('p', $post->description)) ;
+
+	return $div ;
 }
 
 function render_post_rss(\domelement $canvas, post $post)

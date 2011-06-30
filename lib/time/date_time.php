@@ -72,10 +72,15 @@ class date_time
 	static		function from_date_time(date $day, time $time)
 	{
 		$new = self ;
-		$new->_day->copy($day) ;
+		$new->_date->copy($day) ;
 		$new->_time->copy($time) ;
 
 		return $new ;
+	}
+
+	public		function __tostring()
+	{
+		return sprintf('%s %s', $this->_date, $this->_time) ;
 	}
 
 	protected	$_date ;

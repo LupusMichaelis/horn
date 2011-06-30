@@ -44,6 +44,11 @@ class time
 		$this->minute = $minute ;
 		$this->hour = $hour ;
 	}
+
+	public		function __tostring()
+	{
+		return sprintf('%02d:%02d:%02d', $this->_hour, $this->_minute, $this->_second) ;
+	}
 }
 
 class duration
