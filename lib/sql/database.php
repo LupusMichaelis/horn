@@ -30,15 +30,13 @@ use \horn\lib as h ;
 require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/collection.php' ;
 
-/** Wrapper on SQL database. Wrap only MySQL for now.
- */
-class database
+class forge
 	extends h\object_public
 {
-	public		function __construct($host, $space, $user, $pass)
+	public		function __construct(\mysqli $dbcon)
 	{
 		parent::__construct() ;
-		$this->_handler = new \mysqli($host, $user, $pass, $space) ;
+		$this->_handler = $dbcon ;
 
 		if($this->_handler->connect_errno)
 			$this->_throw($this->_handler->connect_error) ;
@@ -56,12 +54,6 @@ class database
 	public		function expression($content)
 	{
 		return new expression($content) ;
-	}
-
-	public		function execute(query $query)
-	{
-		$sql = $query->to_literal($this) ;
-		$this->_handler->query($sql) ;
 	}
 
 	private		$_handler ;
@@ -120,7 +112,7 @@ class select
 		return $q ;
 	}
 
-	public		function to_literal(database $db)
+	public		function to_literal()
 	{
 		$pattern = 'select %s from %s' ;
 		$fields = count($this->fields)
@@ -142,11 +134,4 @@ class where
 	{
 	}
 }
-
-
-$db = new database('localhost', 'test', 'test', 'test') ;
-
-$query = $db->select()
-	->from('pictures') ;
-echo $query->to_literal($db) ;
 

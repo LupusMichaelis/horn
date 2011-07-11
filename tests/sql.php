@@ -1,6 +1,6 @@
 <?php
-/** \file
- *	Run all tests !
+
+/** ?
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -26,59 +26,48 @@
  *
  */
 
+namespace tests ;
 use horn\lib as h ;
 use horn\lib\test as t ;
 
-require_once 'horn/lib/test.php' ;
-require_once 'horn/lib/test/cli.php' ;
+require_once 'horn/lib/sql/database.php' ;
 
-define('DEBUG', true) ;
-
-$available_units = array
-	( 'test'
-	, 'object'
-	, 'collection'
-	, 'string'
-	, 'time'
-#	, 'file'
-	, 'sql'
-	) ;
-
-if($argc == 1)
+class test_suite_sql
+	extends t\suite_object
 {
-	$units = $available_units ;
-}
-else
-{
-	array_shift($argv) ;
-	$units = array_intersect($available_units, $argv) ;
-}
-
-foreach($units as $unit)
-{
-	require_once "tests/{$unit}.php" ;
-
-	try
+	public		function __construct()
 	{
-		$unit_class = "\\tests\\test_suite_$unit" ;
-		$uc = new $unit_class ;
-		# $uc() ;
-		$uc->run() ;
-		t\cli_renderer($uc) ;
+		parent::__construct('Database') ;
 	}
-	catch(\exception $e)
+
+	public		function run()
 	{
-		echo $e->getMessage(), "\n" ; 
-		echo $e->getTraceAsString(), "\n" ; 
+		parent::run() ;
 
-		if(DEBUG) throw $e ;
+		$this->_test_select_from() ;
 	}
+
+	private		function _get_forge()
+	{
+		// I know, this is unsecure
+		$dbcon = new \mysqli('localhost', 'test', 'test', 'test') ;
+		$forge = new h\sql\forge($dbcon) ;
+
+		return $forge ;
+	}
+
+	protected	function _test_select_from()
+	{
+		$db = $this->_get_forge() ;
+
+		$query = $db->select()
+			->from('pictures') ;
+		$this->_test_equal($query->to_literal(), 'select * from pictures') ;
+
+		return $query ;
+	}
+
 }
-
-
-
-
-
 
 
 
