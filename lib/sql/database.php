@@ -47,7 +47,7 @@ class database
 	public		function select(/* $fields = array() */)
 	{
 		$fields = func_get_args() ;
-		$fields = is_null($fields)
+		$fields = ! func_num_args()
 			? h\collection()
 			: h\collection($fields) ;
 		return new select($fields) ;
