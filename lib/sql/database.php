@@ -76,10 +76,12 @@ class select
 	extends query
 {
 	protected	$_fields ;
+	protected	$_criteria ;
 
 	public		function __construct(h\collection $fields = null)
 	{
 		$this->_fields = h\collection() ;
+		$this->_criteria = h\collection() ;
 		parent::__construct() ;
 		$this->fields = $fields ;
 	}
@@ -105,10 +107,11 @@ class select
 		return $q ;
 	}
 
-	public		function where($condition, $and = true)
+	public		function where(/* $conditions */)
 	{
 		$q = clone $this ;
-		if($and) $q->where->and($condition) ; else $q->where->or($condition) ;
+		if(func_num_args())
+			$q->criteria[] = func_get_args() ;
 		return $q ;
 	}
 
@@ -118,14 +121,29 @@ class select
 		$fields = count($this->fields)
 			? $this->fields->implode(', ')
 			: '*' ;
-		$query = sprintf($pattern, $fields, $this->table) ;
-		return $query ;
+		$select = sprintf($pattern, $fields, $this->table) ;
+
+		if(count($this->criteria))
+		{
+			$c = $this->criteria[0] ;
+			$where = " {$c[0]}={$c[1]}" ;
+		}
+		else
+			$where = '' ;
+
+		return "$select$where" ;
 	}
 }
 
 class where
 	extends h\object_public
 {
+	public		function __construct(query $query)
+	{
+		$this->_query = $query ;
+		parent::__construct() ;
+	}
+
 	public		function or_(expression $expression)
 	{
 	}
@@ -133,5 +151,7 @@ class where
 	public		function and_(expression $expression)
 	{
 	}
+
+	protected	$_query ;
 }
 
