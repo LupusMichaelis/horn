@@ -11,7 +11,7 @@ require_once 'horn/lib/render/html.php' ;
 require_once 'horn/lib/render/rss.php' ;
 
 class blog
-	extends \horn\lib\app
+	extends h\app
 {
 	protected	$_posts ;
 
