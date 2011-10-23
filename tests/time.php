@@ -22,20 +22,11 @@ class test_suite_time
 
 	}
 
-	public		function run()
-	{
-		parent::run() ;
-		foreach($this->providers as $provider)
-		{
-			$instance = $provider() ;
-			$this->_test_today($instance) ;
-		}
-	}
-
-	protected	function _test_today(h\date $o)
+	protected	function _test_today()
 	{
 		$messages = array('Testing today') ;
 		$suite = $this ;
+		$o = $this->target ;
 		$callback = function () use ($o, $suite)
 			{
 				$today = h\today() ;

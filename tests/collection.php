@@ -19,47 +19,43 @@ class test_suite_collection
 		$this->providers[] = function () { return new h\collection ; } ;
 	}
 
-	public		function run()
+	protected	function _test_array()
 	{
-		foreach($this->providers as $provider)
-			$this->_test_array($provider()) ;
+		$this->_test_stack() ;
+		$this->_assert_equal($this->target->count(), 0) ;
+		$this->_test_add() ;
 	}
 
-	protected	function _test_array(h\collection $o)
+	protected	function _test_stack()
 	{
-		$this->_test_stack($o) ;
-		$this->_test_equal($o->count(), 0) ;
-		$this->_test_add($o) ;
+		$this->_test_stack_getter() ;
+		$this->_test_stack_setter() ;
 	}
 
-	protected	function _test_stack(h\collection $o)
-	{
-		$this->_test_stack_getter($o) ;
-		$this->_test_stack_setter($o) ;
-	}
-
-	protected	function _test_stack_getter(h\collection $o)
+	protected	function _test_stack_getter()
 	{
 		$messages = array('Trying to get readonly stack.') ;
 		$expected_exception = '\horn\lib\exception' ;
+		$o = $this->target ;
 		$callback = function () use ($o)
 			{ $o->stack ; return true ; } ;
-		//$callback() ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
-	protected	function _test_stack_setter(h\collection $o)
+	protected	function _test_stack_setter()
 	{
 		$messages = array('Trying to set readonly stack.') ;
 		$expected_exception = '\horn\lib\exception' ;
+		$o = $this->target ;
 		$callback = function () use ($o)
 			{ $o->stack = array() ; return false ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 
-	protected	function _test_add(h\collection $o)
+	protected	function _test_add()
 	{
 		$messages = array('Push an element to a h\collection.') ;
+		$o = $this->target ;
 		$callback = function () use ($o)
 			{
 				$o[] = 'toto' ;
@@ -106,13 +102,14 @@ class test_suite_collection
 
 	}
 
-	function _test_undefined_offset(h\collection $o)
+	function _test_undefined_offset()
 	{
 		$messages = array('Trying to access undefined offset.') ;
 		$expected_exception = '\horn\lib\exception' ;
 
+		$o = $this->target ;
 		$callback = function () use ($o)
-			{ $v = $o[0] ; } ;
+			{ $v = $o[1] ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
 }

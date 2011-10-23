@@ -40,13 +40,6 @@ class test_suite_sql
 		parent::__construct('Database') ;
 	}
 
-	public		function run()
-	{
-		parent::run() ;
-
-		$this->_test_select_from() ;
-	}
-
 	private		function _get_forge()
 	{
 		// I know, this is unsecure
@@ -67,6 +60,26 @@ class test_suite_sql
 		return $query ;
 	}
 
+	protected	function _test_select_from_where()
+	{
+		$query = $this->_test_select_from() ;
+
+		$query = $query->where() ;
+		$this->_test_equal($query->to_literal(), 'select * from pictures') ;
+
+		$query = $query->where('id', 10) ;
+		$this->_test_equal($query->to_literal()
+				, 'select * from pictures where id=10') ;
+
+		$query = $query->where('id', 2) ;
+		$this->_test_equal($query->to_literal()
+				, 'select * from pictures where id=2') ;
+
+#		$query = $query->or_('id', 1) ;
+#		$this->_test_equal($query->to_literal()
+#				, 'select * from pictures where id in (1, 2)') ;
+
+	}
 }
 
 

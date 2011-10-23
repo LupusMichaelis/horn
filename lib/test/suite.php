@@ -17,8 +17,9 @@ class suite
 	extends h\object_public
 {
 	protected	$_cases ;
-	protected	$_providers = array() ;
+	protected	$_providers = array(null) ;
 	protected	$_name ;		
+	protected	$_target ;
 
 	public		function __construct($name)
 	{
@@ -32,8 +33,17 @@ class suite
 	public		function __destruct()
 	{ }
 
-	abstract
-	public		function run() ;
+	final
+	public		function run()
+	{
+		foreach($this->providers as $provider)
+		{
+			$this->target = $provider() ;
+			foreach(get_class_methods($this) as $fn)
+				if(0 === strpos($fn, '_test_'))
+					$this->$fn();
+		}
+	}
 
 	/*
 	protected	function _log($case)
@@ -77,7 +87,7 @@ class suite
 		$this->cases->push($test) ;
 	}
 
-	protected	function _test_equal($left, $right)
+	protected	function _assert_equal($left, $right)
 	{
 		$messages = array
 			( 'Testing equality.'
@@ -87,25 +97,25 @@ class suite
 		$this->assert($left == $right, $messages) ;
 	}
 
-	protected	function _test_is_set($variable)
+	protected	function _assert_is_set($variable)
 	{
 		$messages = array('Testing is set variable') ;
 		$this->assert(isset($variable), $messages) ;
 	}
 
-	protected	function _test_is_empty($variable)
+	protected	function _assert_is_empty($variable)
 	{
 		$messages = array('Testing is empty variable') ;
-		$this->assert(is_empty($variable), $messages) ;
+		$this->assert(empty($variable), $messages) ;
 	}
 
-	protected	function _test_is_null($variable)
+	protected	function _assert_is_null($variable)
 	{
 		$messages = array('Testing is null value') ;
 		$this->assert(is_null($variable), $messages) ;
 	}
 
-	protected	function _test_is_scalar($variable)
+	protected	function _assert_is_scalar($variable)
 	{
 		$messages = array
 			( 'Testing is a scalar'
@@ -114,47 +124,47 @@ class suite
 		$this->assert(is_scalar($variable), $messages) ;
 	}
 
-	protected	function _test_is_resource($variable)
+	protected	function _assert_is_resource($variable)
 	{
 		$messages = array('Testing is a resource') ;
 		$this->assert(is_resource($variable), $messages) ;
 	}
 
-	protected	function _test_is_integer($variable)
+	protected	function _assert_is_integer($variable)
 	{
 		$messages = array('Testing is an integer') ;
 		$this->assert(is_integer($variable), $messages) ;
 	}
 
-	protected	function _test_is_float($variable)
+	protected	function _assert_is_float($variable)
 	{
 		$messages = array('Testing is a float') ;
 		$this->assert(is_float($variable), $messages) ;
 	}
 
-	protected	function _test_is_string($variable)
+	protected	function _assert_is_string($variable)
 	{
 		$messages = array('Testing is a string') ;
 		$this->assert(is_string($variable), $messages) ;
 	}
 
-	protected	function _test_is_object($variable)
+	protected	function _assert_is_object($variable)
 	{
 		$messages = array('Testing is an object') ;
 		$this->assert(is_object($variable), $messages) ;
 	}
 
-	protected	function _test_is_a($object, $class)
+	protected	function _assert_is_a($object, $class)
 	{
-		$this->_test_class_exists($class) ;
-		$this->_test_is_object($object) ;
+		$this->_assert_class_exists($class) ;
+		$this->_assert_is_object($object) ;
 		$messages = array
 			( sprintf('Testing is an instance of \'%s\'', $class)
 			); 
 		$this->assert(is_a($object, $class), $messages) ;
 	}
 
-	protected	function _test_class_exists($class_name)
+	protected	function _assert_class_exists($class_name)
 	{
 		$this->assert(class_exists($class_name)) ;
 	}
@@ -167,6 +177,7 @@ abstract
 class suite_object
 	extends suite
 {
+	/*
 	public		function run()
 	{
 		$this->_test_instanciate() ;
@@ -174,14 +185,11 @@ class suite_object
 		foreach($this->providers as $provider)
 			$this->_test_is_a($provider(), 'horn\lib\object_base') ;
 	}
+	*/
 
 	protected	function _test_instanciate()
 	{
-		foreach($this->providers as $provider)
-		{
-			$instance = $provider() ;
-			$this->_test_is_object($instance) ;
-		}
+		$this->_assert_is_object($this->target) ;
 	}
 
 }

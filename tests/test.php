@@ -15,7 +15,7 @@ class test_suite_test
 		parent::__construct($message) ;
 	}
 
-	public		function run()
+	public		function _test()
 	{
 		$this->assert(true) ;
 

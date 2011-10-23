@@ -17,36 +17,18 @@ class test_suite_string
 		$this->providers[] = function() { return new h\string ; } ;
 	}
 
-	public		function run()
-	{
-		parent::run() ;
-
-		foreach($this->providers as $provider)
-		{
-			$instance = $provider() ;
-			$this->_test_is_a($instance, '\horn\lib\string') ;
-
-			$this->_test_empty($instance) ;
-
-			$this->_test_append($instance) ;
-			$this->_test_prepend($instance) ;
-
-			//$this->_test_search(null) ;
-
-#			$this->_test_head($instance) ;
-		}
-	}
-
-	protected	function _test_empty(h\string $o)
+	protected	function _test_empty()
 	{
 		$messages = array('Tests on an empty string.') ;
+		$o = $this->target ;
 		$callback = function () use ($o) { return $o->length() === 0 ; } ;
 		$this->add_test($callback, $messages) ;
 	}
 
-	protected	function _test_append(h\string $o)
+	protected	function _test_append()
 	{
 		$messages = array('Tests appending on string.') ;
+		$o = $this->target ;
 		$callback = function () use ($o) 
 			{
 				$subject = 'Some string that\'s fine.' ;
@@ -57,9 +39,10 @@ class test_suite_string
 		$this->add_test($callback, $messages) ;
 	}
 
-	protected	function _test_prepend(h\string $o)
+	protected	function _test_prepend()
 	{
 		$messages = array('Tests prepending on string.') ;
+		$o = $this->target ;
 		$callback = function () use ($o) 
 			{
 				$subject = 'Some string that\'s fine.' ;
@@ -70,10 +53,11 @@ class test_suite_string
 		$this->add_test($callback, $messages) ;
 	}
 
-	protected	function _test_search(h\string $o)
+	protected	function _test_search()
 	{
 		$messages = array('Tests find value in a string.') ;
-		$callback = function ()
+		$o = $this->target ;
+		$callback = function () use ($o)
 			{
 				$subject = 'Some string that\'s fine.' ;
 				$offset = $o->search('i') ;
