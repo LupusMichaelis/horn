@@ -92,7 +92,7 @@ class suite
 		$messages = array
 			( 'Testing equality.'
 			, 'true' => 'Equality ok'
-			, 'false' => sprintf('Not equal (%d != %d)', $left, $right)
+			, 'false' => sprintf('Not equal (expected \'%s\' != actual \'%s\')', $left, $right)
 			) ;
 		$this->assert($left == $right, $messages) ;
 	}
