@@ -38,6 +38,7 @@ class test_suite_sql
 	public		function __construct()
 	{
 		parent::__construct('Database') ;
+		$this->providers[] = function () { return null ; } ;
 	}
 
 	private		function _get_forge()
@@ -55,7 +56,7 @@ class test_suite_sql
 
 		$query = $db->select()
 			->from('pictures') ;
-		$this->_test_equal($query->to_literal(), 'select * from pictures') ;
+		$this->_assert_equal($query->to_literal(), 'select * from pictures') ;
 
 		return $query ;
 	}
@@ -65,18 +66,14 @@ class test_suite_sql
 		$query = $this->_test_select_from() ;
 
 		$query = $query->where() ;
-		$this->_test_equal($query->to_literal(), 'select * from pictures') ;
+		$this->_assert_equal('select * from pictures', $query->to_literal()) ;
 
 		$query = $query->where('id', 10) ;
-		$this->_test_equal($query->to_literal()
-				, 'select * from pictures where id=10') ;
-
-		$query = $query->where('id', 2) ;
-		$this->_test_equal($query->to_literal()
-				, 'select * from pictures where id=2') ;
+		$this->_assert_equal('select * from pictures where id=10'
+				, $query->to_literal()) ;
 
 #		$query = $query->or_('id', 1) ;
-#		$this->_test_equal($query->to_literal()
+#		$this->_assert_equal($query->to_literal()
 #				, 'select * from pictures where id in (1, 2)') ;
 
 	}
