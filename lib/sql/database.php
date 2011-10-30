@@ -126,7 +126,7 @@ class select
 		if(count($this->criteria))
 		{
 			$c = $this->criteria[0] ;
-			$where = " {$c[0]}={$c[1]}" ;
+			$where = " where {$c[0]}={$c[1]}" ;
 		}
 		else
 			$where = '' ;

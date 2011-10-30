@@ -38,21 +38,18 @@ class test_suite_sql
 	public		function __construct()
 	{
 		parent::__construct('Database') ;
-		$this->providers[] = function () { return null ; } ;
-	}
+		$this->providers[] = function () {
+			// I know, this is unsecure
+			$dbcon = new \mysqli('localhost', 'test', 'test', 'test') ;
+			$forge = new h\sql\forge($dbcon) ;
 
-	private		function _get_forge()
-	{
-		// I know, this is unsecure
-		$dbcon = new \mysqli('localhost', 'test', 'test', 'test') ;
-		$forge = new h\sql\forge($dbcon) ;
-
-		return $forge ;
+			return $forge ;
+		} ;
 	}
 
 	protected	function _test_select_from()
 	{
-		$db = $this->_get_forge() ;
+		$db = $this->target ;
 
 		$query = $db->select()
 			->from('pictures') ;
