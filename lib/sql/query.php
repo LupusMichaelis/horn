@@ -1,5 +1,5 @@
 <?php
-/** database class definition
+/** query class definition
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -30,35 +30,46 @@ use \horn\lib as h ;
 require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/collection.php' ;
 
-require_once 'horn/lib/sql/select.php' ;
+require_once 'horn/lib/sql/where.php' ;
 
-class forge
+class query
 	extends h\object_public
 {
-	public		function __construct(\mysqli $dbcon)
+	protected	$_table ;
+	protected	$_where ;
+
+	private		$_inplace = false;
+
+	public		function __construct($inplace = null)
 	{
 		parent::__construct() ;
-		$this->_handler = $dbcon ;
-
-		if($this->_handler->connect_errno)
-			$this->_throw($this->_handler->connect_error) ;
+		$this->_inplace = $inplace ;
 	}
 
-	public		function select(/* $fields = array() */)
+	protected	function q()
 	{
-		$fields = func_get_args() ;
-		$fields = ! func_num_args()
-			? h\collection()
-			: h\collection($fields) ;
-		return new select($fields) ;
+		return $this->_inplace ? $this : clone $this ;
 	}
 
-
-	public		function expression($content)
+	public		function where($operand)
 	{
-		return new expression($content) ;
+		$q = $this->q() ;
+		$q->where = new where($operand) ;
+		return $q ;
 	}
 
-	private		$_handler ;
+	public		function equals($operand)
+	{
+		$q = $this->q() ;
+		$q->where->equals($operand) ;
+		return $q ;
+	}
+
+	public		function in($list)
+	{
+		$q = $this->q() ;
+		$q->where->in($list) ;
+		return $q ;
+	}
 }
 

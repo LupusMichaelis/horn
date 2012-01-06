@@ -38,9 +38,9 @@ class test_suite_sql
 	public		function __construct()
 	{
 		parent::__construct('Database') ;
-		$this->providers[] = function () {
+		$dbcon = new \mysqli('localhost', 'test', 'test', 'test') ;
+		$this->providers[] = function () use ($dbcon) {
 			// I know, this is unsecure
-			$dbcon = new \mysqli('localhost', 'test', 'test', 'test') ;
 			$forge = new h\sql\forge($dbcon) ;
 
 			return $forge ;
@@ -53,26 +53,32 @@ class test_suite_sql
 
 		$query = $db->select()
 			->from('pictures') ;
-		$this->_assert_equal($query->to_literal(), 'select * from pictures') ;
+		$this->_assert_equal((string) $query, 'select * from pictures') ;
 
 		return $query ;
 	}
 
 	protected	function _test_select_from_where()
 	{
-		$query = $this->_test_select_from() ;
+		$select = $this->_test_select_from() ;
 
-		$query = $query->where() ;
-		$this->_assert_equal('select * from pictures', $query->to_literal()) ;
+		$this->_assert_equal('select * from pictures', (string) $select) ;
 
-		$query = $query->where('id', 10) ;
+		$where = $select
+			->where('id');
+
+		$this->_assert_equal('select * from pictures where id'
+				, (string) $where) ;
+
+		$where_equals = $where
+			->equals(10) ;
+
 		$this->_assert_equal('select * from pictures where id=10'
-				, $query->to_literal()) ;
+				, (string) $where_equals) ;
 
-#		$query = $query->or_('id', 1) ;
-#		$this->_assert_equal($query->to_literal()
-#				, 'select * from pictures where id in (1, 2)') ;
-
+		$where_in = $select->where('id')->in(h\collection(1, 2)) ;
+		$this->_assert_equal('select * from pictures where id in (1, 2)'
+				, (string) $where_in) ;
 	}
 }
 

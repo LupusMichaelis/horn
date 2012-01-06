@@ -1,5 +1,5 @@
 <?php
-/** database class definition
+/** select class definition
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -30,35 +30,54 @@ use \horn\lib as h ;
 require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/collection.php' ;
 
-require_once 'horn/lib/sql/select.php' ;
+require_once 'horn/lib/sql/query.php' ;
 
-class forge
-	extends h\object_public
+class select
+	extends query
 {
-	public		function __construct(\mysqli $dbcon)
+	protected	$_fields ;
+	protected	$_criteria ;
+
+	public		function __construct(h\collection $fields = null)
 	{
+		$this->_fields = h\collection() ;
+		$this->_criteria = h\collection() ;
 		parent::__construct() ;
-		$this->_handler = $dbcon ;
-
-		if($this->_handler->connect_errno)
-			$this->_throw($this->_handler->connect_error) ;
+		$this->fields = $fields ;
 	}
 
-	public		function select(/* $fields = array() */)
+	public		function values($fields)
 	{
-		$fields = func_get_args() ;
-		$fields = ! func_num_args()
-			? h\collection()
-			: h\collection($fields) ;
-		return new select($fields) ;
+		$q = $this->q(); ;
+		$q->values[] = $fields ;
+		return $q ;
 	}
 
-
-	public		function expression($content)
+	public		function insert($fields)
 	{
-		return new expression($content) ;
+		$q = new insert($this) ;
+		$q->fields = $fields ;
+		return $q ;
 	}
 
-	private		$_handler ;
+	public		function from($table)
+	{
+		$q = $this->q(); ;
+		$q->table = $table ;
+		return $q ;
+	}
+
+	protected	function _to_string()
+	{
+		$pattern = 'select %s from %s' ;
+		$fields = count($this->fields)
+			? $this->fields->implode(', ')
+			: '*' ;
+		$select = sprintf($pattern, $fields, $this->table) ;
+
+		$where = (string) $this->_where;
+
+		return strlen($where) ? "$select where $where" : $select ;
+	}
 }
 

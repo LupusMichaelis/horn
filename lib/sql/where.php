@@ -1,5 +1,5 @@
 <?php
-/** database class definition
+/** where class definition
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -30,35 +30,48 @@ use \horn\lib as h ;
 require_once 'horn/lib/object.php' ;
 require_once 'horn/lib/collection.php' ;
 
-require_once 'horn/lib/sql/select.php' ;
-
-class forge
+class where
 	extends h\object_public
 {
-	public		function __construct(\mysqli $dbcon)
+	protected $_stack ;
+
+	public		function __construct($operand)
 	{
+		$this->_stack = h\collection() ;
 		parent::__construct() ;
-		$this->_handler = $dbcon ;
-
-		if($this->_handler->connect_errno)
-			$this->_throw($this->_handler->connect_error) ;
+		$this->stack[] = $operand ;
 	}
 
-	public		function select(/* $fields = array() */)
+	public		function equals($operand)
 	{
-		$fields = func_get_args() ;
-		$fields = ! func_num_args()
-			? h\collection()
-			: h\collection($fields) ;
-		return new select($fields) ;
+		$this->stack[] = '=' ;
+		$this->stack[] = $operand ;
+
+		return $this ;
 	}
 
-
-	public		function expression($content)
+	public		function in(h\collection $list)
 	{
-		return new expression($content) ;
+		$this->stack[] = ' in ' ;
+		$this->stack[] = '('.$list->implode(', ').')' ;
+
+		return $this ;
 	}
 
-	private		$_handler ;
+	public		function _to_string()
+	{
+		return $this->stack->implode('') ;
+	}
+
+	/*
+		if(count($this->criteria) > 0)
+		{
+			$where = ' where ' ;
+			foreach($this->criteria as $c)
+			{
+				$c = $this->criteria[0] ;
+				$where = " where {$c[0]}={$c[1]}" ;
+			}
+	*/
 }
 
