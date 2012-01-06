@@ -172,6 +172,25 @@ class object_base
 			;
 	}
 
+	/**
+	 *
+	 */
+	public		function __tostring()
+	{
+		if(!method_exists($this, '_to_string'))
+
+			trigger_error(sprintf('No %s::_to_string method provided', get_class($this)), E_USER_ERROR) ;
+
+		try {
+			$s = $this->_to_string() ;
+		} catch(\exception $e) {
+			/// @todo better format
+			die(var_export($e, true)) ;
+		}
+
+		return (string) $s ;
+	}
+
 	/**	Assign the $object_source to $this with inheritance care. The behaviour can be custom, just override protected
 	 *	functions _assign_object, _assign_descendant and _assign_ancestor.
 	 *	\param	$object_source	object_base	
@@ -488,10 +507,8 @@ class object_base
 	{
 		$this->_throw("Instance method '$name' is missing.") ;
 	}
-
 }  
  
-
 /** Generic object class with public constructor.
  */
 class object_public

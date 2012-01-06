@@ -99,13 +99,14 @@ class collection
 	public		function implode($glue)
 	{
 		if(!($glue instanceof string))
-			$glue = new string($glue) ;
+			$glue = string($glue) ;
 
-		$crunch = new string ;
+		$crunch = string('') ;
 		$length = $this->count() ;
 		$i = 0 ;
 		foreach($this as $bit)
 		{
+			$bit = string($bit) ;
 			$crunch->append($bit) ;
 			// No glue at back of string
 			if($i < $length - 1)

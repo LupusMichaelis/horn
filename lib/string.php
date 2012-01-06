@@ -73,6 +73,16 @@ class string
 	{
 		parent::__construct() ;
 
+		if(!is_null($copied))
+		{
+			$copied = (string) $copied ;
+		}
+
+		if(!is_null($charset) && !is_string($charset))
+		{
+			$this->_throw('charset') ;
+		}
+
 		$this->scalar = $copied ;
 		$this->charset = $charset ;
 	}
@@ -105,7 +115,7 @@ class string
 
 	/**
 	 */
-	public		function __tostring()
+	public		function _to_string()
 	{
 		return (string) $this->_scalar ;
 	}
