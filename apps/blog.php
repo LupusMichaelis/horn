@@ -7,21 +7,39 @@ require_once 'horn/lib/collection.php' ;
 require_once 'horn/lib/string.php' ;
 
 require_once 'horn/lib/app.php' ;
+require_once 'horn/lib/db/connect.php' ;
 require_once 'horn/lib/render/html.php' ;
 require_once 'horn/lib/render/rss.php' ;
+
+class blog_model
+	extends h\collection
+{
+	protected	$_posts ;
+
+	public		function __construct()
+	{
+		$this->posts = h\collection() ;
+
+		parent::__construct() ;
+
+		$this->posts->push(post::create('First post', 'This is a very first post')) ;
+		$this->posts->push(post::create('Second post', 'This is a most recent post')) ;
+		$this->posts->push(post::create('Third post', 'This is an awful last post')) ;
+	}
+}
 
 class blog
 	extends h\app
 {
-	protected	$_posts ;
+	protected		function &_get_model()
+	{
+		//$db = h\db\connect($this->config['db']);
+		$model = new blog_model(/*$db*/) ;
+		return $model ;
+	}
 
 	public		function run()
 	{
-		$this->posts = new h\collection ;
-		$this->posts->push(post::create('First post', 'This is a very first post')) ;
-		$this->posts->push(post::create('Second post', 'This is a most recent post')) ;
-		$this->posts->push(post::create('Third post', 'This is an awful last post')) ;
-
 		$this->prepare_renderer() ;
 		return $this ;
 	}
@@ -55,7 +73,7 @@ class blog
 		$doc->title = h\string('My new blog') ;
 		$doc->register('post', $types[$type][1]) ;
 
-		foreach($this->posts as $post)
+		foreach($this->model->posts as $post)
 			$doc->render('post', $post) ;
 
 		$this->response->body->content = $doc ;

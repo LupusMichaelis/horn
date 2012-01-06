@@ -25,7 +25,7 @@ function run(http\request $in, http\response $out, $config)
 	ksort($routing) ;
 	foreach($routing as $key => $value)
 		if($key === 0)
-			$main = new $value($in, $out) ;
+			$main = new $value($in, $out, $config) ;
 		elseif(400 < $key && $key < 600) // XXX refine that
 			$main->add_error_handler($key, $value) ;
 		else
@@ -41,11 +41,16 @@ class app
 	protected	$_request ;
 	protected	$_response ;
 
+	protected	$_config ;
+
+	protected	$_data_proxy ;
+
 	abstract
 	public		function run() ;
 
-	public		function __construct(http\request $in, http\response $out)
+	public		function __construct(http\request $in, http\response $out, $config)
 	{
+		$this->_config = $config ;
 		$this->_request = $in ;
 		$this->_response = $out ;
 

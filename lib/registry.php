@@ -50,6 +50,8 @@ class registry
 	{
 		$ref = & $this->_tree ;
 		$this->_current = (object) array('ref' => &$ref) ;
+
+		parent::__construct() ;
 	}
 
 	public		function cd($path)
