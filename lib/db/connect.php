@@ -33,12 +33,12 @@ require_once 'horn/lib/object.php' ;
 const MYSQL = 'mysql' ;
 const COMPOSITE = 'composite' ;
 
-function connect($specification)
+function open($specification)
 {
 	$factory = new database_factory($specification) ;
 	$con = $factory->create() ;
 
-	$con->connect() ;
+	$con->open() ;
 	return $con ;
 }
 
@@ -56,7 +56,7 @@ class database_factory
 	public		function create()
 	{
 		$db = $this->build() ;
-		$db->connect() ;
+		$db->open() ;
 		return $db ;
 	}
 
@@ -87,7 +87,10 @@ class database
 	}
 
 	abstract
-	public		function connect() ;
+	public		function open() ;
+
+	abstract
+	public		function close() ;
 }
 
 
@@ -96,8 +99,9 @@ class database_mysql
 	extends database
 {
 	private		$_con ;
+	protected	$_charset ;
 
-	public		function connect()
+	public		function open()
 	{
 		$this->_con = new \mysqli
 			( $this->specification['host']
@@ -105,6 +109,46 @@ class database_mysql
 			, $this->specification['password']
 			, $this->specification['base']
 			) ;
+
+		if($this->_con->connect_errno)
+			$this->_throw($this->_con->connect_error) ;
+
+		if(array_key_exists('charset', $this->specification))
+			$this->charset = $this->specification['charset'] ;
+	}
+
+	protected	function _set_charset($charset)
+	{
+		/// XXX check charset
+		$this->_charset = $charset ;
+		$this->_con->set_charset($charset) ;
+	}
+
+	protected	function &_get_charset()
+	{
+		if(is_null($this->_charset))
+		{
+			$this->_charset = $this->_con->get_charset() ;
+		}
+
+		return $this->_charset ;
+	}
+
+	public		function close()
+	{
+		$this->_con->close() ;
+		$this->_con = null ;
+	}
+
+	public		function query(h\string $sql)
+	{
+		$result = $this->_con->query($sql) ;
+		return array($result->fetch_assoc()) ;
+	}
+
+	public		function escape(h\string $sql)
+	{
+		$sql->scalar = $this->_con->real_escape_string($sql->scalar) ;
 	}
 }
 

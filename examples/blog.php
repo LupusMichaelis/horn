@@ -1,6 +1,6 @@
 <?php
 
-require_once 'horn/apps/blog.php' ;
+require_once 'horn/apps/blog/app.php' ;
 require_once 'horn/lib/router.php' ;
 
 // Everything is routed to info application
@@ -10,9 +10,10 @@ $config = array
 	, 'db' => array
 		( 'type' => \horn\lib\db\MYSQL
 		, 'host' => 'localhost'
-		, 'user' => 'test'
-		, 'password' => 'test'
-		, 'base' => 'test'
+		, 'user' => 'horn'
+		, 'password' => 'horn'
+		, 'base' => 'horn'
+		, 'charset' => 'utf8'
 		)
 	) ;
 
