@@ -52,6 +52,8 @@ class date
 	protected	$_month ;
 	protected	$_day ;
 
+	protected	$_timestamp ;
+
 	public		function __construct($year=0, $month=0, $day=0)
 	{
 		$this->_day = (int) $day ;
@@ -99,6 +101,31 @@ class date
 	{
 		return strftime($fmt
 				, mktime(0, 0, 0, $this->month, $this->day, $this->year)) ;
+	}
+
+	static
+	protected	$today = null ;
+	static		function new_today()
+	{
+		if(is_null(self::$today))
+		{
+			$aday = getdate() ;
+			self::$today = new self($aday['year'], $aday['mon'], $aday['mday']) ;
+		}
+
+		return self::$today ;
+	}
+
+	static		function new_tomorrow()
+	{
+		self::new_today() ;
+		return self::$today->tomorrow() ;
+	}
+
+	static		function new_yesterday()
+	{
+		self::new_today() ;
+		return self::$today->yesterday() ;
 	}
 
 	/** \todo think about l10n
@@ -240,6 +267,8 @@ class week
 		$this->week = $weekno ;
 		$this->year = $year ;
 
+		parent::__construct() ;
+
 		$day = date::new_from_format("$year-W$weekno") ;
 		$this->push($day) ;
 		while($day->get_day_of_week() != 7)
@@ -298,7 +327,7 @@ class week
 		}
 
 		if(!is_integer($offset) || $offset < 0 || $offset > 6)
-			throw new exception('Unknown day') ;
+			$this->_throw('Unknown day') ;
 
 #		$date = date::new_from_format("{$this->year}-W{$this->week} $offset") ;
 

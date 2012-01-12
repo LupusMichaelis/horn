@@ -55,8 +55,8 @@ class date_time
 
 	static		function from_date(date $day)
 	{
-		$new = self ;
-		$new->_date->copy($day) ;
+		$new = new self ;
+		$new->_date->assign($day) ;
 
 		return $new ;
 	}
