@@ -87,14 +87,14 @@ class suite
 		$this->cases->push($test) ;
 	}
 
-	protected	function _assert_equal($left, $right)
+	protected	function _assert_equals($expected, $actual)
 	{
 		$messages = array
 			( 'Testing equality.'
 			, 'true' => 'Equality ok'
-			, 'false' => sprintf('Not equal (expected \'%s\' != actual \'%s\')', $left, $right)
+			, 'false' => sprintf('Not equal (expected \'%s\' != actual \'%s\')', $expected, $actual)
 			) ;
-		$this->assert($left == $right, $messages) ;
+		$this->assert($expected == $actual, $messages) ;
 	}
 
 	protected	function _assert_is_set($variable)

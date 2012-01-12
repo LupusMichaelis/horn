@@ -40,6 +40,7 @@ $available_units = array
 	, 'collection'
 	, 'string'
 	, 'time'
+	, 'date'
 #	, 'file'
 	, 'sql'
 	) ;
@@ -52,6 +53,10 @@ else
 {
 	array_shift($argv) ;
 	$units = array_intersect($available_units, $argv) ;
+	$unknown_units = array_diff($argv, $available_units) ;
+
+	if(count($unknown_units))
+		die(sprintf("Unknown units [%s]\n", implode('|', $unknown_units)));
 }
 
 foreach($units as $unit)
@@ -74,11 +79,5 @@ foreach($units as $unit)
 		if(DEBUG) throw $e ;
 	}
 }
-
-
-
-
-
-
 
 

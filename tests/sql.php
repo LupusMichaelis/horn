@@ -53,7 +53,7 @@ class test_suite_sql
 
 		$query = $db->select()
 			->from('pictures') ;
-		$this->_assert_equal((string) $query, 'select * from pictures') ;
+		$this->_assert_equals((string) $query, 'select * from pictures') ;
 
 		return $query ;
 	}
@@ -62,22 +62,22 @@ class test_suite_sql
 	{
 		$select = $this->_test_select_from() ;
 
-		$this->_assert_equal('select * from pictures', (string) $select) ;
+		$this->_assert_equals('select * from pictures', (string) $select) ;
 
 		$where = $select
 			->where('id');
 
-		$this->_assert_equal('select * from pictures where id'
+		$this->_assert_equals('select * from pictures where id'
 				, (string) $where) ;
 
 		$where_equals = $where
 			->equals(10) ;
 
-		$this->_assert_equal('select * from pictures where id=10'
+		$this->_assert_equals('select * from pictures where id=10'
 				, (string) $where_equals) ;
 
 		$where_in = $select->where('id')->in(h\collection(1, 2)) ;
-		$this->_assert_equal('select * from pictures where id in (1, 2)'
+		$this->_assert_equals('select * from pictures where id in (1, 2)'
 				, (string) $where_in) ;
 	}
 }

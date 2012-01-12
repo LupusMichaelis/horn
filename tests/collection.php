@@ -22,7 +22,7 @@ class test_suite_collection
 	protected	function _test_array()
 	{
 		$this->_test_stack() ;
-		$this->_assert_equal($this->target->count(), 0) ;
+		$this->_assert_equals(0, $this->target->count()) ;
 		$this->_test_add() ;
 	}
 
