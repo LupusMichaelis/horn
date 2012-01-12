@@ -17,19 +17,23 @@ function render(http\response $out)
 	ob_end_flush() ;
 }
 
-function run(http\request $in, http\response $out, $config)
+function run(http\request $in, http\response $out, &$config)
 {
 	setlocale(LC_ALL, $config['locale']) ;
 
-	$routing = &$config['routing'];
-	ksort($routing) ;
-	foreach($routing as $key => $value)
-		if($key === 0)
-			$main = new $value($in, $out, $config) ;
-		elseif(400 < $key && $key < 600) // XXX refine that
-			$main->add_error_handler($key, $value) ;
-		else
-			$main->add_route($key, $value) ;
+	if(array_key_exists('routing', $config))
+	{
+		$routing = &$config['routing'];
+
+		ksort($routing) ;
+		foreach($routing as $key => $value)
+			if($key === 0)
+				$main = new $value($in, $out, $config) ;
+			elseif(400 < $key && $key < 600) // XXX refine that
+				$main->add_error_handler($key, $value) ;
+			else
+				$main->add_route($key, $value) ;
+	}
 
 	return $main ;
 }
