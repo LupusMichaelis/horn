@@ -4,7 +4,7 @@ create table stories
 , created		datetime	not null
 
 , modified		timestamp	not null
-, title			varchar(80)
+, caption		varchar(80)
 , description	varchar(160)
 
 , primary key	(id)
