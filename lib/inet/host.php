@@ -27,10 +27,10 @@
 
 namespace horn\lib\inet ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/inet/url.php' ;
-require_once 'horn/lib/regex.php' ;
-require_once 'horn/lib/regex-defs.php' ;
+import('lib/object') ;
+import('lib/inet/url') ;
+import('lib/regex') ;
+import('lib/regex-defs') ;
 
 abstract class inet
 	extends		\horn\lib\object_protected

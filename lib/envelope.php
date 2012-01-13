@@ -29,7 +29,7 @@
  */
 namespace horn\lib ;
 
-require_once 'horn/lib/object.php' ;
+import('lib/object') ;
 
 /**
  */

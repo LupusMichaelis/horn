@@ -27,8 +27,8 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/collection.php' ;
+import('lib/object') ;
+import('lib/collection') ;
 
 /** Check if the provided variable is a string or not
  *  \param	any		$variable

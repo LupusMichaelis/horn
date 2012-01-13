@@ -29,8 +29,10 @@
 use horn\lib as h ;
 use horn\lib\test as t ;
 
-require_once 'horn/lib/test.php' ;
-require_once 'horn/lib/test/cli.php' ;
+require'horn/lib/horn.php' ;
+
+h\import('lib/test') ;
+h\import('lib/test/cli') ;
 
 define('DEBUG', true) ;
 

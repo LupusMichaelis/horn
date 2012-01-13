@@ -1,8 +1,10 @@
 <?php
 
-require_once 'horn/apps/info.php' ;
-require_once 'horn/apps/blog.php' ;
-require_once 'horn/lib/router.php' ;
+require 'horn/lib/horn.php' ;
+
+\horn\lib\import('apps/info') ;
+\horn\lib\import('apps/blog/app') ;
+\horn\lib\import('lib/router') ;
 
 $in = \horn\lib\http\request::create_native() ;
 $out = new \horn\lib\http\response ;
@@ -14,7 +16,9 @@ $routing = array
 	, '/info' => '\horn\apps\info'
 	) ;
 
-$main = \horn\lib\run($in, $out, $routing) ;
+$config = array('routing' => $routing) ;
+
+$main = \horn\lib\run($in, $out, $config) ;
 $main->run() ;
 
 \horn\lib\render($out) ;

@@ -27,7 +27,7 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/registry.php' ;
+import('lib/registry') ;
 
 class configuration
 	extends registry

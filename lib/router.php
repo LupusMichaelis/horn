@@ -2,8 +2,8 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/app.php' ;
-require_once 'horn/lib/http/message.php' ;
+import('lib/app') ;
+import('lib/http/message') ;
 
 class simple_router
 	extends app

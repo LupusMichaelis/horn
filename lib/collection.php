@@ -26,8 +26,8 @@
  */
 namespace horn\lib ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/string.php' ;
+import('lib/object') ;
+import('lib/string') ;
 
 function is_collection($variable)
 {

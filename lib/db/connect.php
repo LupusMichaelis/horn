@@ -28,7 +28,7 @@
 namespace horn\lib\db ;
 use horn\lib as h ;
 
-require_once 'horn/lib/object.php' ;
+h\import('lib/object') ;
 
 const MYSQL = 'mysql' ;
 const COMPOSITE = 'composite' ;

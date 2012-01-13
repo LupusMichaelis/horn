@@ -28,8 +28,8 @@
 namespace horn\apps ;
 use \horn\lib as h ;
 
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/string.php' ;
+h\import('lib/collection') ;
+h\import('lib/string') ;
 
 class post
 	extends h\object_public

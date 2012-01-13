@@ -34,6 +34,8 @@
 
 namespace horn\lib\test ;
 
-require_once 'horn/lib/test/suite.php' ;
-require_once 'horn/lib/test/context.php' ;
+use horn\lib as h ;
+
+h\import('lib/test/suite') ;
+h\import('lib/test/context') ;
 

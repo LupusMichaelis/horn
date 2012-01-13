@@ -28,9 +28,9 @@
 
 namespace horn ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/graph_geometry.php' ;
+import('lib/object') ;
+import('lib/collection') ;
+import('lib/graph_geometry') ;
 
 const IMAGE_JPEG_TYPE = 'image/jpeg' ;
 

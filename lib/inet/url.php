@@ -28,12 +28,12 @@
 namespace horn\lib\inet ;
 using \horn\lib as h ;
 
-require_once 'horn/lib/url.php' ;
-require_once 'horn/lib/inet/host.php' ;
-require_once 'horn/lib/string.php' ;
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/regex.php' ;
-require_once 'horn/lib/regex-defs.php' ;
+import('lib/url') ;
+import('lib/inet/host') ;
+import('lib/string') ;
+import('lib/collection') ;
+import('lib/regex') ;
+import('lib/regex-defs') ;
 
 /** \brief URL describes in RFC 1738
   * \code

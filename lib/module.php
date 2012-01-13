@@ -1,6 +1,5 @@
 <?php
-/** \file
- *	Horn HQ
+/** 
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -26,22 +25,39 @@
  *
  */
 
-/** \package horn
- */
 namespace horn\lib ;
 
-require 'horn/lib/module.php' ;
-import('lib/object') ;
-
-function dump($variable)
+final
+class module
 {
-	ob_start() ;
-	\var_dump($variable) ;
-	$desc = ob_get_contents() ;
-	ob_end_clean() ;
+	// Stack loaded files. Default values are set to avoid conflicts.
+	static
+	private		$_loaded = array('horn/lib/horn.php', 'horn/lib/module.php') ;
 
-	return $desc ;
+	static
+	private		$_include_path = 'horn/' ;
+
+	static
+	public		function load_file($file_name)
+	{
+		if(in_array($file_name, self::$_loaded))
+			return ;
+
+		self::$_loaded[] = $file_name ;
+		require $file_name ;
+	}
+
+	static
+	public		function load($module_name)
+	{
+		//$module_name = implode('/', explode('.', $module_name)) ;
+		self::load_file(self::$_include_path . $module_name . '.php') ;
+	}
 }
 
+function import($module)
+{
+	return module::load($module) ;
+}
 
 

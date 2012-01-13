@@ -1,7 +1,9 @@
 <?php
 
-require_once 'horn/apps/info.php' ;
-require_once 'horn/lib/router.php' ;
+require 'horn/lib/horn.php' ;
+
+\horn\lib\import('apps/info') ;
+\horn\lib\import('lib/router') ;
 
 $in = \horn\lib\http\request::create_native() ;
 $out = new \horn\lib\http\response ;

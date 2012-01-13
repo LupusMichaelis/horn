@@ -34,7 +34,7 @@
 namespace horn\filesystem ;
 use horn as h ;
 
-require_once 'horn/lib/object.php' ;
+import('lib/object') ;
 
 const KILOBI = 1024 ;
 const MEGABI = 1048576 ;

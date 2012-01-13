@@ -1,9 +1,10 @@
 <?php
 
 namespace horn\lib ;
+use horn\lib as h ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/http/message.php' ;
+h\import('lib/object') ;
+h\import('lib/http/message') ;
 
 function render(http\response $out)
 {
@@ -19,7 +20,8 @@ function render(http\response $out)
 
 function run(http\request $in, http\response $out, &$config)
 {
-	setlocale(LC_ALL, $config['locale']) ;
+	if(array_key_exists('locale', $config))
+		setlocale(LC_ALL, $config['locale']) ;
 
 	if(array_key_exists('routing', $config))
 	{

@@ -4,8 +4,8 @@ namespace tests ;
 use horn\lib as h ;
 use horn\lib\test as t ;
 
-require_once 'horn/lib/horn.php' ;
-require_once 'horn/lib/test.php' ;
+h\import('lib/horn') ;
+h\import('lib/test') ;
 
 class test_suite_test
 	extends t\suite

@@ -30,7 +30,7 @@ namespace tests ;
 use horn\lib as h ;
 use horn\lib\test as t ;
 
-require_once 'horn/lib/sql/database.php' ;
+h\import('lib/sql/database') ;
 
 class test_suite_sql
 	extends t\suite_object

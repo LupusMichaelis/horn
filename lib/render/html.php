@@ -2,9 +2,9 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/string.php' ;
-require_once 'horn/lib/collection.php' ;
+import('lib/object') ;
+import('lib/string') ;
+import('lib/collection') ;
 
 class html
 	extends object_public

@@ -27,10 +27,10 @@
 namespace horn\lib\sql ;
 use \horn\lib as h ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/collection.php' ;
+h\import('lib/object') ;
+h\import('lib/collection') ;
 
-require_once 'horn/lib/sql/query.php' ;
+h\import('lib/sql/query') ;
 
 class select
 	extends query

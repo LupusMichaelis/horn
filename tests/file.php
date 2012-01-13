@@ -2,8 +2,10 @@
 
 namespace horn ;
 
-require_once 'horn/lib/file.php' ;
-require_once 'horn/lib/test.php' ;
+use \horn\lib as h ;
+
+h\import('lib/file') ;
+h\import('lib/test') ;
 
 class test_unit_file
 	extends test\unit_object

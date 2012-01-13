@@ -28,17 +28,17 @@
 namespace horn\apps ;
 use \horn\lib as h ;
 
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/string.php' ;
+h\import('lib/collection') ;
+h\import('lib/string') ;
 
-require_once 'horn/lib/app.php' ;
-require_once 'horn/lib/db/connect.php' ;
+h\import('lib/app') ;
+h\import('lib/db/connect') ;
 
-require_once 'horn/lib/time/date_time.php' ;
-require_once 'horn/lib/string.php' ;
+h\import('lib/time/date_time') ;
+h\import('lib/string') ;
 
-require_once 'horn/apps/blog/model.php' ;
-require_once 'horn/apps/blog/view.php' ;
+h\import('apps/blog/model') ;
+h\import('apps/blog/view') ;
 
 class blog
 	extends h\app

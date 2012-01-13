@@ -33,9 +33,9 @@
 /* :%s/\$this->_throw_format(\(.*\), \(.*\)) ;$/throw new exception(sprintf(\1, \2)) ;/g
  */
 namespace horn\lib ;
+use horn\lib as h ;
 
-require_once 'horn/lib/horn.php' ;
-require_once 'horn/lib/exception.php' ;
+h\import('lib/exception') ;
 
 /** Ensure homogenic access to properties.
  *

@@ -27,8 +27,8 @@
 namespace horn\lib\sql ;
 use \horn\lib as h ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/collection.php' ;
+h\import('lib/object') ;
+h\import('lib/collection') ;
 
 class where
 	extends h\object_public

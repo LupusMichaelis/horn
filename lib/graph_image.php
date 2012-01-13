@@ -26,11 +26,11 @@
  *
  */
 
-namespace horn ;
+namespace horn\lib ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/graph.php' ;
-require_once 'horn/lib/image.php' ;
+import('lib/object') ;
+import('lib/graph') ;
+import('lib/image') ;
 
 /**
  *	\todo	color aware

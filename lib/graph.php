@@ -28,8 +28,8 @@
 
 namespace horn ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/graph_geometry.php' ;
+import('lib/object') ;
+import('lib/graph_geometry') ;
 
 class coordinate
 	extends object_public

@@ -28,7 +28,7 @@
 
 namespace horn ;
 
-require_once 'horn/lib/object.php' ;
+import('lib/object') ;
 
 /** Position in screen
  */

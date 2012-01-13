@@ -27,7 +27,7 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/collection.php' ;
+import('lib/collection') ;
 
 // \todo		refactor to make it lazy
 class day_array

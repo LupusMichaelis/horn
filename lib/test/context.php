@@ -4,10 +4,10 @@
 namespace horn\lib\test ;
 use horn\lib as h ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/string.php' ;
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/callback.php' ;
+h\import('lib/object') ;
+h\import('lib/string') ;
+h\import('lib/collection') ;
+h\import('lib/callback') ;
 
 /** Test management.
  *	This class provides a way to handle test running. The test is actually done in a

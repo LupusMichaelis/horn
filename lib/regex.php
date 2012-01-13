@@ -27,7 +27,7 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/string.php' ;
+import('lib/string') ;
 
 class regex
 	extends		object_public

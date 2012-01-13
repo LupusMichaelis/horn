@@ -2,7 +2,9 @@
 
 namespace horn\lib\http ;
 
-require_once 'horn/lib/collection.php' ;
+use horn\lib as h ;
+
+h\import('lib/collection') ;
 
 class uri
 	extends \horn\lib\object_public

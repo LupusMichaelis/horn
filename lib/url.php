@@ -27,10 +27,10 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/string.php' ;
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/regex.php' ;
-require_once 'horn/lib/regex-defs.php' ;
+import('lib/string') ;
+import('lib/collection') ;
+import('lib/regex') ;
+import('lib/regex-defs') ;
 
 class uri
 	extends		object_public

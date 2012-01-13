@@ -33,7 +33,7 @@
  */
 namespace horn\lib ;
 
-require_once 'horn/lib/filesystem.php' ;
+import('lib/filesystem') ;
 
 /** \todo	Files have to know about filesystem issue. So, when a file is contained in
  *			another file, he'll try to write himself to filesystem. That's stupid.

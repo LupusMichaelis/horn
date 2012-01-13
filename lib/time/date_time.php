@@ -27,9 +27,9 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/time/date.php' ;
-require_once 'horn/lib/time/time.php' ;
+import('lib/object') ;
+import('lib/time/date') ;
+import('lib/time/time') ;
 
 function now()
 {

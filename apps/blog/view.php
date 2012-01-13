@@ -28,11 +28,11 @@
 namespace horn\apps ;
 use \horn\lib as h ;
 
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/string.php' ;
+h\import('lib/collection') ;
+h\import('lib/string') ;
 
-require_once 'horn/lib/render/html.php' ;
-require_once 'horn/lib/render/rss.php' ;
+h\import('lib/render/html') ;
+h\import('lib/render/rss') ;
 
 function render_post_html(\domelement $canvas, post $post)
 {

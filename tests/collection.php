@@ -4,8 +4,8 @@ namespace tests ;
 use horn\lib as h ;
 use horn\lib\test as t ;
 
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/test.php' ;
+h\import('lib/collection') ;
+h\import('lib/test') ;
 
 class test_suite_collection
 	extends t\suite_object

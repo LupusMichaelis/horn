@@ -27,8 +27,8 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/time/time.php' ;
-require_once 'horn/lib/time/date.php' ;
+import('lib/time/time') ;
+import('lib/time/date') ;
 
 // WTF ! Why must I set the timzone, why set the tz is safer than using
 // system setting ? Must I set the clock at every scrip invokation ?

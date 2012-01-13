@@ -4,8 +4,8 @@ namespace tests ;
 use horn\lib as h ;
 use horn\lib\test as t ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/test.php' ;
+h\import('lib/object') ;
+h\import('lib/test') ;
 
 // Test class
 class thing_public

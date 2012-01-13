@@ -4,9 +4,9 @@ namespace tests ;
 use horn\lib as h ;
 use horn\lib\test as t ;
 
-require_once 'horn/lib/test.php' ;
-//require_once 'horn/lib/date.php' ;
-require_once 'horn/lib/time.php' ;
+h\import('lib/test') ;
+//h\import('lib/date') ;
+h\import('lib/time') ;
 
 class test_suite_time
 	extends t\suite_object

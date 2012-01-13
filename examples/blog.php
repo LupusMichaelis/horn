@@ -1,7 +1,11 @@
 <?php
 
-require_once 'horn/apps/blog/app.php' ;
-require_once 'horn/lib/router.php' ;
+use horn\lib as h ;
+
+require 'horn/lib/horn.php' ;
+
+h\import('apps/blog/app') ;
+h\import('lib/router') ;
 
 // Everything is routed to info application
 $config = array

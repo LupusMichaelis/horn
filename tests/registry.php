@@ -1,6 +1,7 @@
 <?php
 
-require_once 'horn/lib/registry.php' ;
+use \horn\lib as h ;
+h\import('lib/registry') ;
 
 try
 {

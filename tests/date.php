@@ -31,7 +31,7 @@ namespace tests ;
 use horn\lib as h ;
 use horn\lib\test as t ;
 
-require_once 'horn/lib/time/date.php' ;
+h\import('lib/time/date') ;
 
 clASS test_suite_date
 	extends t\suite_object

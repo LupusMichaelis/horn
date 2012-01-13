@@ -27,7 +27,9 @@
 
 namespace horn\lib\http ;
 
-require_once 'horn/lib/inet/url.php' ;
+use horn\lib as h ;
+
+h\import('lib/inet/url') ;
 
 /**
  *	\code

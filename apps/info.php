@@ -2,7 +2,9 @@
 
 namespace horn\apps ;
 
-require_once 'horn/lib/app.php' ;
+require_once 'horn/lib/horn.php' ;
+
+\horn\lib\import('lib/app') ;
 
 class info
 	extends \horn\lib\app

@@ -27,9 +27,9 @@
 
 namespace horn\lib ;
 
-require_once 'horn/lib/object.php' ;
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/callback.php' ;
+import('lib/object') ;
+import('lib/collection') ;
+import('lib/callback') ;
 
 /** Observable interface.
  *

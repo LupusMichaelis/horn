@@ -27,11 +27,11 @@
 
 namespace horn\lib\inet ;
 
-require_once 'horn/lib/inet/host.php' ;
-require_once 'horn/lib/string.php' ;
-require_once 'horn/lib/collection.php' ;
-require_once 'horn/lib/regex.php' ;
-require_once 'horn/lib/regex-defs.php' ;
+import('lib/inet/host') ;
+import('lib/string') ;
+import('lib/collection') ;
+import('lib/regex') ;
+import('lib/regex-defs') ;
 
 /** \brief		HTTP handling
   *
