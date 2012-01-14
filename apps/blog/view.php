@@ -34,28 +34,30 @@ h\import('lib/string') ;
 h\import('lib/render/html') ;
 h\import('lib/render/rss') ;
 
-function render_post_html(\domelement $canvas, post $post)
+function render_story_html(\domelement $canvas, story $story)
 {
 	$od = $canvas->ownerDocument ;
 	$div = $canvas->appendChild($od->createElement('div')) ;
-	$div->appendChild($od->createElement('h2', $post->title)) ;
+	$div->appendChild($od->createElement('h2', $story->title)) ;
 	$meta = $div->appendChild($od->createElement('p')) ;
-	$meta->appendChild($od->createElement('span', (string) $post->created)) ;
-	$meta->appendChild($od->createElement('span', (string) $post->modified)) ;
-	$div->appendChild($od->createElement('p', $post->description)) ;
+	$meta->appendChild($od->createElement('span', (string) $story->created)) ;
+	$meta->appendChild($od->createElement('span', (string) $story->modified)) ;
+	$link = $meta->appendChild($od->createElement('a', 'go')) ;
+	$link->setAttribute('href', render_story_link($story)) ;
+	$div->appendChild($od->createElement('p', $story->description)) ;
 
 	return $div ;
 }
 
-function render_post_rss(\domelement $canvas, post $post)
+function render_story_rss(\domelement $canvas, story $story)
 {
 	$od = $canvas->ownerDocument ;
 	$i = $od->createElement('item') ;
-	$i->setAttribute('rdf:about', render_post_link($post)) ;
+	$i->setAttribute('rdf:about', render_story_link($story)) ;
 	$l = array
-		( 'title' => $post->title
-		, 'link' => render_post_link($post)
-		, 'description' => $post->description
+		( 'title' => $story->title
+		, 'link' => render_story_link($story)
+		, 'description' => $story->description
 		) ;
 	foreach($l as $t => $c)
 	{
@@ -67,8 +69,8 @@ function render_post_rss(\domelement $canvas, post $post)
 }
 
 
-function render_post_link(post $post)
+function render_story_link(story $story)
 {
-	return '/story/'.urlencode($post->title) ;
+	return '/story/'.urlencode($story->title) ;
 }
 

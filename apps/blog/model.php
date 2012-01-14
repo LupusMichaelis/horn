@@ -31,7 +31,55 @@ use \horn\lib as h ;
 h\import('lib/collection') ;
 h\import('lib/string') ;
 
-class post
+class story_source
+	extends h\object_public
+{
+	protected	$_source ;
+
+	public		function __construct(h\db\database $db)
+	{
+		$this->_source = $db ;
+		parent::__construct() ;
+	}
+
+	public		function get_all()
+	{
+		$rows = $this->source->query(h\string('select * from stories')) ;
+
+		$stories = new stories ;
+
+		foreach($rows as $row)
+			$stories->push(story::create
+				( $row['caption']
+				, $row['description']
+				, $row['modified']
+				)
+			) ;
+
+		return $stories ;
+	}
+
+	public		function get_by_title(h\string $title)
+	{
+		$sql = h\string::format('select * from stories where caption = \'%s\'', $title) ;
+		$rows = $this->source->query($sql) ;
+
+		$stories = new stories ;
+
+		foreach($rows as $row)
+			$stories->push(story::create
+				( $row['caption']
+				, $row['description']
+				, $row['modified']
+				)
+			) ;
+
+		return $stories ;
+	}
+}
+
+
+class story
 	extends h\object_public
 {
 	protected	$_title ;
@@ -63,31 +111,8 @@ class post
 	}
 }
 
-class blog_model
+class stories
 	extends h\collection
 {
-	protected	$_source ;
-	protected	$_posts ;
-
-	public		function __construct(h\db\database $db)
-	{
-		$this->_source = $db ;
-		$this->_posts = h\collection() ;
-		parent::__construct() ;
-		$this->load() ;
-	}
-
-	private		function load()
-	{
-		$rows = $this->source->query(h\string('select * from stories')) ;
-
-		foreach($rows as $row)
-			$this->posts->push(post::create
-				( $row['caption']
-				, $row['description']
-				, $row['modified']
-				)
-			) ;
-	}
 }
 

@@ -30,6 +30,7 @@ use \horn\lib as h ;
 
 h\import('lib/collection') ;
 h\import('lib/string') ;
+h\import('lib/regex') ;
 
 h\import('lib/app') ;
 h\import('lib/db/connect') ;
@@ -43,17 +44,45 @@ h\import('apps/blog/view') ;
 class blog
 	extends h\app
 {
+	private			$_resource ;
+
 	protected		function &_get_model()
 	{
 		$db = h\db\open($this->config['db']);
-		$model = new blog_model($db) ;
+		$model = new story_source($db) ;
 		return $model ;
 	}
 
 	public		function run()
 	{
+		$this->do_routing() ;
 		$this->prepare_renderer() ;
 		return $this ;
+	}
+
+	private		function do_routing()
+	{
+		$path = h\string($this->request->uri->path) ;
+		$this->_resource = null ;
+
+		if($path->is_equal(h\string('/')))
+		{
+		}
+		elseif($path->is_equal(h\string('/stories')))
+		{
+			$this->_resource = $this->model->get_all() ;
+		}
+		else
+		{
+			$re = new h\regex('^/stories/(.+)$') ;
+
+			if($re->match($path))
+			{
+				$title = $re->get_result(1) ;
+				$title = h\string(urldecode($path->slice($title[0][0], $title[0][1]))) ;
+				$this->_resource = $this->model->get_by_title($title) ;
+			}
+		}
 	}
 
 	static
@@ -77,16 +106,21 @@ class blog
 	{
 		$type = static::desired_mime_type($this->request) ;
 		$types = array
-			( 'text/html' => array('\horn\lib\html', '\horn\apps\render_post_html')
-			, 'application/rss+xml' => array('\horn\lib\rss', '\horn\apps\render_post_rss')
+			( 'text/html' => array('\horn\lib\html', '\horn\apps\render_story_html')
+			, 'application/rss+xml' => array('\horn\lib\rss', '\horn\apps\render_story_rss')
 			) ;
 
 		$doc = new $types[$type][0] ;
 		$doc->title = h\string('My new blog') ;
-		$doc->register('post', $types[$type][1]) ;
+		$doc->register('story', $types[$type][1]) ;
 
-		foreach($this->model->posts as $post)
-			$doc->render('post', $post) ;
+		if($this->_resource instanceof h\string)
+			$doc->render('story', $this->_resource) ;
+		elseif($this->_resource instanceof h\collection)
+			foreach($this->_resource as $story)
+				$doc->render('story', $story) ;
+		else
+			$this->not_found() ;
 
 		$this->response->body->content = $doc ;
 		//$this->response->set_content_type($type, 'utf-8') ;
