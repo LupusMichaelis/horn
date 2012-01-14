@@ -44,15 +44,15 @@ class regex
 
 		// \todo check for delimiters in the pattern, and escape them
 
-		if($pattern instanceof string_ex)
+		if($pattern instanceof string)
 			$this->pattern = clone $pattern ;
 		if(is_null($pattern))
-			$this->pattern = new string_ex ;
+			$this->pattern = new string ;
 		else
-			$this->pattern = new string_ex((string) $pattern) ;
+			$this->pattern = new string((string) $pattern) ;
 	}
 
-	public		function match(string_ex $subject)
+	public		function match(string $subject)
 	{
 		$pattern = sprintf("%1\$s%2\$s%1\$s", $this->delimiter, $this->pattern) ;
 		$result = preg_match_all
