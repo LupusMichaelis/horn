@@ -117,6 +117,11 @@ class database_mysql
 			$this->charset = $this->specification['charset'] ;
 	}
 
+	protected	function _throw_query_error()
+	{
+		$this->_throw($this->_con->error) ;
+	}
+
 	protected	function _set_charset($charset)
 	{
 		/// XXX check charset
@@ -143,6 +148,9 @@ class database_mysql
 	public		function query(h\string $sql)
 	{
 		$result = $this->_con->query($sql) ;
+		if($result === false)
+			$this->_throw_query_error() ;
+
 		return array($result->fetch_assoc()) ;
 	}
 
