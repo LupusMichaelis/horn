@@ -6,30 +6,70 @@ use horn\lib as h ;
 
 h\import('lib/collection') ;
 
+class searchpart
+	extends h\collection_mutltivalue
+{
+	static
+	public		function from_string(string $s)
+	{
+		$new = new static ;
+
+		$parts = $s->explode('&') ;
+		foreach($parts as $part)
+		{
+			$pos = $part->search('=') ;
+			if($pos !== false)
+			{
+				$name = $part->head($pos) ;
+				$value = $part->tail($pos + 1) ;
+			}
+			else
+			{
+				$name = $part ;
+				$value = null ;
+			}
+
+			$pos = $name->search('[]') ;
+			if($pos !== false)
+				$name = $name->head(-2) ;
+
+			$new[$name] = urldecode($value) ;
+		}
+		var_dump($this) ;
+	}
+}
+
 class uri
-	extends \horn\lib\object_public
+	extends h\object_public
 {
 	protected	$_path ;
 	protected	$_searchpart ;
 
-	public		function __construct($raw='')
+	public		function __construct(h\string $raw = null)
 	{
-		$qmark = strpos($raw, '?') ;
-		$qmark = $qmark === false ? strlen($raw) : $qmark ; 
-		$this->path = substr($raw, 0, $qmark) ;
-		$this->searchpart = substr($raw, $qmark) ;
+		if($raw === null)
+			$raw = h\string('') ;
+
+		$qmark = $raw->search('?') ;
+		if(false !== $qmark)
+		{
+			$this->_path = $raw->head($qmark - 1) ;
+			$this->_searchpart = $raw->tail($qmark) ;
+		}
+		else
+			$this->_path = $raw ;
 
 		parent::__construct() ;
 	}
 
-	public		function __tostring()
+	public		function _to_string()
 	{
 		return '' ;
 	}
 }
 
 class message
-	extends \horn\lib\object_public
+	extends h\object_public
 {
 	public	$header ;
 	public	$body ;
@@ -57,7 +97,7 @@ class request
 
 	public		function __construct()
 	{
-		$this->_uri = new uri('/') ;
+		$this->_uri = new uri(h\string('/')) ;
 		parent::__construct() ;
 	}
 
@@ -67,8 +107,8 @@ class request
 		$native->header['host'] = $_SERVER['HTTP_HOST'] ;
 
 		$native->method = self::get_method($_SERVER['REQUEST_METHOD']) ;
-		$native->uri = new uri($_SERVER['REQUEST_URI']) ;
-		$native->version = $_SERVER['SERVER_PROTOCOL'] ;
+		$native->uri = new uri(h\string($_SERVER['REQUEST_URI'])) ;
+		$native->version = h\string($_SERVER['SERVER_PROTOCOL']) ;
 
 		return $native ;
 	}
