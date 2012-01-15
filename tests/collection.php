@@ -112,6 +112,20 @@ class test_suite_collection
 			{ $v = $o[1] ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 	}
+
+	function _test_isset_offset()
+	{
+
+		$messages = array('Trying to use array_key_exists.') ;
+
+		$o = $this->target ;
+		$callback = function () use ($o)
+			{
+				$o['key'] = 'value' ;
+				return isset($o['key']) ;
+			} ;
+		$this->add_test($callback, $messages) ;
+	}
 }
 
 

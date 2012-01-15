@@ -58,7 +58,6 @@ class collection
 	public		function __construct(/* ... */)
 	{
 		parent::__construct() ;
-		$this->_stack = array() ;
 		$this->join(func_get_args()) ;
 	}
 
@@ -246,7 +245,7 @@ class collection
 	/* interface Countable */
 	public		function count()	{ return count($this->_stack) ; }
 
-	protected	function _filter_key($candidate)
+	protected	function filter_key($candidate)
 	{
 		if(\is_integer($candidate) || \is_string($candidate))
 			$filtered = $candidate ;
@@ -260,10 +259,10 @@ class collection
 	/* interface ArrayAccess */
 	public		function offsetExists($key)
 	{
-		return array_key_exists($this->_filter_key($key), $this->_stack) ;
+		return array_key_exists($this->filter_key($key), $this->_stack) ;
 	}
 	
-	public		function offsetGet($key)
+	public		function &offsetGet($key)
 	{
 		if(!$this->offsetExists($key))
 			$this->_throw_offset_does_not_exists($key) ;
@@ -276,14 +275,14 @@ class collection
 		if(is_null($key))
 			$this->_stack[] = $value ;
 		else
-			$this->_stack[$this->_filter_key($key)] = $value ;
+			$this->_stack[$this->filter_key($key)] = $value ;
 
 		return $this->current() ;
 	}
 
 	public		function offsetUnset($key)
 	{
-		unset($this->_stack[$this->_filter_key($key)]) ;
+		unset($this->_stack[$this->filter_key($key)]) ;
 	}
 
 	/** Clean current elements of the collection, then copy each elements of the
@@ -294,8 +293,7 @@ class collection
 	 */
 	protected		function _set_stack($rhs)
 	{
-		$stack = array() ;
-		$this->_stack = & $stack ;
+		$this->_stack = array() ;
 
 		if(is_array($rhs) || $rhs instanceof iterator)
 			foreach($rhs as $k => $v)
@@ -324,7 +322,24 @@ class collection
 
 	/** array	Actual data that is accessed through collection
 	 */
-	protected	$_stack ; // = & array() ;
+	protected	$_stack = array() ;
+}
+
+class collection_mutltivalue
+	extends collection
+{
+	public		function offsetSet($offset, $value)
+	{
+		if($this->offsetExists($offset))
+		{
+			$current = $this->offsetGet($offset) ;
+			if(!$current instanceof collection)
+				$current = collection($current) ;
+
+			$current[] = $value ;
+			parent::offsetSet($offset, $current) ;
+		}
+	}
 }
 
 
