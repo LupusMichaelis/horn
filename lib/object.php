@@ -175,6 +175,7 @@ class object_base
 	/**
 	 *
 	 */
+	final
 	public		function __tostring()
 	{
 		if(!method_exists($this, '_to_string'))

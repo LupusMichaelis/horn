@@ -39,7 +39,7 @@ function is_string($variable)
 	return $variable instanceof string || \is_string($variable) ;
 }
 
-/** Cast $converted in a string_ex
+/** Cast $converted in a string
  */
 function string($converted)
 {

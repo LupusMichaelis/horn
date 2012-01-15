@@ -78,7 +78,7 @@ class date_time
 		return $new ;
 	}
 
-	public		function __tostring()
+	protected	function _to_string()
 	{
 		return sprintf('%s %s', $this->_date, $this->_time) ;
 	}

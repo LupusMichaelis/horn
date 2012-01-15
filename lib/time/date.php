@@ -87,7 +87,7 @@ class date
 	}
 	*/
 
-	public		function __tostring()
+	protected	function _to_string()
 	{
 		return $this->format('%A %d %B %Y') ;
 	}
