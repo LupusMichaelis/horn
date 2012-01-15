@@ -52,6 +52,7 @@ class story_source
 			$stories->push(story::create
 				( $row['caption']
 				, $row['description']
+				, $row['created']
 				, $row['modified']
 				)
 			) ;
@@ -70,6 +71,7 @@ class story_source
 			$stories->push(story::create
 				( $row['caption']
 				, $row['description']
+				, $row['created']
 				, $row['modified']
 				)
 			) ;
@@ -99,13 +101,13 @@ class story
 	}
 
 	static
-	public		function create($title, $description, $created)
+	public		function create($title, $description, $created, $modified)
 	{
 		$new = new static ;
 		$new->title = h\string($title) ;
 		$new->description = h\string($description) ;
 		$new->created = h\date_time::from_date(h\date::new_from_sql($created)) ;
-		$new->modified = h\now() ;
+		$new->modified = h\date_time::from_date(h\date::new_from_sql($modified)) ;
 
 		return $new ;
 	}

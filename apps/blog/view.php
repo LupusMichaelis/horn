@@ -40,8 +40,8 @@ function render_story_html(\domelement $canvas, story $story)
 	$div = $canvas->appendChild($od->createElement('div')) ;
 	$div->appendChild($od->createElement('h2', $story->title)) ;
 	$meta = $div->appendChild($od->createElement('p')) ;
-	$meta->appendChild($od->createElement('span', (string) $story->created)) ;
-	$meta->appendChild($od->createElement('span', (string) $story->modified)) ;
+	$meta->appendChild($od->createElement('span', $story->created->date)) ;
+	$meta->appendChild($od->createElement('span', $story->modified->date)) ;
 	$link = $meta->appendChild($od->createElement('a', 'go')) ;
 	$link->setAttribute('href', render_story_link($story)) ;
 	$div->appendChild($od->createElement('p', $story->description)) ;

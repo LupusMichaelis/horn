@@ -123,7 +123,7 @@ class blog
 			$this->not_found() ;
 
 		$this->response->body->content = $doc ;
-		//$this->response->set_content_type($type, 'utf-8') ;
+		$this->response->header['Content-type'] = sprintf('%s;encoding=%s', $type, 'utf-8') ;
 	}
 }
 
