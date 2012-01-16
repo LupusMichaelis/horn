@@ -9,9 +9,13 @@ $in = \horn\lib\http\request::create_native() ;
 $out = new \horn\lib\http\response ;
 
 // Everything is routed to info application
-$routing = array('\horn\apps\info') ;
+$routing = array
+	( '\horn\apps\info'
+	) ;
 
-$main = \horn\lib\run($in, $out, $routing) ;
+$config = array('routing' => $routing) ;
+
+$main = \horn\lib\run($in, $out, $config) ;
 $main->run() ;
 
 \horn\lib\render($out) ;
