@@ -145,8 +145,11 @@ class date
 		return $new ;
 	}
 
-	public		function is_equal(date $right)
+	public		function is_equal(object_base $right)
 	{
+		if(! $right instanceof date)
+			$this->_throw_not_date_object() ;
+
 		return $this->day == $right->day
 			&& $this->month == $right->month
 			&& $this->year == $right->year
