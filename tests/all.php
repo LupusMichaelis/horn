@@ -26,6 +26,8 @@
  *
  */
 
+ini_set('include_path', $_SERVER['HOME'].'/php-libs/:.') ;
+
 use horn\lib as h ;
 use horn\lib\test as t ;
 
