@@ -89,8 +89,8 @@ class blog
 	public		function desired_mime_type(h\http\request $in = null)
 	{
 		$types = array
-			( 'html' => 'text/html'
-			, 'rss' => 'application/rss+xml'
+			( 'html' => h\string('text/html')
+			, 'rss' => h\string('application/rss+xml')
 			) ;
 		$suffix = 'html' ;
 		if(!is_null($in))
@@ -102,28 +102,36 @@ class blog
 		return $types[(string) $suffix] ;
 	}
 
-	public		function prepare_renderer()
+	protected	function get_canvas_by_mime_type(h\string $type)
 	{
-		$type = static::desired_mime_type($this->request) ;
 		$types = array
-			( 'text/html' => array('\horn\lib\html', '\horn\apps\render_story_html')
-			, 'application/rss+xml' => array('\horn\lib\rss', '\horn\apps\render_story_rss')
+			( 'text/html' => array('\horn\lib\html', '\horn\apps\story_renderer_html')
+			, 'application/rss+xml' => array('\horn\lib\rss', '\horn\apps\story_renderer_rss')
 			) ;
 
-		$doc = new $types[$type][0] ;
+		$doc = new $types[(string) $type][0] ;
+
+		return $doc ;
+	}
+
+	public		function prepare_renderer()
+	{
+		$mime_type = static::desired_mime_type($this->request) ;
+		$doc = $this->get_canvas_by_mime_type($mime_type) ;
+
 		$doc->title = h\string('My new blog') ;
-		$doc->register('story', $types[$type][1]) ;
+		$doc->register('story', '\horn\apps\story_html_renderer') ;
 
 		if($this->_resource instanceof h\string)
-			$doc->render('story', $this->_resource) ;
+			$doc->render('story', 'summary', $this->_resource) ;
 		elseif($this->_resource instanceof h\collection)
 			foreach($this->_resource as $story)
-				$doc->render('story', $story) ;
+				$doc->render('story', 'full', $story) ;
 		else
 			$this->not_found() ;
 
 		$this->response->body->content = $doc ;
-		$this->response->header['Content-type'] = sprintf('%s;encoding=%s', $type, 'utf-8') ;
+		$this->response->header['Content-type'] = sprintf('%s;encoding=%s', $mime_type, 'utf-8') ;
 	}
 }
 

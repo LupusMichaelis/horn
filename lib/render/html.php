@@ -8,14 +8,58 @@ import('lib/collection') ;
 
 class html
 	extends object_public
+	//extends object_protected
 {
 	protected	$_document ;
 	private		$_helpers ;
 
+/*
+	static
+	public		function new_open_file(string $template_filename)
+	{
+		$document = \DomDocument::loadHtmlFile($template_filename) ;
+		return new self($document) ;
+	}
+
+	static
+	public		function new_from_string(string $template)
+	{
+		$document = \DomDocument::loadHTML($template) ;
+		return new self($document) ;
+	}
+
+	static
+	public		function new_4(string $template)
+	{
+		$template = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
+		$template .= '<html><head><title><body>' ;
+		$document = \DomDocument::loadHTML($template) ;
+		return new self($document) ;
+	}
+
+	static
+	public		function new_x11(string $template)
+	{
+		$template = '<!DOCTYPE html><html><head><title><body>' ;
+		$document = \DomDocument::loadHTML($template) ;
+		return new self($document) ;
+	}
+
+	static
+	public		function new_5(string $template)
+	{
+		$template = '<!DOCTYPE html><html><head><title><body>' ;
+		$document = \DomDocument::loadHTML($template) ;
+		return new self($document) ;
+	}
+
+	protected	function __construct(\DomDocument $template)
+*/
 	public		function __construct()
 	{
-		$template = '<html><head><title><body>' ;
-		$this->_document = \DomDocument::loadHTML($template) ;
+		$template = '<!DOCTYPE html><html><head><title><body>' ;
+		$this->_document = new \DomDocument ;
+		$this->_document->loadHTML($template) ;
 		$this->_document->formatOutput = true ;
 		$this->_helpers = new collection ;
 
@@ -39,7 +83,7 @@ class html
 			$titleElement->appendChild($newTitleTxt) ;
 	}
 
-	public		function __tostring()
+	protected	function _to_string()
 	{
 		return $this->document->saveHTML() ;
 	}
@@ -49,10 +93,11 @@ class html
 		$this->_helpers[$name] = $callback ;
 	}
 
-	public		function render($name, $thing)
+	public		function render($name, $control, $thing)
 	{
 		$render = $this->_helpers[$name] ;
-		$render($this->body, $thing) ;
+		$h = new $render($this->body) ;
+		$h->$control($thing) ;
 	}
 
 	protected	function & _get_body()

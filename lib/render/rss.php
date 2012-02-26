@@ -23,7 +23,7 @@ class rss
 		$this->_initialize() ;
 	}
 
-	public		function __tostring()
+	public		function __to_string()
 	{
 		return $this->document->saveXML() ;
 	}

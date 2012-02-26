@@ -151,12 +151,17 @@ class database_mysql
 		if($result === false)
 			$this->_throw_query_error() ;
 
-		return array($result->fetch_assoc()) ;
+		$return = h\collection() ;
+
+		while($row = $result->fetch_assoc())
+			$return->push($row) ;
+
+		return $return ;
 	}
 
-	public		function escape(h\string $sql)
+		public		function escape(h\string $sql)
 	{
-		$sql->scalar = $this->_con->real_escape_string($sql->scalar) ;
+		return h\string($this->_con->real_escape_string($sql->scalar)) ;
 	}
 }
 

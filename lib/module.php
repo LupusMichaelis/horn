@@ -38,6 +38,14 @@ class module
 	private		$_include_path = 'horn/' ;
 
 	static
+	public		function set_include_path($include_path)
+	{
+		$original = static::$_include_path ;
+		static::$_loaded = str_replace($original, $include_path, static::$_loaded) ;
+		static::$_include_path = $include_path ;
+	}
+
+	static
 	public		function load_file($file_name)
 	{
 		if(in_array($file_name, self::$_loaded))

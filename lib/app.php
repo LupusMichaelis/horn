@@ -51,6 +51,9 @@ class app
 
 	protected	$_data_proxy ;
 
+	protected	$_router ;
+	protected	$_renderer ;
+
 	abstract
 	public		function run() ;
 
@@ -61,6 +64,8 @@ class app
 		$this->_response = $out ;
 
 		parent::__construct() ;
+
+		$this->run() ;
 	}
 
 	public		function not_found()

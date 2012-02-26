@@ -34,43 +34,85 @@ h\import('lib/string') ;
 h\import('lib/render/html') ;
 h\import('lib/render/rss') ;
 
-function render_story_html(\domelement $canvas, story $story)
+class story_html_renderer
+	extends h\object_public
 {
-	$od = $canvas->ownerDocument ;
-	$div = $canvas->appendChild($od->createElement('div')) ;
-	$div->appendChild($od->createElement('h2', $story->title)) ;
-	$meta = $div->appendChild($od->createElement('p')) ;
-	$meta->appendChild($od->createElement('span', $story->created->date)) ;
-	$meta->appendChild($od->createElement('span', $story->modified->date)) ;
-	$link = $meta->appendChild($od->createElement('a', 'go')) ;
-	$link->setAttribute('href', render_story_link($story)) ;
-	$div->appendChild($od->createElement('p', $story->description)) ;
+	protected	$_canvas ;
 
-	return $div ;
-}
-
-function render_story_rss(\domelement $canvas, story $story)
-{
-	$od = $canvas->ownerDocument ;
-	$i = $od->createElement('item') ;
-	$i->setAttribute('rdf:about', render_story_link($story)) ;
-	$l = array
-		( 'title' => $story->title
-		, 'link' => render_story_link($story)
-		, 'description' => $story->description
-		) ;
-	foreach($l as $t => $c)
+	public		function __construct(\domelement $canvas)
 	{
-		$e = $od->createElement($t, $c) ;
-		$i->appendChild($e) ;
+		$this->_canvas = $canvas ;
+		parent::__construct() ;
 	}
 
-	return $canvas->appendChild($i) ;
+	public		function full(story $story)
+	{
+		$canvas = $this->canvas ;
+
+		$od = $canvas->ownerDocument ;
+		$div = $canvas->appendChild($od->createElement('div')) ;
+		$div->appendChild($od->createElement('h2', $story->title)) ;
+		$meta = $div->appendChild($od->createElement('p')) ;
+		$meta->appendChild($od->createElement('span', $story->created->date)) ;
+		$meta->appendChild($od->createElement('span', $story->modified->date)) ;
+		$link = $meta->appendChild($od->createElement('a', 'go')) ;
+		$link->setAttribute('href', render_story_link::link($story)) ;
+		$div->appendChild($od->createElement('p', $story->description)) ;
+
+		return $div ;
+	}
 }
 
 
-function render_story_link(story $story)
+class story_rss_renderer
+	extends h\object_public
 {
-	return '/story/'.urlencode($story->title) ;
+	protected	$_canvas ;
+
+	public		function __construct(\domelement $canvas)
+	{
+		$this->_canvas = $canvas ;
+		parent::__construct() ;
+	}
+
+	public		function node(\domelement $canvas, story $story)
+	{
+		$canvas = $this->canvas ;
+
+		$od = $canvas->ownerDocument ;
+		$i = $od->createElement('item') ;
+		$i->setAttribute('rdf:about', render_story_link($story)) ;
+		$l = array
+			( 'title' => $story->title
+			, 'link' => render_story_link::link($story)
+			, 'description' => $story->description
+			) ;
+		foreach($l as $t => $c)
+		{
+			$e = $od->createElement($t, $c) ;
+			$i->appendChild($e) ;
+		}
+
+		return $canvas->appendChild($i) ;
+	}
+}
+
+
+class render_story_link
+	extends h\object_public
+{
+	/*
+	public		function __construct(h\router $router)
+	{
+		$this->_canvas = $canvas ;
+		parent::__construct() ;
+	}
+	*/
+
+	static
+	public		function link(story $story)
+	{
+		return '/stories/'.urlencode($story->title) ;
+	}
 }
 

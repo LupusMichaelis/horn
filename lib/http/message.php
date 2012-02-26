@@ -35,7 +35,6 @@ class searchpart
 
 			$new[$name] = urldecode($value) ;
 		}
-		var_dump($this) ;
 	}
 }
 
@@ -51,7 +50,7 @@ class uri
 			$raw = h\string('') ;
 
 		$qmark = $raw->search('?') ;
-		if(false !== $qmark)
+		if($qmark > -1)
 		{
 			$this->_path = $raw->head($qmark - 1) ;
 			$this->_searchpart = $raw->tail($qmark) ;

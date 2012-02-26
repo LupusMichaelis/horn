@@ -62,7 +62,8 @@ class story_source
 
 	public		function get_by_title(h\string $title)
 	{
-		$sql = h\string::format('select * from stories where caption = \'%s\'', $title) ;
+		$sql = h\string::format('select * from stories where caption = \'%s\''
+				, $this->source->escape($title)) ;
 		$rows = $this->source->query($sql) ;
 
 		$stories = new stories ;

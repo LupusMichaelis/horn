@@ -3,7 +3,7 @@
 require 'horn/lib/horn.php' ;
 
 \horn\lib\import('apps/info') ;
-\horn\lib\import('lib/router') ;
+//\horn\lib\import('lib/router') ;
 
 $in = \horn\lib\http\request::create_native() ;
 $out = new \horn\lib\http\response ;
