@@ -43,6 +43,18 @@ function collection(/* ... */)
 	return $collection ;
 }
 
+function c($a)
+{
+	if(!is_array($a))
+		throw new \exception('Argument isn\'t an array.') ;
+
+	$collection = new collection ;
+	foreach($a as $k => $v)
+		$collection[$k] = $v ;
+
+	return $collection ;
+}
+
 /**	An object that implements array behaviour in a consistent way.
   * \todo		make a compatible collection range class
   *				that allows laziness

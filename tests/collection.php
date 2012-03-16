@@ -115,7 +115,6 @@ class test_suite_collection
 
 	function _test_isset_offset()
 	{
-
 		$messages = array('Trying to use array_key_exists.') ;
 
 		$o = $this->target ;
@@ -123,6 +122,25 @@ class test_suite_collection
 			{
 				$o['key'] = 'value' ;
 				return isset($o['key']) ;
+			} ;
+		$this->add_test($callback, $messages) ;
+	}
+
+	function _test_init()
+	{
+		$o = h\c(array('key' => 'value', 'first')) ;
+
+		$messages = array('Check key \'key\'.') ;
+		$callback = function () use ($o)
+			{
+				return isset($o['key']);
+			} ;
+		$this->add_test($callback, $messages) ;
+
+		$messages = array('Check key \'0\'.') ;
+		$callback = function () use ($o)
+			{
+				return isset($o[0]) && $o->search('first') > -1 && $o[0] === 'first' ;
 			} ;
 		$this->add_test($callback, $messages) ;
 	}
