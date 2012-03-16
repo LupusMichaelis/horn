@@ -6,12 +6,50 @@ import('lib/object') ;
 import('lib/string') ;
 import('lib/collection') ;
 
+class page_html
+	extends object_public
+{
+	protected	$_canvas ;
+	private		$_helpers ;
+
+	public		function __construct()
+	{
+		$this->_canvas = new \horn\lib\html;
+		$this->_helpers = new collection ;
+		parent::__construct() ;
+	}
+
+	public		function register($name, $callback)
+	{
+		$this->_helpers[$name] = $callback ;
+	}
+
+	public		function render_control($name, $control, $thing)
+	{
+		$render = $this->_helpers[$name] ;
+		$h = new $render($this->_canvas->body) ;
+		$h->$control($thing) ;
+	}
+
+	public		function render($resource)
+	{
+		$skins = c(array('story' => 'full', 'stories' => 'collection')) ;
+		$skin = $skins[$resource['type']] ;
+		$this->render_control('story', $skin, $resource['stories']) ;
+	}
+
+	protected	function _to_string()
+	{
+		return (string) $this->canvas;
+	}
+
+}
+
 class html
 	extends object_public
 	//extends object_protected
 {
 	protected	$_document ;
-	private		$_helpers ;
 
 /*
 	static
@@ -61,7 +99,6 @@ class html
 		$this->_document = new \DomDocument ;
 		$this->_document->loadHTML($template) ;
 		$this->_document->formatOutput = true ;
-		$this->_helpers = new collection ;
 
 		parent::__construct() ;
 	}
@@ -86,18 +123,6 @@ class html
 	protected	function _to_string()
 	{
 		return $this->document->saveHTML() ;
-	}
-
-	public		function register($name, $callback)
-	{
-		$this->_helpers[$name] = $callback ;
-	}
-
-	public		function render($name, $control, $thing)
-	{
-		$render = $this->_helpers[$name] ;
-		$h = new $render($this->body) ;
-		$h->$control($thing) ;
 	}
 
 	protected	function & _get_body()

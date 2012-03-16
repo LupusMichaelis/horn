@@ -44,6 +44,7 @@ h\import('apps/blog/view') ;
 class blog
 	extends h\app
 {
+	private			$_template ;
 	private			$_resource ;
 
 	protected		function &_get_model()
@@ -56,31 +57,42 @@ class blog
 	public		function run()
 	{
 		$this->do_routing() ;
-		$this->prepare_renderer() ;
+		$this->render() ;
 		return $this ;
 	}
 
 	private		function do_routing()
 	{
 		$path = h\string($this->request->uri->path) ;
-		$this->_resource = null ;
+		$this->_template = null ;
 
 		if($path->is_equal(h\string('/')))
 		{
 		}
 		elseif($path->is_equal(h\string('/stories')))
 		{
-			$this->_resource = $this->model->get_all() ;
+			$this->_template = 'list' ;
+			$this->_resource = h\c(array('type' => 'stories')) ;
+			$this->_resource['stories'] = $this->model->get_all() ;
 		}
+		elseif($path->is_equal(h\string('/stories/')))
+			$this->redirect_to(h\string('/stories')) ;
 		else
 		{
 			$re = new h\regex('^/stories/(.+)$') ;
+
+			$this->_resource = h\c(array('type' => 'story')) ;
 
 			if($re->match($path))
 			{
 				$title = $re->get_result(1) ;
 				$title = h\string(urldecode($path->slice($title[0][0], $title[0][1]))) ;
-				$this->_resource = $this->model->get_by_title($title) ;
+
+				$this->_resource['title'] = $title ;
+				$this->_resource['type'] = 'story' ;
+				$this->_resource['stories'] = $this->model->get_by_title($title) ;
+
+				$this->_template = 'entry' ;
 			}
 		}
 	}
@@ -105,33 +117,31 @@ class blog
 	protected	function get_canvas_by_mime_type(h\string $type)
 	{
 		$types = array
-			( 'text/html' => array('\horn\lib\html', '\horn\apps\story_renderer_html')
-			, 'application/rss+xml' => array('\horn\lib\rss', '\horn\apps\story_renderer_rss')
+			( 'text/html' => '\horn\lib\page_html'
+			, 'application/rss+xml' => '\horn\lib\rss'
 			) ;
 
-		$doc = new $types[(string) $type][0] ;
+		$doc = new $types[(string) $type] ;
 
 		return $doc ;
 	}
 
-	public		function prepare_renderer()
+	public		function render()
 	{
 		$mime_type = static::desired_mime_type($this->request) ;
 		$doc = $this->get_canvas_by_mime_type($mime_type) ;
 
-		$doc->title = h\string('My new blog') ;
+		$doc->canvas->title = h\string('My new blog') ;
 		$doc->register('story', '\horn\apps\story_html_renderer') ;
 
-		if($this->_resource instanceof h\string)
-			$doc->render('story', 'summary', $this->_resource) ;
-		elseif($this->_resource instanceof h\collection)
-			foreach($this->_resource as $story)
-				$doc->render('story', 'full', $story) ;
-		else
+		if(is_null($this->_resource))
 			$this->not_found() ;
-
-		$this->response->body->content = $doc ;
-		$this->response->header['Content-type'] = sprintf('%s;encoding=%s', $mime_type, 'utf-8') ;
+		else
+		{
+			$doc->render($this->_resource) ;
+			$this->response->body->content = $doc ;
+			$this->response->header['Content-type'] = sprintf('%s;encoding=%s', $mime_type, 'utf-8') ;
+		}
 	}
 }
 

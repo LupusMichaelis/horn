@@ -45,24 +45,60 @@ class story_html_renderer
 		parent::__construct() ;
 	}
 
-	public		function full(story $story)
+	public		function full(stories $stories)
+	{
+		$canvas = $this->canvas ;
+		$od = $canvas->ownerDocument ;
+
+		foreach($stories as $story)
+		{
+			$div = $canvas->appendChild($od->createElement('div')) ;
+			$div->appendChild($od->createElement('h2', $story->title)) ;
+			$meta = $div->appendChild($od->createElement('p')) ;
+			$meta->appendChild($od->createElement('span', $story->created->date)) ;
+			$meta->appendChild($od->createElement('span', $story->modified->date)) ;
+			$link = $meta->appendChild($od->createElement('a', 'go')) ;
+			$link->setAttribute('href', $this->link($story)) ;
+			$div->appendChild($od->createElement('p', $story->description)) ;
+		}
+
+		return $div ;
+	}
+
+	public		function collection(stories $stories)
+	{
+		$canvas = $this->canvas ;
+
+		$od = $canvas->ownerDocument ;
+		$ul = $canvas->appendChild($od->createElement('ul')) ;
+		foreach($stories as $story)
+		{
+			$li = $ul->appendChild($od->createElement('li')) ;
+			$a = $li->appendChild($od->createElement('a', $story->title)) ;
+			$a->setAttribute('href', $this->link($story)) ;
+		}
+
+		return $ul ;
+	}
+
+	public		function summary(story $story)
 	{
 		$canvas = $this->canvas ;
 
 		$od = $canvas->ownerDocument ;
 		$div = $canvas->appendChild($od->createElement('div')) ;
-		$div->appendChild($od->createElement('h2', $story->title)) ;
-		$meta = $div->appendChild($od->createElement('p')) ;
-		$meta->appendChild($od->createElement('span', $story->created->date)) ;
-		$meta->appendChild($od->createElement('span', $story->modified->date)) ;
-		$link = $meta->appendChild($od->createElement('a', 'go')) ;
-		$link->setAttribute('href', render_story_link::link($story)) ;
-		$div->appendChild($od->createElement('p', $story->description)) ;
+		$a = $div->appendChild($od->createElement('a', $story->title)) ;
+		$a->setAttribute('href', $this->link($story));
 
 		return $div ;
 	}
-}
 
+	public		function link(story $story)
+	{
+		$link_renderer = new story_link_renderer ;
+		return $link_renderer->link($story) ;
+	}
+}
 
 class story_rss_renderer
 	extends h\object_public
@@ -81,10 +117,10 @@ class story_rss_renderer
 
 		$od = $canvas->ownerDocument ;
 		$i = $od->createElement('item') ;
-		$i->setAttribute('rdf:about', render_story_link($story)) ;
+		$i->setAttribute('rdf:about', story_link_renderer($story)) ;
 		$l = array
 			( 'title' => $story->title
-			, 'link' => render_story_link::link($story)
+			, 'link' => story_link_renderer::link($story)
 			, 'description' => $story->description
 			) ;
 		foreach($l as $t => $c)
@@ -97,8 +133,7 @@ class story_rss_renderer
 	}
 }
 
-
-class render_story_link
+class story_link_renderer
 	extends h\object_public
 {
 	/*
@@ -109,7 +144,6 @@ class render_story_link
 	}
 	*/
 
-	static
 	public		function link(story $story)
 	{
 		return '/stories/'.urlencode($story->title) ;

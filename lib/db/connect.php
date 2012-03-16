@@ -159,7 +159,7 @@ class database_mysql
 		return $return ;
 	}
 
-		public		function escape(h\string $sql)
+	public		function escape(h\string $sql)
 	{
 		return h\string($this->_con->real_escape_string($sql->scalar)) ;
 	}
