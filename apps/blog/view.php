@@ -50,9 +50,9 @@ class story_html_renderer
 		$canvas = $this->canvas ;
 		$od = $canvas->ownerDocument ;
 
+		$div = $canvas->appendChild($od->createElement('div')) ;
 		foreach($stories as $story)
 		{
-			$div = $canvas->appendChild($od->createElement('div')) ;
 			$div->appendChild($od->createElement('h2', $story->title)) ;
 			$meta = $div->appendChild($od->createElement('p')) ;
 			$meta->appendChild($od->createElement('span', $story->created->date)) ;

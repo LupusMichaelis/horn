@@ -177,7 +177,7 @@ class path
 
 	protected	function parse()
 	{
-		$re = new regex("^".RE_PATH."$") ;
+		$re = new regex('^'.RE_PATH.'$') ;
 		$re->match($this->literal) ;
 
 		$this->nodes = $this->literal->explode('/') ;
