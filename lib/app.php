@@ -23,6 +23,9 @@ function run(http\request $in, http\response $out, &$config)
 	if(array_key_exists('locale', $config))
 		setlocale(LC_ALL, $config['locale']) ;
 
+	$config['scheme'] = 'http' ;
+	$config['domain'] = 'horn.localhost' ;
+
 	if(array_key_exists('routing', $config))
 	{
 		$routing = &$config['routing'];
@@ -71,6 +74,17 @@ class app
 	public		function not_found()
 	{
 		$this->status('404', 'Not found') ;
+	}
+
+	public		function redirect_to($to)
+	{
+		$this->status('301', 'Moved Permanently') ;
+		$this->response->header['Location'] = sprintf
+			( '%s://%s%s'
+			, $this->config['scheme']
+			, $this->config['domain']
+			, $to
+			) ;
 	}
 
 	public		function status($code, $message)
