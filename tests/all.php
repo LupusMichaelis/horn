@@ -49,6 +49,10 @@ $available_units = array
 	, 'sql'
 	) ;
 
+// We throw some exception and catch them, to test behaviour. Xdebug will trace exception
+// (even catched) and eventually prints it on stdout. So we ask it to stfu.
+ini_set('xdebug.show_exception_trace', 0) ;
+
 if($argc == 1)
 {
 	$units = $available_units ;
