@@ -46,6 +46,13 @@ function string($converted)
 	return new string($converted) ;
 }
 
+/** Concatenate two strings
+ */
+function concatenate($lhs, $rhs)
+{
+	return string($lhs)->append(string($rhs)) ;
+}
+
 /** 	Implementation of a string class that handle encoding issues. The API try
  *				to reach a consistency.
  *
@@ -74,17 +81,15 @@ class string
 		parent::__construct() ;
 
 		if(!is_null($copied))
-		{
 			$copied = (string) $copied ;
-		}
 
 		if(!is_null($charset) && !is_string($charset))
-		{
 			$this->_throw('charset') ;
-		}
 
 		$this->scalar = $copied ;
 		$this->charset = $charset ;
+
+		$this->_auto_charset() ;
 	}
 
 	/** Autodetect the charset/encoding of the encapsulate string
@@ -219,6 +224,11 @@ class string
 	 */
 	public		function search($needle, $offset=0)
 	{
+		if($needle instanceof self)
+			$needle = $needle->_scalar ;
+		elseif(!\is_string($needle))
+			$needle = (string) $needle ;
+
 		$pos = strpos($this->_scalar, $needle, $offset) ;
 		return $pos === false ? -1 : $pos ;
 	}
