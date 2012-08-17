@@ -97,7 +97,9 @@ class string
 	 */
 	protected	function _auto_charset()
 	{
-		 return $this->charset = mb_detect_encoding($this->_scalar) ;
+		$this->_charset = mb_detect_encoding($this->_scalar) ;
+		if(false === $this->_charset)
+			$this->_throw('Charset detection failed') ;
 	}
 
 	/** Factory method to forge string from a format string
@@ -113,7 +115,6 @@ class string
 		$s = new static ;
 		$args = func_get_args() ;
 		$s->_scalar = call_user_func_array('sprintf', $args) ;
-		$s->_auto_charset() ;
 
 		return $s ;
 	}
