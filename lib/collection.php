@@ -153,6 +153,24 @@ class collection
 		return $keys ;
 	}
 
+	/** Find if the $value is in the collection.
+	 *	\param	$value mixed
+	 *	\return bool
+	 */
+	public		function has_value($value)
+	{
+		return in_array($value, $this->_stack) ;
+	}
+
+	/** Find if the current collection has at least one value from the $compared
+	 *	\param	$compared collection
+	 *	\return bool
+	 */
+	public		function has_intersection_with(collection $compared)
+	{
+		return 0 < count(\array_intersect($this->_stack, $compared->_stack)) ;
+	}
+
 	/** Remove element that match $value.
 	 *	\return		bool	Success of removing.
 	 */
