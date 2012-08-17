@@ -35,29 +35,57 @@ class story_source
 	extends h\object_public
 {
 	protected	$_source ;
+	private		$cache ;
 
 	public		function __construct(h\db\database $db)
 	{
 		$this->_source = $db ;
+		$this->cache = h\collection() ;
 		parent::__construct() ;
+	}
+
+	public		function insert(story $story)
+	{
+		$sql = h\string::format(
+				'insert into stories (caption, description, created, modified)'
+				.'	values (\'%s\', \'%s\', \'%s\', \'%s\')'
+				, $this->source->escape($story->title)
+				, $this->source->escape($story->description)
+				, $this->source->escape(h\string($story->created))
+				, $this->source->escape(h\string($story->modified))
+				) ;
+		$this->source->query($sql) ;
+	}
+
+	public		function update(story $story)
+	{
+		$id = $this->cache->search_first($story) ;
+		$sql = h\string::format(
+				'update stories set caption = \'%s\''
+				.', description = \'%s\''
+				.', created = \'%s\''
+				.', modified = \'%s\''
+				.' where id = %d'
+				, $this->source->escape($story->title)
+				, $this->source->escape($story->description)
+				, $this->source->escape(h\string($story->created))
+				, $this->source->escape(h\string($story->modified))
+				, $id
+				) ;
+		$this->source->query($sql) ;
+	}
+
+	public		function delete(story $story)
+	{
+		$id = $this->cache->search_first($story) ;
+		$sql = h\string::format('delete from stories where id=%d', $id) ;
+		$this->source->query($sql) ;
 	}
 
 	public		function get_all()
 	{
 		$rows = $this->source->query(h\string('select * from stories')) ;
-
-		$stories = new stories ;
-
-		foreach($rows as $row)
-			$stories->push(story::create
-				( $row['caption']
-				, $row['description']
-				, $row['created']
-				, $row['modified']
-				)
-			) ;
-
-		return $stories ;
+		return $this->stories_from_select($rows) ;
 	}
 
 	public		function get_by_title(h\string $title)
@@ -65,17 +93,34 @@ class story_source
 		$sql = h\string::format('select * from stories where caption = \'%s\''
 				, $this->source->escape($title)) ;
 		$rows = $this->source->query($sql) ;
+		$stories = $this->stories_from_select($rows) ;
 
+		return isset($stories[0])
+			? $stories[0]
+			: null ;
+	}
+
+	private		function stories_from_select($rows)
+	{
 		$stories = new stories ;
 
 		foreach($rows as $row)
-			$stories->push(story::create
-				( $row['caption']
-				, $row['description']
-				, $row['created']
-				, $row['modified']
-				)
-			) ;
+		{
+			if(isset($this->cache[$row['id']]))
+				$new = $this->cache[$row['id']] ;
+			else
+			{
+				$new = story::create
+					( $row['caption']
+					, $row['description']
+					, $row['created']
+					, $row['modified']
+					) ;
+				$this->cache[$row['id']] = $new ;
+			}
+
+			$stories->push($new) ;
+		}
 
 		return $stories ;
 	}
@@ -95,8 +140,8 @@ class story
 	{
 		$this->title = new h\string ;
 		$this->description = new h\string ;
-		$this->created = new h\date_time ;
-		$this->modified = new h\date_time ;
+		$this->created = h\now() ;
+		$this->modified = h\now() ;
 
 		parent::__construct() ;
 	}

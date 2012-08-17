@@ -46,55 +46,144 @@ class blog
 {
 	private			$_template ;
 	private			$_resource ;
+	private			$_model ;
 
-	protected		function &_get_model()
+	public		function __construct(h\http\request $in, h\http\response $out, $config)
 	{
-		$db = h\db\open($this->config['db']);
-		$model = new story_source($db) ;
-		return $model ;
+		$this->_resource = h\c(array('type' => null, 'model' => null)) ;
+		$this->_template = h\c(array('display' => null, 'mode' => h\string('show'))) ;
+		parent::__construct($in, $out, $config) ;
+	}
+
+	protected	function &_get_model()
+	{
+		if(is_null($this->_model))
+		{
+			$db = h\db\open($this->config['db']);
+			$this->_model = new story_source($db) ;
+		}
+
+		return $this->_model ;
 	}
 
 	public		function run()
 	{
-		$this->do_routing() ;
+		$this->do_control() ;
+		$this->set_view() ;
 		$this->render() ;
 		return $this ;
 	}
 
-	private		function do_routing()
+	private		function do_control()
+	{
+		if(h\http\request::POST === $this->request->method)
+		{
+			if($this->request->uri->searchpart->length())
+			{
+				$action = $this->request->uri->searchpart->tail(1) ;
+				if(h\collection('add', 'delete', 'edit')->has_value($action))
+					return $this->do_action($action) ;
+			}
+		}
+		return false ;
+	}
+
+	private		function do_action($action)
+	{
+		if($action->is_equal(h\string('add')))
+		{
+			$title = $this->request->body->get(h\string('story_title')) ;
+			$story = $this->model->get_by_title(h\string($title)) ;
+
+			if($story instanceof story)
+				$this->_throw('Story already exists') ;
+
+			$story = story::create
+					( $this->request->body->get(h\string('story_title'))
+					, $this->request->body->get(h\string('story_description'))
+					, $this->request->body->get(h\string('story_created'))
+					, $this->request->body->get(h\string('story_modified'))
+					) ;
+
+			$this->model->insert($story) ;
+			$this->redirect_to_created('/stories/'.\urlencode($story->title)) ;
+			return true ;
+		}
+		elseif($action->is_equal(h\string('edit')))
+		{
+			$title = $this->request->body->get(h\string('story_key')) ;
+			$story = $this->model->get_by_title(h\string($title)) ;
+
+			$story->assign(story::create
+					( $this->request->body->get(h\string('story_title'))
+					, $this->request->body->get(h\string('story_description'))
+					, $this->request->body->get(h\string('story_created'))
+					, $this->request->body->get(h\string('story_modified'))
+					)
+				) ;
+
+			$this->model->update($story) ;
+			$this->redirect_to('/stories/'.\urlencode($story->title)) ;
+			return true ;
+		}
+		elseif($action->is_equal(h\string('delete')))
+		{
+			$title = $this->request->body->get(h\string('story_key')) ;
+			$story = $this->model->get_by_title(h\string($title)) ;
+			$this->model->delete($story) ;
+			$this->redirect_to('/stories') ;
+			return true ;
+		}
+
+		return false ;
+	}
+
+	private		function set_view()
 	{
 		$path = h\string($this->request->uri->path) ;
-		$this->_template = null ;
+		$base = h\string($this->config['base']) ;
 
-		if($path->is_equal(h\string('/')))
+		if(0 !== $path->search($base))
+			return false ;
+
+		if($path->is_equal($base))
 		{
+			$this->_resource['type'] = '\horn\apps\blog\stories' ;
+			$this->_resource['model'] = $this->model->get_all() ;
+
+			$this->_template['display'] = 'itemise' ;
 		}
-		elseif($path->is_equal(h\string('/stories')))
+		elseif($path->is_equal(h\concatenate($base, '/')))
 		{
-			$this->_template = 'list' ;
-			$this->_resource = h\c(array('type' => 'stories')) ;
-			$this->_resource['stories'] = $this->model->get_all() ;
+			$this->redirect_to($base) ;
 		}
-		elseif($path->is_equal(h\string('/stories/')))
-			$this->redirect_to(h\string('/stories')) ;
 		else
 		{
-			$re = new h\regex('^/stories/(.+)$') ;
-
-			$this->_resource = h\c(array('type' => 'story')) ;
+			$re = new h\regex('^'.$base.'/(.+)$') ;
 
 			if($re->match($path))
 			{
 				$title = $re->get_result(1) ;
 				$title = h\string(urldecode($path->slice($title[0][0], $title[0][1]))) ;
 
+				$this->_resource['type'] = '\horn\apps\blog\story' ;
 				$this->_resource['title'] = $title ;
-				$this->_resource['type'] = 'story' ;
-				$this->_resource['stories'] = $this->model->get_by_title($title) ;
+				$this->_resource['model'] = $this->model->get_by_title($title) ;
 
-				$this->_template = 'entry' ;
+				$this->_template['display'] = 'entry' ;
 			}
+			else
+				return false ;
 		}
+
+		if($this->request->uri->searchpart->length())
+		{
+			$action = $this->request->uri->searchpart->tail(1) ;
+			if(h\collection('delete', 'add', 'edit')->has_value($action))
+				$this->_template['mode'] = $action ;
+		}
+
+		return true ;
 	}
 
 	static
@@ -132,13 +221,14 @@ class blog
 		$doc = $this->get_canvas_by_mime_type($mime_type) ;
 
 		$doc->canvas->title = h\string('My new blog') ;
-		$doc->register('story', '\horn\apps\story_html_renderer') ;
+		$doc->register('\horn\apps\blog\story', '\horn\apps\story_html_renderer') ;
+		$doc->register('\horn\apps\blog\stories', '\horn\apps\story_html_renderer') ;
 
-		if(is_null($this->_resource))
+		if(is_null($this->_resource['model']))
 			$this->not_found() ;
 		else
 		{
-			$doc->render($this->_resource) ;
+			$doc->render($this->_template, $this->_resource) ;
 			$this->response->body->content = $doc ;
 			$this->response->header['Content-type'] = sprintf('%s;encoding=%s', $mime_type, 'utf-8') ;
 		}

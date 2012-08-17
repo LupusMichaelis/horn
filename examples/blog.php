@@ -9,6 +9,10 @@ h\import('apps/blog/app') ;
 // Everything is routed to info application
 $config = array
 	( 'routing' => array('\horn\apps\blog')
+	, 'scheme' => 'http'
+	, 'domain' => 'horn.localhost'
+	, 'base' => '/stories'
+
 	, 'locale' => 'fr_FR.UTF-8'
 	, 'db' => array
 		( 'type' => \horn\lib\db\MYSQL

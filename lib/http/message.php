@@ -56,7 +56,10 @@ class uri
 			$this->_searchpart = $raw->tail($qmark) ;
 		}
 		else
+		{
 			$this->_path = $raw ;
+			$this->_searchpart = h\string('') ;
+		}
 
 		parent::__construct() ;
 	}
@@ -94,6 +97,8 @@ class request
 	protected	$_uri ;
 	public		$version ;
 
+	public		$body ;
+
 	public		function __construct()
 	{
 		$this->_uri = new uri(h\string('/')) ;
@@ -109,6 +114,8 @@ class request
 		$native->uri = new uri(h\string($_SERVER['REQUEST_URI'])) ;
 		$native->version = h\string($_SERVER['SERVER_PROTOCOL']) ;
 
+		$native->body = body::create_native() ;
+
 		return $native ;
 	}
 
@@ -120,7 +127,7 @@ class request
 			, 'PUT' => self::PUT
 			, 'DELETE' => self::DELETE
 			) ;
-		return $methods[$candidate] ;
+		return $methods[strtoupper($candidate)] ;
 	}
 
 }
@@ -139,7 +146,39 @@ class header
 class body
 	extends \horn\lib\object_public
 {
+	private $parts ;
 	public	$content ;
+
+	static public function create_native()
+	{
+		$native = new self ;
+
+		/* XXX Get data from raw input when it is not a multipart
+		$received = file_get_contents('php://input') ;
+		if(strlen($received) === 0)
+		{
+		*/
+			$native->parts->join($_POST) ;
+			$native->parts->join($_FILES) ;
+		/* XXX
+		}
+		else
+		{
+		}
+		*/
+
+		return $native ;
+	}
+
+	public		function __construct()
+	{
+		$this->parts = h\collection() ;
+	}
+
+	public		function get(h\string $key)
+	{
+		return $this->parts[(string) $key] ;
+	}
 }
 
 

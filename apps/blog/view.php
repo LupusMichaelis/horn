@@ -45,40 +45,168 @@ class story_html_renderer
 		parent::__construct() ;
 	}
 
-	public		function full(stories $stories)
+	public		function entry(story $story, $mode)
+	{
+		if($mode == 'show')
+			return $this->entry_show($story) ;
+		elseif($mode == 'edit')
+			return $this->entry_edit($story) ;
+		elseif($mode == 'delete')
+			return $this->entry_delete($story) ;
+
+		$this->_throw_format('Unknown mode \'%s\'', $mode) ;
+	}
+
+	private		function form_node($action, $method)
+	{
+		$od = $this->canvas->ownerDocument ;
+
+		$form = $od->createElement('form') ;
+		$form->setAttribute('action', $action) ;
+		$form->setAttribute('method', $method) ;
+		$form->setAttribute('accept-charset', 'utf-8') ;
+		//$form->setAttribute('enctype', 'multipart/form-data') ;
+		$form->appendChild($od->createElement('div')) ;
+
+		return $form ;
+	}
+
+	private		function form_story_node(story $story, $action, $method)
+	{
+		$od = $this->canvas->ownerDocument ;
+		$form = $this->form_node($this->link($story, array($action => null)), $method) ;
+		$div = $form->firstChild ;
+
+		$input = $div->appendChild($od->createElement('input')) ;
+		$input->setAttribute('type', 'submit') ;
+
+		$div->appendChild($od->createElement('label', 'Title')) ;
+		$input = $div->appendChild($od->createElement('input')) ;
+		$input->setAttribute('value', $story->title) ;
+		$input->setAttribute('name', 'story.title') ;
+
+		$div->appendChild($od->createElement('label', 'Created')) ;
+		$input = $div->appendChild($od->createElement('input')) ;
+		$input->setAttribute('value', $story->created->date) ;
+		$input->setAttribute('name', 'story.created') ;
+
+		$div->appendChild($od->createElement('label', 'Modified')) ;
+		$input = $div->appendChild($od->createElement('input')) ;
+		$input->setAttribute('value', $story->modified->date) ;
+		$input->setAttribute('name', 'story.modified') ;
+
+		$div->appendChild($od->createElement('label', 'Description')) ;
+		$input = $div->appendChild($od->createElement('textarea', $story->description)) ;
+		$input->setAttribute('name', 'story.description') ;
+
+		return $form ;
+	}
+
+	private		function entry_add(story $story)
+	{
+		$canvas = $this->canvas ;
+		$od = $canvas->ownerDocument ;
+
+		$form = $canvas->appendChild($this->form_story_node($story, 'add', h\http\request::POST)) ;
+
+		return $form ;
+	}
+
+	private		function entry_edit(story $story)
+	{
+		$canvas = $this->canvas ;
+		$od = $canvas->ownerDocument ;
+
+		$form = $canvas->appendChild($this->form_story_node
+				($story, 'edit', h\http\request::POST)) ;
+		$input = $form->firstChild->appendChild($od->createElement('input')) ;
+		$input->setAttribute('type', 'hidden') ;
+		$input->setAttribute('value', $story->title) ;
+		$input->setAttribute('name', 'story.key') ;
+
+		return $form ;
+	}
+
+	private		function entry_delete(story $story)
+	{
+		$canvas = $this->canvas ;
+		$od = $canvas->ownerDocument ;
+
+		$canvas->appendChild($od->createElement('div', 'Please confirm removing.')) ;
+
+		$form = $canvas->appendChild($this->form_node
+				( $this->link($story, array('delete' => null))
+				, h\http\request::POST)) ;
+		$div = $form->firstChild ;
+
+		$input = $div->appendChild($od->createElement('input')) ;
+		$input->setAttribute('type', 'hidden') ;
+		$input->setAttribute('value', $story->title) ;
+		$input->setAttribute('name', 'story.key') ;
+
+		$input = $div->appendChild($od->createElement('input')) ;
+		$input->setAttribute('type', 'submit') ;
+		$input->setAttribute('value', 'Delete') ;
+
+		return $div ;
+	}
+
+	private		function entry_show(story $story)
 	{
 		$canvas = $this->canvas ;
 		$od = $canvas->ownerDocument ;
 
 		$div = $canvas->appendChild($od->createElement('div')) ;
-		foreach($stories as $story)
-		{
-			$div->appendChild($od->createElement('h2', $story->title)) ;
-			$meta = $div->appendChild($od->createElement('p')) ;
-			$meta->appendChild($od->createElement('span', $story->created->date)) ;
-			$meta->appendChild($od->createElement('span', $story->modified->date)) ;
-			$link = $meta->appendChild($od->createElement('a', 'go')) ;
-			$link->setAttribute('href', $this->link($story)) ;
-			$div->appendChild($od->createElement('p', $story->description)) ;
-		}
+
+		$div->appendChild($od->createElement('h2'))
+			->appendChild($od->createTextNode($story->title)) ;
+		$meta = $div->appendChild($od->createElement('p')) ;
+		$meta->appendChild($od->createElement('span', $story->created->date)) ;
+		$meta->appendChild($od->createElement('span', $story->modified->date)) ;
+		$meta->appendChild($this->action_node($story, 'edit')) ;
+		$meta->appendChild($this->action_node($story, 'delete')) ;
+		$div->appendChild($od->createElement('p', $story->description)) ;
 
 		return $div ;
 	}
 
-	public		function collection(stories $stories)
+	public		function itemise(stories $stories, $mode)
 	{
+		if($mode->is_equal(h\string('add')))
+			$this->entry_add(new story) ;
+
 		$canvas = $this->canvas ;
 
 		$od = $canvas->ownerDocument ;
+		$ul = $canvas->appendChild($od->createElement('ul')) ;
+		$li = $ul->appendChild($od->createElement('li')) ;
+		$a = $li->appendChild($od->createElement('a', 'Add')) ;
+		$a->setAttribute('href', '?add') ;
+
 		$ul = $canvas->appendChild($od->createElement('ul')) ;
 		foreach($stories as $story)
 		{
 			$li = $ul->appendChild($od->createElement('li')) ;
 			$a = $li->appendChild($od->createElement('a', $story->title)) ;
 			$a->setAttribute('href', $this->link($story)) ;
+
+			$li->appendChild($od->createEntityReference('nbsp')) ;
+			$a = $li->appendChild($this->action_node($story, 'edit')) ;
+
+			$li->appendChild($od->createEntityReference('nbsp')) ;
+			$a = $li->appendChild($this->action_node($story, 'delete')) ;
 		}
 
 		return $ul ;
+	}
+
+	private		function action_node(story $story, $action)
+	{
+		$od = $this->canvas->ownerDocument ;
+		$a = $od->createElement('a', $action) ;
+		$a->setAttribute('href', $this->link($story, array($action => null)));
+
+		return $a ;
 	}
 
 	public		function summary(story $story)
@@ -93,10 +221,10 @@ class story_html_renderer
 		return $div ;
 	}
 
-	public		function link(story $story)
+	public		function link(story $story, $params = null)
 	{
 		$link_renderer = new story_link_renderer ;
-		return $link_renderer->link($story) ;
+		return $link_renderer->link($story, $params) ;
 	}
 }
 
@@ -144,9 +272,23 @@ class story_link_renderer
 	}
 	*/
 
-	public		function link(story $story)
+	public		function link(story $story, $params = null)
 	{
-		return '/stories/'.urlencode($story->title) ;
+		$searchpart = '' ;
+		if(!\is_null($params))
+		{
+			$searchpart = array() ;
+			foreach($params as $name => $value)
+			{
+				$param = \urlencode($name) ;
+				if(!\is_null($value))
+					$param .= '='.\urlencode($value) ;
+				$searchpart[] = $param ;
+			}
+			$searchpart = '?'.implode('&', $searchpart) ;
+		}
+
+		return '/stories/'.\urlencode($story->title).$searchpart ;
 	}
 }
 

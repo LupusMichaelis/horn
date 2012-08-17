@@ -24,18 +24,11 @@ class page_html
 		$this->_helpers[$name] = $callback ;
 	}
 
-	public		function render_control($name, $control, $thing)
+	public		function render($template, $resource)
 	{
-		$render = $this->_helpers[$name] ;
-		$h = new $render($this->_canvas->body) ;
-		$h->$control($thing) ;
-	}
-
-	public		function render($resource)
-	{
-		$skins = c(array('story' => 'full', 'stories' => 'collection')) ;
-		$skin = $skins[$resource['type']] ;
-		$this->render_control('story', $skin, $resource['stories']) ;
+		$renderer = $this->_helpers[$resource['type']] ;
+		$h = new $renderer($this->_canvas->body) ;
+		$h->{$template['display']}($resource['model'], $template['mode']) ;
 	}
 
 	protected	function _to_string()
@@ -99,6 +92,7 @@ class html
 		$this->_document = new \DomDocument ;
 		$this->_document->loadHTML($template) ;
 		$this->_document->formatOutput = true ;
+		$this->_document->encoding = 'utf-8' ;
 
 		parent::__construct() ;
 	}

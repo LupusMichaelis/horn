@@ -8,4 +8,4 @@ create table stories
 , description	varchar(160)
 
 , primary key	(id)
-) type = innodb ;
+) engine=innodb, character set utf8 ;

@@ -132,9 +132,7 @@ class database_mysql
 	protected	function &_get_charset()
 	{
 		if(is_null($this->_charset))
-		{
 			$this->_charset = $this->_con->get_charset() ;
-		}
 
 		return $this->_charset ;
 	}
@@ -151,17 +149,23 @@ class database_mysql
 		if($result === false)
 			$this->_throw_query_error() ;
 
-		$return = h\collection() ;
+		if(is_array($result))
+		{
+			$return = h\collection() ;
 
-		while($row = $result->fetch_assoc())
-			$return->push($row) ;
+			while($row = $result->fetch_assoc())
+				$return->push($row) ;
+		}
+		else
+			$return = $result ;
 
 		return $return ;
 	}
 
 	public		function escape(h\string $sql)
 	{
-		return h\string($this->_con->real_escape_string($sql->scalar)) ;
+		$escaped = h\string($this->_con->real_escape_string($sql->scalar)) ;
+		return $escaped ;
 	}
 }
 
