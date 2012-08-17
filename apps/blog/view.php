@@ -239,16 +239,21 @@ class story_rss_renderer
 		parent::__construct() ;
 	}
 
-	public		function node(\domelement $canvas, story $story)
+	public		function itemise(stories $stories, $mode)
 	{
-		$canvas = $this->canvas ;
+		$this->canvas->appendChild($this->node($stories[0])) ;
+	}
 
-		$od = $canvas->ownerDocument ;
+	private		function node(story $story)
+	{
+		$linker = new story_link_renderer ;
+
+		$od = $this->_canvas->ownerDocument ;
 		$i = $od->createElement('item') ;
-		$i->setAttribute('rdf:about', story_link_renderer($story)) ;
+		$i->setAttribute('rdf:about', $linker-> link($story)) ;
 		$l = array
 			( 'title' => $story->title
-			, 'link' => story_link_renderer::link($story)
+			, 'link' => $linker->link($story)
 			, 'description' => $story->description
 			) ;
 		foreach($l as $t => $c)
@@ -257,7 +262,7 @@ class story_rss_renderer
 			$i->appendChild($e) ;
 		}
 
-		return $canvas->appendChild($i) ;
+		return $i ;
 	}
 }
 
@@ -288,7 +293,7 @@ class story_link_renderer
 			$searchpart = '?'.implode('&', $searchpart) ;
 		}
 
-		return '/stories/'.\urlencode($story->title).$searchpart ;
+		return 'http://horn.localhost'.'/stories/'.\urlencode($story->title).$searchpart ;
 	}
 }
 

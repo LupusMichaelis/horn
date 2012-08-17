@@ -143,6 +143,9 @@ class blog
 		$path = h\string($this->request->uri->path) ;
 		$base = h\string($this->config['base']) ;
 
+		$dot = $path->search('.') ;
+		$path = -1 < $dot ?  $path->head(--$dot) : $path ;
+
 		if(0 !== $path->search($base))
 			return false ;
 
@@ -207,7 +210,7 @@ class blog
 	{
 		$types = array
 			( 'text/html' => '\horn\lib\page_html'
-			, 'application/rss+xml' => '\horn\lib\rss'
+			, 'application/rss+xml' => '\horn\lib\feed_rss'
 			) ;
 
 		$doc = new $types[(string) $type] ;
@@ -221,8 +224,16 @@ class blog
 		$doc = $this->get_canvas_by_mime_type($mime_type) ;
 
 		$doc->canvas->title = h\string('My new blog') ;
-		$doc->register('\horn\apps\blog\story', '\horn\apps\story_html_renderer') ;
-		$doc->register('\horn\apps\blog\stories', '\horn\apps\story_html_renderer') ;
+
+		if(h\string('text/html')->is_equal($mime_type))
+		{
+			$doc->register('\horn\apps\blog\story', '\horn\apps\story_html_renderer') ;
+			$doc->register('\horn\apps\blog\stories', '\horn\apps\story_html_renderer') ;
+		}
+		elseif(h\string('application/rss+xml')->is_equal($mime_type))
+		{
+			$doc->register('\horn\apps\blog\stories', '\horn\apps\story_rss_renderer') ;
+		}
 
 		if(is_null($this->_resource['model']))
 			$this->not_found() ;

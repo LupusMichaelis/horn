@@ -6,6 +6,37 @@ import('lib/object') ;
 import('lib/string') ;
 import('lib/collection') ;
 
+class feed_rss
+	extends object_public
+{
+	protected	$_canvas ;
+	private		$_helpers ;
+
+	public		function __construct()
+	{
+		$this->_canvas = new \horn\lib\rss;
+		$this->_helpers = new collection ;
+		parent::__construct() ;
+	}
+
+	public		function register($name, $callback)
+	{
+		$this->_helpers[$name] = $callback ;
+	}
+
+	public		function render($template, $resource)
+	{
+		$renderer = $this->_helpers[$resource['type']] ;
+		$h = new $renderer($this->_canvas->root) ;
+		$h->{$template['display']}($resource['model'], $template['mode']) ;
+	}
+
+	protected	function _to_string()
+	{
+		return (string) $this->canvas;
+	}
+}
+
 class rss
 	extends object_public
 {
@@ -49,7 +80,7 @@ class rss
 
 	protected	function &_get_root()
 	{
-		$e = null ;
+		$e = $this->document->firstChild ;
 		return $e ;
 	}
 
@@ -69,6 +100,11 @@ class rss
 		//$l = $od->createElement('link', render_post_link($post)) ;
 		//$c->appendChild($l) ;
 		return $od->firstChild->appendChild($c) ;
+	}
+
+	protected	function _to_string()
+	{
+		return $this->document->saveXML() ;
 	}
 }
 
