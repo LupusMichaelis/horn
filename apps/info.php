@@ -13,9 +13,12 @@ class info
 	{
 		ob_start() ;
 		phpinfo() ;
-		//$this->_response->status = '200 Ok' ;
 		$this->_response->body->content = ob_get_contents() ;
 		ob_end_clean() ;
 		return $this ;
+	}
+
+	public		function do_control()
+	{
 	}
 }
