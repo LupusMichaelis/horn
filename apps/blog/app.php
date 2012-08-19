@@ -44,37 +44,17 @@ h\import('apps/blog/view') ;
 class blog
 	extends h\app
 {
-	private			$_template ;
-	private			$_resource ;
 	private			$_model ;
-
-	public		function __construct(h\http\request $in, h\http\response $out, $config)
-	{
-		$this->_resource = h\c(array('type' => null, 'model' => null)) ;
-		$this->_template = h\c(array('display' => null, 'mode' => h\string('show'))) ;
-		parent::__construct($in, $out, $config) ;
-	}
 
 	protected	function &_get_model()
 	{
 		if(is_null($this->_model))
-		{
-			$db = h\db\open($this->config['db']);
-			$this->_model = new story_source($db) ;
-		}
+			$this->_model = new story_source($this->db) ;
 
 		return $this->_model ;
 	}
 
-	public		function run()
-	{
-		$this->do_control() ;
-		$this->set_view() ;
-		$this->render() ;
-		return $this ;
-	}
-
-	private		function do_control()
+	protected	function do_control()
 	{
 		if(h\http\request::POST === $this->request->method)
 		{
@@ -90,7 +70,7 @@ class blog
 
 	private		function do_action($action)
 	{
-		if($action->is_equal(h\string('add')))
+		if(h\string('add')->is_equal($action))
 		{
 			$title = $this->request->body->get(h\string('story_title')) ;
 			$story = $this->model->get_by_title(h\string($title)) ;
@@ -109,7 +89,7 @@ class blog
 			$this->redirect_to_created('/stories/'.\urlencode($story->title)) ;
 			return true ;
 		}
-		elseif($action->is_equal(h\string('edit')))
+		elseif(h\string('edit')->is_equal($action))
 		{
 			$title = $this->request->body->get(h\string('story_key')) ;
 			$story = $this->model->get_by_title(h\string($title)) ;
@@ -126,7 +106,7 @@ class blog
 			$this->redirect_to('/stories/'.\urlencode($story->title)) ;
 			return true ;
 		}
-		elseif($action->is_equal(h\string('delete')))
+		elseif(h\string('delete')->is_equal($action))
 		{
 			$title = $this->request->body->get(h\string('story_key')) ;
 			$story = $this->model->get_by_title(h\string($title)) ;
@@ -138,8 +118,11 @@ class blog
 		return false ;
 	}
 
-	private		function set_view()
+	protected		function set_view()
 	{
+		parent::set_view() ;
+		$this->prepare_render() ;
+
 		$path = h\string($this->request->uri->path) ;
 		$base = h\string($this->config['base']) ;
 
@@ -151,10 +134,10 @@ class blog
 
 		if($path->is_equal($base))
 		{
-			$this->_resource['type'] = '\horn\apps\blog\stories' ;
-			$this->_resource['model'] = $this->model->get_all() ;
+			$this->resource['type'] = '\horn\apps\blog\stories' ;
+			$this->resource['model'] = $this->model->get_all() ;
 
-			$this->_template['display'] = 'itemise' ;
+			$this->template['display'] = 'itemise' ;
 		}
 		elseif($path->is_equal(h\concatenate($base, '/')))
 		{
@@ -169,11 +152,11 @@ class blog
 				$title = $re->get_result(1) ;
 				$title = h\string(urldecode($path->slice($title[0][0], $title[0][1]))) ;
 
-				$this->_resource['type'] = '\horn\apps\blog\story' ;
-				$this->_resource['title'] = $title ;
-				$this->_resource['model'] = $this->model->get_by_title($title) ;
+				$this->resource['type'] = '\horn\apps\blog\story' ;
+				$this->resource['title'] = $title ;
+				$this->resource['model'] = $this->model->get_by_title($title) ;
 
-				$this->_template['display'] = 'entry' ;
+				$this->template['display'] = 'entry' ;
 			}
 			else
 				return false ;
@@ -183,66 +166,32 @@ class blog
 		{
 			$action = $this->request->uri->searchpart->tail(1) ;
 			if(h\collection('delete', 'add', 'edit')->has_value($action))
-				$this->_template['mode'] = $action ;
+				$this->template['mode'] = $action ;
 		}
 
 		return true ;
 	}
 
-	static
-	public		function desired_mime_type(h\http\request $in = null)
+	private	function prepare_render()
 	{
-		$types = array
-			( 'html' => h\string('text/html')
-			, 'rss' => h\string('application/rss+xml')
-			) ;
-		$suffix = 'html' ;
-		if(!is_null($in))
-		{
-			$path = h\string($in->uri->path) ;
-			$offset = $path->search('.') ;
-			$offset > -1 and $suffix = $path->tail(++$offset) ;
-		}
-		return $types[(string) $suffix] ;
-	}
-
-	protected	function get_canvas_by_mime_type(h\string $type)
-	{
-		$types = array
-			( 'text/html' => '\horn\lib\page_html'
-			, 'application/rss+xml' => '\horn\lib\feed_rss'
-			) ;
-
-		$doc = new $types[(string) $type] ;
-
-		return $doc ;
-	}
-
-	public		function render()
-	{
-		$mime_type = static::desired_mime_type($this->request) ;
-		$doc = $this->get_canvas_by_mime_type($mime_type) ;
-
+		$doc = $this->response->body->content ;
 		$doc->canvas->title = h\string('My new blog') ;
+		$mimetype = $this->response->header['Content-type']->head(
+			$this->response->header['Content-type']->search(';') - 1
+			) ;
 
-		if(h\string('text/html')->is_equal($mime_type))
+		if(h\string('text/html')->is_equal($mimetype))
 		{
 			$doc->register('\horn\apps\blog\story', '\horn\apps\story_html_renderer') ;
 			$doc->register('\horn\apps\blog\stories', '\horn\apps\story_html_renderer') ;
 		}
-		elseif(h\string('application/rss+xml')->is_equal($mime_type))
+		elseif(h\string('application/rss+xml')->is_equal($mimetype))
 		{
 			$doc->register('\horn\apps\blog\stories', '\horn\apps\story_rss_renderer') ;
 		}
-
-		if(is_null($this->_resource['model']))
-			$this->not_found() ;
 		else
-		{
-			$doc->render($this->_template, $this->_resource) ;
-			$this->response->body->content = $doc ;
-			$this->response->header['Content-type'] = sprintf('%s;encoding=%s', $mime_type, 'utf-8') ;
-		}
+			$this->_throw_format('Unknown mimetype \'%s\'', $mimetype) ;
+
 	}
 }
 
