@@ -54,7 +54,6 @@ class app
 	protected	$_template ;
 	protected	$_resource ;
 
-
 	public		function __construct(http\request $in, http\response $out, $config)
 	{
 		$this->_config = $config ;
