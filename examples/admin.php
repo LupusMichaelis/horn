@@ -11,7 +11,7 @@ $config = array
 	( 'routing' => array('\horn\apps\account_controller')
 	, 'scheme' => 'http'
 	, 'domain' => 'horn.localhost'
-	, 'base' => '/accounts'
+	, 'base' => '/fakeroot'
 
 	, 'locale' => 'fr_FR.UTF-8'
 	, 'db' => array

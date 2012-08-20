@@ -20,27 +20,20 @@ function render(http\response $out)
 
 function run(http\request $in, http\response $out, &$config)
 {
-	if(array_key_exists('locale', $config))
+	if(isset($config['locale']))
 		setlocale(LC_ALL, $config['locale']) ;
 
-	if(array_key_exists('routing', $config))
+	if(isset($config['app']))
 	{
-		$routing = &$config['routing'];
-
-		ksort($routing) ;
-		foreach($routing as $key => $value)
-			if($key === 0)
-				$main = new $value($in, $out, $config) ;
-			elseif(400 < $key && $key < 600) // XXX refine that
-				$main->add_error_handler($key, $value) ;
-			else
-				$main->add_route($key, $value) ;
+		$app = &$config['app'];
+		$main = new $app($in, $out, $config) ;
 	}
+	else
+		throw new exception('App is not set.', $config) ;
 
 	return $main ;
 }
 
-abstract
 class app
 	extends object_public
 {
@@ -51,8 +44,7 @@ class app
 
 	protected	$_config ;
 
-	protected	$_template ;
-	protected	$_resource ;
+	protected	$_controllers ;
 
 	public		function __construct(http\request $in, http\response $out, $config)
 	{
@@ -60,38 +52,36 @@ class app
 		$this->_request = $in ;
 		$this->_response = $out ;
 
-		$this->_resource = h\c(array('type' => null, 'model' => null)) ;
-		$this->_template = h\c(array('display' => null, 'mode' => h\string('show'))) ;
-
 		parent::__construct() ;
 	}
 
-	static
-	public		function desired_mime_type(h\http\request $in = null)
+	public		function desired_mime_type()
 	{
-		$types = array
-			( 'html' => h\string('text/html')
-			, 'rss' => h\string('application/rss+xml')
-			) ;
-		$suffix = 'html' ;
-		if(!is_null($in))
-		{
-			$path = h\string($in->uri->path) ;
-			$offset = $path->search('.') ;
-			$offset > -1 and $suffix = $path->tail(++$offset) ;
-		}
+		$types = $this->config['content-types']['availables'] ;
+		$suffix = $this->config['content-types']['default'] ;
+
+		$path = h\string($this->request->uri->path) ;
+		$offset = $path->search('.') ;
+		$offset > -1 and $suffix = $path->tail(++$offset) ;
+
 		return $types[(string) $suffix] ;
 	}
 
-	abstract
-	protected	function do_control() ;
-
 	public		function run()
 	{
-		$this->do_control() ;
+		$this->set_controllers() ;
 		$this->set_view() ;
 		$this->do_render() ;
 		return $this ;
+	}
+
+	private		function set_controllers()
+	{
+		foreach($this->config['controllers'] as $ctrl_config)
+		{
+			$class_name = $ctrl_config['controller'] ;
+			$this->controllers[] = new $class_name($this) ;
+		}
 	}
 
 	protected	function &_get_db()
@@ -116,17 +106,19 @@ class app
 
 	protected	function set_view()
 	{
-		$mime_type = static::desired_mime_type($this->request) ;
+		$mime_type = $this->desired_mime_type() ;
 		$this->response->body->content = $this->get_canvas_by_mime_type($mime_type) ;
 		$this->response->header['Content-type'] = h\string::format('%s;encoding=%s', $mime_type, 'utf-8') ;
+
 	}
+
 	public		function do_render()
 	{
-		// XXX need an actual state that means the model rendering must not be done
-		if(!is_null($this->_resource['model']))
-			$this->response->body->content->render($this->_template, $this->_resource) ;
-		else
-			$this->not_found() ;
+		foreach($this->controllers as $ctrl)
+		{
+			$ctrl->set_view() ;
+			$ctrl->do_render() ;
+		}
 	}
 
 	public		function not_found()

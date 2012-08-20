@@ -25,7 +25,7 @@
  *
  */
 
-namespace horn\apps ;
+namespace horn\apps\blog ;
 use \horn\lib as h ;
 
 h\import('lib/collection') ;

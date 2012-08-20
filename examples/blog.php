@@ -4,14 +4,29 @@ use horn\lib as h ;
 
 require 'horn/lib/horn.php' ;
 
-h\import('apps/blog/app') ;
+h\import('apps/blog/controller') ;
 
 // Everything is routed to info application
 $config = array
-	( 'routing' => array('\horn\apps\blog')
+	( 'app' => '\horn\lib\app'
 	, 'scheme' => 'http'
 	, 'domain' => 'horn.localhost'
-	, 'base' => '/stories'
+	, 'base' => '/fakeroot'
+
+	, 'controllers' => array
+		( array
+			( 'base' => '/stories'
+			, 'controller' => '\horn\apps\blog\controller'
+			)
+		)
+
+	, 'content-types' => array
+		( 'availables' => array
+			( 'html' => h\string('text/html')
+			, 'rss' => h\string('application/rss+xml')
+			)
+		, 'default' => 'html'
+		)
 
 	, 'locale' => 'fr_FR.UTF-8'
 	, 'db' => array
