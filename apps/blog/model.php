@@ -138,10 +138,10 @@ class story
 	// public	$owner ;
 	public		function __construct()
 	{
-		$this->title = new h\string ;
-		$this->description = new h\string ;
-		$this->created = h\now() ;
-		$this->modified = h\now() ;
+		$this->_title = new h\string ;
+		$this->_description = new h\string ;
+		$this->_created = h\now() ;
+		$this->_modified = h\now() ;
 
 		parent::__construct() ;
 	}
