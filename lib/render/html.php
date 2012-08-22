@@ -26,9 +26,15 @@ class page_html
 
 	public		function render($template, $resource)
 	{
+		if(is_null($resource['type']))
+			$this->_throw('Type not set for resource') ;
+
+		if(!isset($this->_helpers[$resource['type']]))
+			$this->_throw_format('No resource for \'%s\'.', $resource['type']) ;
+
 		$renderer = $this->_helpers[$resource['type']] ;
 		$h = new $renderer($this->_canvas->body) ;
-		$h->{$template['display']}($resource['model'], $template['mode']) ;
+		$h->{(string)$template['display']}($resource['model'], $template['mode']) ;
 	}
 
 	protected	function _to_string()

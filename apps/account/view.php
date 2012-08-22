@@ -25,7 +25,7 @@
  *
  */
 
-namespace horn\apps ;
+namespace horn\apps\account ;
 use \horn\lib as h ;
 
 h\import('lib/collection') ;
@@ -293,7 +293,7 @@ class account_link_renderer
 			$searchpart = '?'.implode('&', $searchpart) ;
 		}
 
-		return 'http://horn.localhost'.'/accounts/'.\urlencode($account->name).$searchpart ;
+		return 'http://horn.localhost'.'/fakeroot/accounts/'.\urlencode($account->name).$searchpart ;
 	}
 }
 

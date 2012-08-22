@@ -31,7 +31,7 @@ use \horn\lib as h ;
 h\import('lib/collection') ;
 h\import('lib/string') ;
 
-class story_source
+class source
 	extends h\object_public
 {
 	protected	$_source ;

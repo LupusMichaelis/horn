@@ -1,5 +1,5 @@
 <?php
-/** blog application controller helper
+/** account application controller helper
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -25,7 +25,7 @@
  *
  */
 
-namespace horn\apps\blog ;
+namespace horn\apps\account ;
 use \horn\lib as h ;
 
 h\import('lib/collection') ;
@@ -33,13 +33,13 @@ h\import('lib/string') ;
 h\import('lib/regex') ;
 
 h\import('lib/app') ;
-h\import('lib/db/connect') ;
+h\import('lib/controller') ;
 
 h\import('lib/time/date_time') ;
 h\import('lib/string') ;
 
-h\import('apps/blog/model') ;
-h\import('apps/blog/view') ;
+h\import('apps/account/model') ;
+h\import('apps/account/view') ;
 
 class controller
 	extends h\crud_controller
@@ -59,82 +59,82 @@ class controller
 		return $this->_model ;
 	}
 
-	protected	function create_from_http()
-	{
-		$title = $this->app->request->body->get(h\string('story_title')) ;
-		$story = $this->model->get_by_title(h\string($title)) ;
-
-		if($story instanceof story)
-			$this->_throw('Story already exists') ;
-
-		$story = story::create
-				( $this->app->request->body->get(h\string('story_title'))
-				, $this->app->request->body->get(h\string('story_description'))
-				, $this->app->request->body->get(h\string('story_created'))
-				, $this->app->request->body->get(h\string('story_modified'))
-				) ;
-
-		return $story ;
-	}
-
-	protected	function update_from_http()
-	{
-		$title = $this->app->request->body->get(h\string('story_key')) ;
-		$story = $this->model->get_by_title(h\string($title)) ;
-
-		$story->assign(story::create
-				( $this->app->request->body->get(h\string('story_title'))
-				, $this->app->request->body->get(h\string('story_description'))
-				, $this->app->request->body->get(h\string('story_created'))
-				, $this->app->request->body->get(h\string('story_modified'))
-				)
-			) ;
-
-		return $story ;
-	}
-
-	protected	function delete_from_http()
-	{
-		$title = $this->app->request->body->get(h\string('story_key')) ;
-		$story = $this->model->get_by_title(h\string($title)) ;
-
-		return $story ;
-	}
-
 	protected	function get_one()
 	{
-		$this->resource['type'] = '\horn\apps\blog\story' ;
-		return $this->model->get_by_title($this->resource['title']) ;
+		$this->resource['type'] = '\horn\apps\account\account' ;
+		$one = $this->model->get_by_name($this->resource['title']) ;
+		return $one ;
 	}
 
 	protected	function get_collection()
 	{
-		$this->resource['type'] = '\horn\apps\blog\stories' ;
+		$this->resource['type'] = '\horn\apps\account\accounts' ;
 		return $this->model->get_all() ;
+	}
+
+	protected	function create_from_http()
+	{
+		$name = $this->app->request->body->get(h\string('account_name')) ;
+		$account = $this->model->get_by_name(h\string($name)) ;
+
+		if($account instanceof account)
+			$this->_throw('Story already exists') ;
+
+		$account = account::create
+				( $this->app->request->body->get(h\string('account_name'))
+				, $this->app->request->body->get(h\string('account_email'))
+				, $this->app->request->body->get(h\string('account_created'))
+				, $this->app->request->body->get(h\string('account_modified'))
+				) ;
+
+		return $account ;
+	}
+
+	protected	function update_from_http()
+	{
+		$name = $this->app->request->body->get(h\string('account_key')) ;
+		$account = $this->model->get_by_name(h\string($name)) ;
+
+		$account->assign(account::create
+				( $this->app->request->body->get(h\string('account_name'))
+				, $this->app->request->body->get(h\string('account_email'))
+				, $this->app->request->body->get(h\string('account_created'))
+				, $this->app->request->body->get(h\string('account_modified'))
+				)
+			) ;
+
+		return $account ;
+	}
+
+	protected	function delete_from_http()
+	{
+		$name = $this->app->request->body->get(h\string('account_key')) ;
+		$account = $this->model->get_by_name(h\string($name)) ;
+		$this->model->delete($account) ;
+
+		return $account ;
 	}
 
 	protected	function prepare_render()
 	{
 		$doc = $this->app->response->body->content ;
-		$doc->canvas->title = h\string('My new blog') ;
+		$doc->canvas->title = h\string('My new account') ;
 		$mimetype = $this->app->response->header['Content-type']->head(
 			$this->app->response->header['Content-type']->search(';') - 1
 			) ;
 
 		if(h\string('text/html')->is_equal($mimetype))
 		{
-			$doc->register('\horn\apps\blog\story', '\horn\apps\blog\story_html_renderer') ;
-			$doc->register('\horn\apps\blog\stories', '\horn\apps\blog\story_html_renderer') ;
+			$doc->register('\horn\apps\account\account', '\horn\apps\account\account_html_renderer') ;
+			$doc->register('\horn\apps\account\accounts', '\horn\apps\account\account_html_renderer') ;
 		}
 		elseif(h\string('application/rss+xml')->is_equal($mimetype))
 		{
-			$doc->register('\horn\apps\blog\stories', '\horn\apps\blog\story_rss_renderer') ;
+			$doc->register('\horn\apps\account\accounts', '\horn\apps\account\account_rss_renderer') ;
 		}
 		else
 			$this->_throw_format('Unknown mimetype \'%s\'', $mimetype) ;
-
 	}
-
 }
 
 

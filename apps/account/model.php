@@ -1,5 +1,5 @@
 <?php
-/** Domain model for blog
+/** Domain model for account
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -25,13 +25,13 @@
  *
  */
 
-namespace horn\apps ;
+namespace horn\apps\account ;
 use \horn\lib as h ;
 
 h\import('lib/collection') ;
 h\import('lib/string') ;
 
-class account_source
+class source
 	extends h\object_public
 {
 	protected	$_source ;

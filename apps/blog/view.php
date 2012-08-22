@@ -293,7 +293,7 @@ class story_link_renderer
 			$searchpart = '?'.implode('&', $searchpart) ;
 		}
 
-		return 'http://horn.localhost'.'/stories/'.\urlencode($story->title).$searchpart ;
+		return 'http://horn.localhost'.'/fakeroot/stories/'.\urlencode($story->title).$searchpart ;
 	}
 }
 

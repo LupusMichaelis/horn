@@ -5,6 +5,7 @@ use horn\lib as h ;
 
 h\import('lib/object') ;
 h\import('lib/http/message') ;
+h\import('lib/controller') ;
 
 function render(http\response $out)
 {
@@ -31,6 +32,7 @@ function run(http\request $in, http\response $out, &$config)
 	else
 		throw new exception('App is not set.', $config) ;
 
+	$main->run() ;
 	return $main ;
 }
 
@@ -70,6 +72,7 @@ class app
 	public		function run()
 	{
 		$this->set_controllers() ;
+		$this->do_control() ;
 		$this->set_view() ;
 		$this->do_render() ;
 		return $this ;
@@ -80,8 +83,15 @@ class app
 		foreach($this->config['controllers'] as $ctrl_config)
 		{
 			$class_name = $ctrl_config['controller'] ;
-			$this->controllers[] = new $class_name($this) ;
+			$this->controllers[] = new $class_name($this, $ctrl_config) ;
 		}
+	}
+
+	private		function do_control()
+	{
+		foreach($this->controllers as $ctrl)
+			if($ctrl->do_control())
+				break ; // We found the responsible
 	}
 
 	protected	function &_get_db()
@@ -116,7 +126,9 @@ class app
 	{
 		foreach($this->controllers as $ctrl)
 		{
-			$ctrl->set_view() ;
+			if($done = $ctrl->do_routing())
+				$ctrl->set_model() ;
+
 			$ctrl->do_render() ;
 		}
 	}
