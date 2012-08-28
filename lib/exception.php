@@ -30,12 +30,20 @@
  */
 namespace horn\lib ;
 
+function throw_format($fmt /*, $args*/)
+{
+	$msg = call_user_func_array('sprintf', func_get_args()) ;
+	throw new exception($msg, null) ;
+}
+
 /**
  *
  */
 class exception
 	extends \exception
 {
+	private		$throwee ;
+
 	public		function __construct($msg, $that)
 	{
 		parent::__construct($msg) ;

@@ -33,7 +33,9 @@ use horn\lib\test as t ;
 
 h\import('lib/time/date') ;
 
-clASS test_suite_date
+date_default_timezone_set('Europe/Paris') ;
+
+class test_suite_date
 	extends t\suite_object
 {
 	public		function __construct()
@@ -43,11 +45,11 @@ clASS test_suite_date
 		$this->providers[] = function () { return new h\collection ; } ;
 	}
 
-	protected	function test_birthday()
+	protected	function _test_birthday()
 	{
 		$birthday = new h\date(1980, 12, 22) ;
 		$this->_assert_is_a($birthday, '\horn\lib\date') ;
-		$this->_assert($birthday->check()) ;
+		$this->assert($birthday->check()) ;
 		$this->_assert_equals(22, $birthday->day) ;
 		$this->_assert_equals(12, $birthday->month) ;
 		$this->_assert_equals(1980, $birthday->year) ;
@@ -61,7 +63,7 @@ clASS test_suite_date
 		$this->_assert_is_a($week[6], '\horn\lib\date') ;
 
 		$this->_assert_equals(7, $week->count()) ;
-		$this->_assert(!isset($week[7])) ;
+		$this->assert(!isset($week[7])) ;
 
 		$messages = array('Week overflow.') ;
 		$expected_exception = '\horn\lib\exception' ;
@@ -73,9 +75,27 @@ clASS test_suite_date
 		$callback = function () use ($week) { return $week['mon'] ; } ;
 		$this->add_test($callback, $messages, $expected_exception) ;
 
-		$this->_assert($week['monday'], 'horn\lib\date') ;
+		$this->_assert_is_a($week['monday'], 'horn\lib\date') ;
 
-		$this->_assert_equals($week['monday'], $birthday) ;
+		$this->_assert_equals($birthday, $week['monday']) ;
+	}
+
+	protected	function _test_today()
+	{
+		$messages = array('Testing today') ;
+		$suite = $this ;
+		$o = $this->target ;
+		$callback = function () use ($o, $suite)
+			{
+				$today = h\today() ;
+				$suite->assert($today->check()) ;
+				$suite->_assert_equals(\date('d'), $today->day) ;
+				$suite->_assert_equals(\date('m'), $today->month) ;
+				$suite->_assert_equals(\date('Y'), $today->year) ;
+				$suite->_assert_equals(\strtotime(\date('m/d/Y')), $today->timestamp) ;
+				return $today->check() ;
+			} ;
+		$this->add_test($callback, $messages) ;
 	}
 }
 

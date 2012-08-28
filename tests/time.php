@@ -30,12 +30,12 @@ class test_suite_time
 		$callback = function () use ($o, $suite)
 			{
 				$today = h\today() ;
-				//$suite->_test_object($today) ;
+				$suite->assert($today->check()) ;
+				$suite->_assert_equals($today->day, \date('d')) ;
+				$suite->_assert_equals($today->month, \date('m')) ;
+				$suite->_assert_equals($today->year, \date('Y')) ;
+				$suite->_assert_equals($today->timestamp, \strtotime(\date('m/d/Y'))) ;
 				return $today->check() ;
-				//$suite->_test($today->check()) ;
-				//$suite->_test_equal($today->day, \date('d')) ;
-				//$suite->_test_equal($today->month, \date('m')) ;
-				//$suite->_test_equal($today->year, \date('Y')) ;
 			} ;
 		$this->add_test($callback, $messages) ;
 	}

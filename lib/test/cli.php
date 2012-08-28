@@ -23,7 +23,7 @@ function cli_renderer(t\suite $suite)
 	}
 
 	print "\n".implode($out, "\n")."\n" ;
-	printf('[%s] (%d/%d)', $suite->name, $count - $errors, $count) ;
+	printf("[%s] (%d/%d)\n", $suite->name, $count - $errors, $count) ;
 }
 
 /*

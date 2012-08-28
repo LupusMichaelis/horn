@@ -92,7 +92,8 @@ class suite
 		$messages = array
 			( 'Testing equality.'
 			, 'true' => 'Equality ok'
-			, 'false' => sprintf('Not equal (expected \'%s\' != actual \'%s\')', $expected, $actual)
+			, 'false' => sprintf('Not equal (expected \'%s\' != actual \'%s\')',
+					var_export($expected, true), var_export($actual, true))
 			) ;
 		$this->assert($expected == $actual, $messages) ;
 	}

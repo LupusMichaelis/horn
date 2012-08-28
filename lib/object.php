@@ -30,8 +30,6 @@
  *
  */
 
-/* :%s/\$this->_throw_format(\(.*\), \(.*\)) ;$/throw new exception(sprintf(\1, \2)) ;/g
- */
 namespace horn\lib ;
 use horn\lib as h ;
 
@@ -172,14 +170,13 @@ class object_base
 			;
 	}
 
-	/**
-	 *
+	/** For a lot of types, it is not a good idea to cast in a string. Take care when you
+	 *  make the decision.
 	 */
 	final
 	public		function __tostring()
 	{
 		if(!method_exists($this, '_to_string'))
-
 			trigger_error(sprintf('No %s::_to_string method provided', get_class($this)), E_USER_ERROR) ;
 
 		try {
