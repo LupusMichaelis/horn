@@ -58,7 +58,7 @@ class where
 		return $this ;
 	}
 
-	public		function _to_string()
+	protected	function _to_string()
 	{
 		return $this->stack->implode('') ;
 	}

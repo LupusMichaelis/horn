@@ -5,6 +5,7 @@ namespace horn\apps ;
 require_once 'horn/lib/horn.php' ;
 
 \horn\lib\import('lib/app') ;
+\horn\lib\import('lib/controller') ;
 
 class info
 	extends \horn\lib\app
@@ -18,7 +19,4 @@ class info
 		return $this ;
 	}
 
-	public		function do_control()
-	{
-	}
 }

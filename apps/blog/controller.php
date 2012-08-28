@@ -113,6 +113,12 @@ class controller
 		return $this->model->get_all() ;
 	}
 
+	protected	function uri_to($resource)
+	{
+		$base = h\concatenate($this->app->config['base'], $this->config['base']) ;
+		return $base.'/'.\urlencode($resource->title) ;
+	}
+
 	protected	function prepare_render()
 	{
 		$doc = $this->app->response->body->content ;

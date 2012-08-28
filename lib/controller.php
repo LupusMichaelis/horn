@@ -71,6 +71,9 @@ class crud_controller
 	protected	function get_collection() ;
 
 	abstract
+	protected	function uri_to($resource) ;
+
+	abstract
 	protected	function create_from_http() ;
 	abstract
 	protected	function update_from_http() ;
@@ -79,54 +82,46 @@ class crud_controller
 
 	public		function do_control()
 	{
+		if(!$this->do_routing())
+			return false ;
+
 		if(h\http\request::POST === $this->app->request->method)
-		{
 			if($this->app->request->uri->searchpart->length())
 			{
 				$action = $this->app->request->uri->searchpart->tail(1) ;
 				if(h\collection('add', 'delete', 'edit')->has_value($action))
-				{
 					$this->do_action($action) ;
-					return true ;
-				}
 			}
-		}
-		return false ;
+
+		return true ;
 	}
 
 	private		function do_action($action)
 	{
-		$base = h\concatenate($this->app->config['base'], $this->config['base']) ;
-
 		if(h\string('add')->is_equal($action))
 		{
-			$story = $this->create_from_http() ;
-			$this->model->insert($story) ;
-			$this->app->redirect_to_created($base.'/'.\urlencode($story->title)) ;
+			$resource = $this->create_from_http() ;
+			$this->model->insert($resource) ;
+			$uri = $this->uri_to($resource) ;
+			$this->app->redirect_to_created($uri) ;
 		}
 		elseif(h\string('edit')->is_equal($action))
 		{
-			$story = $this->update_from_http() ;
-			$this->model->update($story) ;
-			$this->app->redirect_to($base.'/'.\urlencode($story->title)) ;
+			$resource = $this->update_from_http() ;
+			$this->model->update($resource) ;
+			$uri = $this->uri_to($resource) ;
+			$this->app->redirect_to($uri) ;
 		}
 		elseif(h\string('delete')->is_equal($action))
 		{
-			$story = $this->delete_from_http() ;
-			$this->model->delete($story) ;
+			$resource = $this->delete_from_http() ;
+			$this->model->delete($resource) ;
+			$base = h\concatenate($this->app->config['base'], $this->config['base']) ;
 			$this->app->redirect_to($base) ;
 		}
 	}
 
-	public		function set_model()
-	{
-		if(h\string('itemise')->is_equal($this->template['display']))
-			$this->resource['model'] = $this->get_collection() ;
-		elseif(h\string('entry')->is_equal($this->template['display']))
-			$this->resource['model'] = $this->get_one() ;
-	}
-
-	public		function do_routing()
+	private		function do_routing()
 	{
 		$path = h\string($this->app->request->uri->path) ;
 		$base = h\concatenate($this->app->config['base'], $this->config['base']) ;
@@ -139,7 +134,10 @@ class crud_controller
 			return false ;
 
 		if($path->is_equal($base))
+		{
 			$this->template['display'] = h\string('itemise') ;
+			$this->resource['model'] = $this->get_collection() ;
+		}
 		elseif($path->is_equal(h\concatenate($base, '/')))
 			$this->app->redirect_to($base) ;
 		else
@@ -152,6 +150,7 @@ class crud_controller
 				$title = h\string(urldecode($path->slice($title[0][0], $title[0][1]))) ;
 				$this->resource['title'] = $title ;
 				$this->template['display'] = h\string('entry') ;
+				$this->resource['model'] = $this->get_one() ;
 			}
 			else
 				return false ;
@@ -177,8 +176,6 @@ class crud_controller
 		// XXX need an actual state that means the model rendering must not be done
 		if(!is_null($this->_resource['model']))
 			$this->app->response->body->content->render($this->template, $this->resource) ;
-		else
-			$this->app->not_found() ;
 	}
 }
 

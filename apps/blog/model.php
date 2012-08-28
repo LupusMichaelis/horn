@@ -51,8 +51,8 @@ class source
 				.'	values (\'%s\', \'%s\', \'%s\', \'%s\')'
 				, $this->source->escape($story->title)
 				, $this->source->escape($story->description)
-				, $this->source->escape(h\string($story->created))
-				, $this->source->escape(h\string($story->modified))
+				, $this->source->escape($story->created->format(h\date::FMT_YYYY_MM_DD))
+				, $this->source->escape($story->modified->format(h\date::FMT_YYYY_MM_DD))
 				) ;
 		$this->source->query($sql) ;
 	}
@@ -68,8 +68,8 @@ class source
 				.' where id = %d'
 				, $this->source->escape($story->title)
 				, $this->source->escape($story->description)
-				, $this->source->escape(h\string($story->created))
-				, $this->source->escape(h\string($story->modified))
+				, $this->source->escape($story->created->format(h\date::FMT_YYYY_MM_DD))
+				, $this->source->escape($story->modified->format(h\date::FMT_YYYY_MM_DD))
 				, $id
 				) ;
 		$this->source->query($sql) ;
@@ -140,8 +140,8 @@ class story
 	{
 		$this->_title = new h\string ;
 		$this->_description = new h\string ;
-		$this->_created = h\now() ;
-		$this->_modified = h\now() ;
+		$this->_created = h\today() ;
+		$this->_modified = h\today() ;
 
 		parent::__construct() ;
 	}
@@ -152,8 +152,8 @@ class story
 		$new = new static ;
 		$new->title = h\string($title) ;
 		$new->description = h\string($description) ;
-		$new->created = h\date_time::from_date(h\date::new_from_sql($created)) ;
-		$new->modified = h\date_time::from_date(h\date::new_from_sql($modified)) ;
+		$new->created = h\date::new_from_sql($created) ;
+		$new->modified = h\date::new_from_sql($modified) ;
 
 		return $new ;
 	}

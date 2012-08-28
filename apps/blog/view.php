@@ -87,12 +87,12 @@ class story_html_renderer
 
 		$div->appendChild($od->createElement('label', 'Created')) ;
 		$input = $div->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $story->created->date) ;
+		$input->setAttribute('value', $story->created->format(h\date::FMT_YYYY_MM_DD)) ;
 		$input->setAttribute('name', 'story.created') ;
 
 		$div->appendChild($od->createElement('label', 'Modified')) ;
 		$input = $div->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $story->modified->date) ;
+		$input->setAttribute('value', $story->modified->format(h\date::FMT_YYYY_MM_DD)) ;
 		$input->setAttribute('name', 'story.modified') ;
 
 		$div->appendChild($od->createElement('label', 'Description')) ;
@@ -161,8 +161,10 @@ class story_html_renderer
 		$div->appendChild($od->createElement('h2'))
 			->appendChild($od->createTextNode($story->title)) ;
 		$meta = $div->appendChild($od->createElement('p')) ;
-		$meta->appendChild($od->createElement('span', $story->created->date)) ;
-		$meta->appendChild($od->createElement('span', $story->modified->date)) ;
+		$meta->appendChild($od->createElement('span'
+				, $story->created->format(h\date::FMT_YYYY_MM_DD))) ;
+		$meta->appendChild($od->createElement('span'
+				, $story->modified->format(h\date::FMT_YYYY_MM_DD))) ;
 		$meta->appendChild($this->action_node($story, 'edit')) ;
 		$meta->appendChild($this->action_node($story, 'delete')) ;
 		$div->appendChild($od->createElement('p', $story->description)) ;

@@ -80,23 +80,24 @@ class account_html_renderer
 		$input = $div->appendChild($od->createElement('input')) ;
 		$input->setAttribute('type', 'submit') ;
 
-		$div->appendChild($od->createElement('label', 'Title')) ;
-		$input = $div->appendChild($od->createElement('input')) ;
+		$label = $div->appendChild($od->createElement('label', 'Title')) ;
+		$input = $label->appendChild($od->createElement('input')) ;
 		$input->setAttribute('value', $account->name) ;
 		$input->setAttribute('name', 'account.name') ;
 
-		$div->appendChild($od->createElement('label', 'Created')) ;
-		$input = $div->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $account->created->date) ;
+		$label = $div->appendChild($od->createElement('label', 'Created')) ;
+		$input = $label->appendChild($od->createElement('input')) ;
+		$input->setAttribute('value', $account->created->format(h\date::FMT_YYYY_MM_DD)) ;
 		$input->setAttribute('name', 'account.created') ;
 
-		$div->appendChild($od->createElement('label', 'Modified')) ;
-		$input = $div->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $account->modified->date) ;
+		$label = $div->appendChild($od->createElement('label', 'Modified')) ;
+		$input = $label->appendChild($od->createElement('input')) ;
+		$input->setAttribute('value', $account->modified->format(h\date::FMT_YYYY_MM_DD)) ;
 		$input->setAttribute('name', 'account.modified') ;
 
-		$div->appendChild($od->createElement('label', 'Email')) ;
-		$input = $div->appendChild($od->createElement('textarea', $account->email)) ;
+		$label = $div->appendChild($od->createElement('label', 'Email')) ;
+		$input = $label->appendChild($od->createElement('input')) ;
+		$input->setAttribute('value', $account->email) ;
 		$input->setAttribute('name', 'account.email') ;
 
 		return $form ;
@@ -161,8 +162,10 @@ class account_html_renderer
 		$div->appendChild($od->createElement('h2'))
 			->appendChild($od->createTextNode($account->name)) ;
 		$meta = $div->appendChild($od->createElement('p')) ;
-		$meta->appendChild($od->createElement('span', $account->created->date)) ;
-		$meta->appendChild($od->createElement('span', $account->modified->date)) ;
+		$meta->appendChild($od->createElement('span'
+					, $account->created->format(h\date::FMT_YYYY_MM_DD))) ;
+		$meta->appendChild($od->createElement('span'
+					, $account->modified->format(h\date::FMT_YYYY_MM_DD))) ;
 		$meta->appendChild($this->action_node($account, 'edit')) ;
 		$meta->appendChild($this->action_node($account, 'delete')) ;
 		$div->appendChild($od->createElement('p', $account->email)) ;

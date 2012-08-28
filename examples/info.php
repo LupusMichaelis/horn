@@ -13,9 +13,42 @@ $routing = array
 	( '\horn\apps\info'
 	) ;
 
-$config = array('routing' => $routing) ;
+h\import('apps/info/controller') ;
 
-$main = \horn\lib\run($in, $out, $config) ;
-$main->run() ;
+// Everything is routed to info application
+$config = array
+	( 'app' => '\horn\lib\app'
+	, 'scheme' => 'http'
+	, 'domain' => 'horn.localhost'
+	, 'base' => '/fakeroot'
 
+	, 'controllers' => array
+		( array
+			( 'base' => '/stories'
+			, 'controller' => '\horn\apps\info\controller'
+			)
+		)
+
+	, 'views' => array()
+
+	, 'content-types' => array
+		( 'availables' => array
+			( 'html' => h\string('text/html')
+			)
+		, 'default' => 'html'
+		)
+
+	, 'locale' => 'fr_FR.UTF-8'
+	, 'db' => array
+		( 'type' => \horn\lib\db\MYSQL
+		, 'host' => 'localhost'
+		, 'user' => 'horn'
+		, 'password' => 'horn'
+		, 'base' => 'horn'
+		, 'charset' => 'utf8'
+		)
+	) ;
+
+
+\horn\lib\run($in, $out, $config) ;
 \horn\lib\render($out) ;

@@ -72,6 +72,12 @@ class controller
 		return $this->model->get_all() ;
 	}
 
+	protected	function uri_to($resource)
+	{
+		$base = h\concatenate($this->app->config['base'], $this->config['base']) ;
+		return $base.'/'.\urlencode($resource->name) ;
+	}
+
 	protected	function create_from_http()
 	{
 		$name = $this->app->request->body->get(h\string('account_name')) ;

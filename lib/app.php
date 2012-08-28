@@ -72,9 +72,11 @@ class app
 	public		function run()
 	{
 		$this->set_controllers() ;
-		$this->do_control() ;
+		$ctrl = $this->do_control() ;
 		$this->set_view() ;
-		$this->do_render() ;
+
+		is_null($ctrl) ? $this->not_found() : $ctrl->do_render() ;
+
 		return $this ;
 	}
 
@@ -91,7 +93,7 @@ class app
 	{
 		foreach($this->controllers as $ctrl)
 			if($ctrl->do_control())
-				break ; // We found the responsible
+				return $ctrl ; ; // We found the responsible
 	}
 
 	protected	function &_get_db()
@@ -119,18 +121,6 @@ class app
 		$mime_type = $this->desired_mime_type() ;
 		$this->response->body->content = $this->get_canvas_by_mime_type($mime_type) ;
 		$this->response->header['Content-type'] = h\string::format('%s;encoding=%s', $mime_type, 'utf-8') ;
-
-	}
-
-	public		function do_render()
-	{
-		foreach($this->controllers as $ctrl)
-		{
-			if($done = $ctrl->do_routing())
-				$ctrl->set_model() ;
-
-			$ctrl->do_render() ;
-		}
 	}
 
 	public		function not_found()

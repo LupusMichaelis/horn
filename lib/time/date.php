@@ -61,8 +61,6 @@ class date
 		$this->_year = (int) $year ;
 
 		parent::__construct() ;
-
-		$this->compute_timestamp() ;
 	}
 
 	protected	function &_get_timestamp()
@@ -87,20 +85,15 @@ class date
 	}
 	*/
 
-	protected	function _to_string()
-	{
-		return $this->format('%A %d %B %Y') ;
-	}
-
-	public		function to_sql()
-	{
-		return $this->format('%Y-%m-%d') ;
-	}
+	const		FMT_YYYY_MM_DD = '%Y-%m-%d' ;
+	const		FMT_DD_MM_YYYY = '%d-%m-%Y' ;
+	const		FMT_HUMAN = '%A %d %B %Y' ;
+	const		FMT_SQL = '%Y-%m-%d' ;
 
 	public		function format($fmt)
 	{
-		return strftime($fmt
-				, mktime(0, 0, 0, $this->month, $this->day, $this->year)) ;
+		return string(strftime($fmt
+				, mktime(0, 0, 0, $this->month, $this->day, $this->year))) ;
 	}
 
 	static
@@ -140,6 +133,15 @@ class date
 	static		function new_from_sql($sql_date)
 	{
 		$parsed = date_parse($sql_date) ;
+
+		if($parsed === false)
+			throw_format('Invalid date') ;
+
+		if($parsed['warning_count'])
+			throw_format('Invalid date \'%s\'', implode("\n", $parsed['warnings'])) ;
+
+		if($parsed['error_count'])
+			throw_format('Invalid date \'%s\'', implode("\n", $parsed['errors'])) ;
 
 		$new = new self($parsed['year'], $parsed['month'], $parsed['day']) ;
 		return $new ;
@@ -216,7 +218,7 @@ class date
 				, mktime(0, 0, 0, $this->month, $this->day, $this->year)) ;
 	}
 
-	protected	function compute_timestamp()
+	private		function compute_timestamp()
 	{
 		return mktime(0, 0, 0, $this->month, $this->day, $this->year) ;
 	}

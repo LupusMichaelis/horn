@@ -51,9 +51,9 @@ class source
 				'insert into accounts (name, email, created, modified)'
 				.'	values (\'%s\', \'%s\', \'%s\', \'%s\')'
 				, $this->source->escape($account->name)
-				, $this->source->escape($account->emain)
-				, $this->source->escape(h\string($account->created))
-				, $this->source->escape(h\string($account->modified))
+				, $this->source->escape($account->email)
+				, $this->source->escape($account->created->format(h\date::FMT_YYYY_MM_DD))
+				, $this->source->escape($account->modified->format(h\date::FMT_YYYY_MM_DD))
 				) ;
 		$this->source->query($sql) ;
 	}
@@ -69,8 +69,8 @@ class source
 				.' where id = %d'
 				, $this->source->escape($account->name)
 				, $this->source->escape($account->email)
-				, $this->source->escape(h\string($account->created))
-				, $this->source->escape(h\string($account->modified))
+				, $this->source->escape($account->created->format(h\date::FMT_YYYY_MM_DD))
+				, $this->source->escape($account->modified->format(h\date::FMT_YYYY_MM_DD))
 				, $id
 				) ;
 		$this->source->query($sql) ;
@@ -153,8 +153,8 @@ class account
 	{
 		$this->_name = new h\string ;
 		$this->_email = new h\string ;
-		$this->_created = h\now() ;
-		$this->_modified = h\now() ;
+		$this->_created = h\today() ;
+		$this->_modified = h\today() ;
 
 		parent::__construct() ;
 	}
@@ -165,8 +165,8 @@ class account
 		$new = new static ;
 		$new->name = h\string($name) ;
 		$new->email = h\string($email) ;
-		$new->created = h\date_time::from_date(h\date::new_from_sql($created)) ;
-		$new->modified = h\date_time::from_date(h\date::new_from_sql($modified)) ;
+		$new->created = h\date::new_from_sql($created) ;
+		$new->modified = h\date::new_from_sql($modified) ;
 
 		return $new ;
 	}
