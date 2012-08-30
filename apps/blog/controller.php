@@ -36,7 +36,6 @@ h\import('lib/app') ;
 h\import('lib/db/connect') ;
 
 h\import('lib/time/date_time') ;
-h\import('lib/string') ;
 
 h\import('apps/blog/model') ;
 h\import('apps/blog/view') ;
