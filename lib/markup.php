@@ -37,5 +37,14 @@ class xml
 		return $e ;
 	}
 
+	public		function create_entity_reference(h\string $name)
+	{
+		return $this->document->createEntityReference($name) ;
+	}
+
+	public		function create_nbsp()
+	{
+		return $this->create_entity_reference(h\string('nbsp')) ;
+	}
 
 }

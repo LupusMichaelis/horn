@@ -25,12 +25,17 @@ $config = array
 			)
 		)
 
+	, 'renderer' => array
+		( 'text/html' => '\horn\apps\blog\page_html'
+		, 'application/rss+xml' => '\horn\lib\feed_rss'
+		)
+
 	, 'views' => array()
 
 	, 'content-types' => array
 		( 'availables' => array
-			( 'html' => h\string('text/html')
-			, 'rss' => h\string('application/rss+xml')
+			( 'html' => 'text/html'
+			, 'rss' => 'application/rss+xml'
 			)
 		, 'default' => 'html'
 		)
