@@ -37,12 +37,12 @@ class html4
 		return $body ;
 	}
 
-	public		function create_div_element(collection $attrs = null)
+	public		function create_div_element(h\collection $attrs = null)
 	{
 		return $this->create_element(h\string('div'), $attrs) ;
 	}
 
-	public		function create_anchor_element(collection $attrs = null)
+	public		function create_anchor_element(h\collection $attrs = null)
 	{
 		return $this->create_element(h\string('a'), $attrs) ;
 	}

@@ -106,19 +106,12 @@ class app
 
 	protected	function get_canvas_by_mime_type(h\string $type)
 	{
-		static $types = array
-			( 'text/html' => '\horn\lib\page_html'
-			, 'application/rss+xml' => '\horn\lib\feed_rss'
-			) ;
-
-		$doc = new $types[(string) $type] ;
-
-		return $doc ;
+		return new $this->config['renderer'][(string) $type] ;
 	}
 
 	protected	function set_view()
 	{
-		$mime_type = $this->desired_mime_type() ;
+		$mime_type = h\string($this->desired_mime_type()) ;
 		$this->response->body->content = $this->get_canvas_by_mime_type($mime_type) ;
 		$this->response->header['Content-type'] = h\string::format('%s;encoding=%s', $mime_type, 'utf-8') ;
 	}

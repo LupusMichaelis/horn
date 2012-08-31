@@ -23,10 +23,10 @@ class xml
 		return $this->document->saveHTML() ;
 	}
 
-	public		function create_element(h\string $name, h\collection $attrs = null)
+	public		function create_element(h\string $element_name, h\collection $attrs = null)
 	{
 		$od = $this->document ;
-		$e = $od->createElement($name) ;
+		$e = $od->createElement($element_name) ;
 
 		foreach($attrs as $name => $value)
 			if(is_integer($name))

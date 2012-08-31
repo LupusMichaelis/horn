@@ -39,6 +39,7 @@ h\import('lib/time/date_time') ;
 
 h\import('apps/blog/model') ;
 h\import('apps/blog/view') ;
+h\import('apps/blog/page_html') ;
 
 class controller
 	extends h\crud_controller
