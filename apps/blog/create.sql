@@ -9,3 +9,11 @@ create table stories
 
 , primary key	(id)
 ) engine=innodb, character set utf8 ;
+
+create table legacy_stories
+( path			varchar(255)	not null
+, story_id		integer			not null
+
+, primary key (path, story_id)
+) engine=innodb, character set utf8 ;
+

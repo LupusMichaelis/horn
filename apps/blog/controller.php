@@ -91,6 +91,51 @@ class portal_controller
 
 }
 
+class legacy_controller
+	extends h\controller
+{
+	protected	$_model ;
+
+	public		function __construct(h\app $app, $config)
+	{
+		parent::__construct($app, $config) ;
+	}
+
+	protected	function &_get_model()
+	{
+		if(is_null($this->_model))
+			$this->_model = new source($this->app->db) ;
+
+		return $this->_model ;
+	}
+
+	public		function do_control()
+	{
+		$path = h\string($this->app->request->uri->path) ;
+		$legacy = $this->model->get_by_legacy_path($path) ;
+
+		if(! $legacy instanceof story)
+			return false ;
+
+		$this->app->redirect_to($this->uri_to($legacy)) ;
+
+		return true ;
+	}
+
+	// XXX Remove that
+	protected	function uri_to($resource)
+	{
+		$base = h\concatenate($this->app->config['base'], $this->config['base']) ;
+		return $base.'/'.\urlencode($resource->title) ;
+	}
+
+	public		function do_render()
+	{
+
+	}
+
+}
+
 
 class story_controller
 	extends h\crud_controller

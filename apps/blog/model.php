@@ -100,6 +100,20 @@ class source
 			: null ;
 	}
 
+	public		function get_by_legacy_path(h\string $legacy_path)
+	{
+		$sql = h\string::format
+			('select * from stories s right join legacy_stories ls'
+				.'	on s.id = ls.story_id where path = \'%s\''
+				, $this->source->escape($legacy_path)) ;
+		$rows = $this->source->query($sql) ;
+		$stories = $this->stories_from_select($rows) ;
+
+		return isset($stories[0])
+			? $stories[0]
+			: null ;
+	}
+
 	private		function stories_from_select($rows)
 	{
 		$stories = new stories ;

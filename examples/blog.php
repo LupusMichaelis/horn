@@ -25,6 +25,10 @@ $config = array
 			)
 		, array
 			( 'base' => ''
+			, 'controller' => '\horn\apps\blog\legacy_controller'
+			)
+		, array
+			( 'base' => ''
 			, 'controller' => '\horn\apps\blog\portal_controller'
 			)
 		)
