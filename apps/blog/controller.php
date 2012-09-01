@@ -41,7 +41,58 @@ h\import('apps/blog/model') ;
 h\import('apps/blog/view') ;
 h\import('apps/blog/page_html') ;
 
-class controller
+class portal_controller
+	extends h\controller
+{
+	protected	$_model ;
+
+	public		function __construct(h\app $app, $config)
+	{
+		parent::__construct($app, $config) ;
+	}
+
+	protected	function &_get_model()
+	{
+		if(is_null($this->_model))
+			$this->_model = new source($this->app->db) ;
+
+		return $this->_model ;
+	}
+
+	public		function do_control()
+	{
+		return true ;
+	}
+
+	public		function do_render()
+	{
+		$this->prepare_render() ;
+	}
+
+	protected	function prepare_render()
+	{
+		$doc = $this->app->response->body->content ;
+		$doc->canvas->title = h\string('My new blog') ;
+		$mimetype = $this->app->response->header['Content-type']->head(
+			$this->app->response->header['Content-type']->search(';') - 1
+			) ;
+
+		if(h\string('text/html')->is_equal($mimetype))
+		{
+			$doc->register('\horn\apps\blog\story', '\horn\apps\blog\story_html_renderer') ;
+			$doc->register('\horn\apps\blog\stories', '\horn\apps\blog\story_html_renderer') ;
+			$doc->register('\horn\apps\blog\account', '\horn\apps\blog\account_html_renderer') ;
+			$doc->register('\horn\apps\blog\accounts', '\horn\apps\blog\account_html_renderer') ;
+		}
+		else
+			$this->_throw_format('Unknown mimetype \'%s\'', $mimetype) ;
+
+	}
+
+}
+
+
+class story_controller
 	extends h\crud_controller
 {
 	protected	$_model ;
@@ -142,5 +193,4 @@ class controller
 	}
 
 }
-
 

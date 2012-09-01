@@ -17,11 +17,15 @@ $config = array
 	, 'controllers' => array
 		( array
 			( 'base' => '/stories'
-			, 'controller' => '\horn\apps\blog\controller'
+			, 'controller' => '\horn\apps\blog\story_controller'
 			)
 		, array
 			( 'base' => '/accounts'
 			, 'controller' => '\horn\apps\account\controller'
+			)
+		, array
+			( 'base' => ''
+			, 'controller' => '\horn\apps\blog\portal_controller'
 			)
 		)
 

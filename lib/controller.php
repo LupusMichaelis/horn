@@ -39,27 +39,36 @@ abstract
 class controller
 	extends h\object_public
 {
+	protected	$_app ;
+	protected	$_config ;
+
+	public		function __construct(h\app $app, $config)
+	{
+		$this->_app = $app ;
+		$this->_config = $config ;
+
+		parent::__construct() ;
+	}
+
 	abstract
 	public		function do_control() ;
+	abstract
+	public		function do_render() ;
 }
 
 abstract
 class crud_controller
 	extends controller
 {
-	protected	$_app ;
-	protected	$_config ;
 	protected	$_resource ;
 	protected	$_template ;
 
 	public		function __construct(h\app $app, $config)
 	{
-		$this->_app = $app ;
-		$this->_config = $config ;
 		$this->_resource = h\c(array('type' => null, 'model' => null)) ;
 		$this->_template = h\c(array('display' => h\string('entry'), 'mode' => h\string('show'))) ;
 
-		parent::__construct() ;
+		parent::__construct($app, $config) ;
 	}
 
 	abstract
