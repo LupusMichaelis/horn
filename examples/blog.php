@@ -5,7 +5,7 @@ use horn\lib as h ;
 require 'horn/lib/horn.php' ;
 
 h\import('apps/blog/controller') ;
-h\import('apps/account/controller') ;
+h\import('apps/user/controller') ;
 
 // Everything is routed to info application
 $config = array
@@ -21,14 +21,14 @@ $config = array
 			)
 		, array
 			( 'base' => '/accounts'
-			, 'controller' => '\horn\apps\account\controller'
+			, 'controller' => '\horn\apps\user\controller'
 			)
 		, array
-			( 'base' => ''
+			( 'base' => null
 			, 'controller' => '\horn\apps\blog\legacy_controller'
 			)
 		, array
-			( 'base' => ''
+			( 'base' => null
 			, 'controller' => '\horn\apps\blog\portal_controller'
 			)
 		)
@@ -63,6 +63,8 @@ $config = array
 $in = \horn\lib\http\request::create_native() ;
 $out = new \horn\lib\http\response ;
 
-\horn\lib\run($in, $out, $config) ;
+$user = \horn\lib\http\user::create_native() ;
+
+\horn\lib\run($user, $in, $out, $config) ;
 \horn\lib\render($out) ;
 

@@ -114,6 +114,12 @@ class source
 			: null ;
 	}
 
+	public		function user_is_granted(story $story, h\http\user $user, h\acl $rights = null)
+	{
+		// XXX By default, deny access
+		return false ;
+	}
+
 	private		function stories_from_select($rows)
 	{
 		$stories = new stories ;

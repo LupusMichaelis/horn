@@ -5,6 +5,7 @@ use horn\lib as h ;
 
 h\import('lib/object') ;
 h\import('lib/http/message') ;
+h\import('lib/http/user') ;
 h\import('lib/controller') ;
 
 function render(http\response $out)
@@ -19,7 +20,7 @@ function render(http\response $out)
 	ob_end_flush() ;
 }
 
-function run(http\request $in, http\response $out, &$config)
+function run(http\user $user, http\request $in, http\response $out, &$config)
 {
 	if(isset($config['locale']))
 		setlocale(LC_ALL, $config['locale']) ;
@@ -27,7 +28,7 @@ function run(http\request $in, http\response $out, &$config)
 	if(isset($config['app']))
 	{
 		$app = &$config['app'];
-		$main = new $app($in, $out, $config) ;
+		$main = new $app($user, $in, $out, $config) ;
 	}
 	else
 		throw new exception('App is not set.', $config) ;
@@ -48,11 +49,14 @@ class app
 
 	protected	$_controllers ;
 
-	public		function __construct(http\request $in, http\response $out, $config)
+	protected	$_user ;
+
+	public		function __construct(http\user $user, http\request $in, http\response $out, $config)
 	{
 		$this->_config = $config ;
 		$this->_request = $in ;
 		$this->_response = $out ;
+		$this->_user = $user ;
 
 		parent::__construct() ;
 	}
@@ -114,6 +118,11 @@ class app
 		$mime_type = h\string($this->desired_mime_type()) ;
 		$this->response->body->content = $this->get_canvas_by_mime_type($mime_type) ;
 		$this->response->header['Content-type'] = h\string::format('%s;encoding=%s', $mime_type, 'utf-8') ;
+	}
+
+	public		function forbidden()
+	{
+		$this->status('403', 'Forbidden') ;
 	}
 
 	public		function not_found()

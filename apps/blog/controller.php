@@ -136,7 +136,6 @@ class legacy_controller
 
 }
 
-
 class story_controller
 	extends h\crud_controller
 {

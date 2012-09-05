@@ -1,5 +1,5 @@
 <?php
-/** account application controller helper
+/** user management application controller helper
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -25,7 +25,7 @@
  *
  */
 
-namespace horn\apps\account ;
+namespace horn\apps\user ;
 use \horn\lib as h ;
 
 h\import('lib/collection') ;
@@ -38,8 +38,8 @@ h\import('lib/controller') ;
 h\import('lib/time/date_time') ;
 h\import('lib/string') ;
 
-h\import('apps/account/model') ;
-h\import('apps/account/view') ;
+h\import('apps/user/model') ;
+h\import('apps/user/view') ;
 
 class controller
 	extends h\crud_controller
@@ -61,14 +61,14 @@ class controller
 
 	protected	function get_one()
 	{
-		$this->resource['type'] = '\horn\apps\account\account' ;
+		$this->resource['type'] = '\horn\apps\user\account' ;
 		$one = $this->model->get_by_name($this->resource['title']) ;
 		return $one ;
 	}
 
 	protected	function get_collection()
 	{
-		$this->resource['type'] = '\horn\apps\account\accounts' ;
+		$this->resource['type'] = '\horn\apps\user\accounts' ;
 		return $this->model->get_all() ;
 	}
 
@@ -131,12 +131,12 @@ class controller
 
 		if(h\string('text/html')->is_equal($mimetype))
 		{
-			$doc->register('\horn\apps\account\account', '\horn\apps\account\account_html_renderer') ;
-			$doc->register('\horn\apps\account\accounts', '\horn\apps\account\account_html_renderer') ;
+			$doc->register('\horn\apps\user\account', '\horn\apps\user\account_html_renderer') ;
+			$doc->register('\horn\apps\user\accounts', '\horn\apps\user\account_html_renderer') ;
 		}
 		elseif(h\string('application/rss+xml')->is_equal($mimetype))
 		{
-			$doc->register('\horn\apps\account\accounts', '\horn\apps\account\account_rss_renderer') ;
+			$doc->register('\horn\apps\user\accounts', '\horn\apps\user\account_rss_renderer') ;
 		}
 		else
 			$this->_throw_format('Unknown mimetype \'%s\'', $mimetype) ;
