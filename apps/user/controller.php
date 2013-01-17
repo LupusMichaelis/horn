@@ -53,10 +53,8 @@ class controller
 
 	protected	function &_get_model()
 	{
-		if(is_null($this->_model))
-			$this->_model = new source($this->app->db) ;
-
-		return $this->_model ;
+		$s = $this->app->models->users ;
+		return $s ;
 	}
 
 	protected	function get_one()
@@ -86,12 +84,11 @@ class controller
 		if($account instanceof account)
 			$this->_throw('Story already exists') ;
 
-		$account = account::create
-				( $this->app->request->body->get(h\string('account_name'))
-				, $this->app->request->body->get(h\string('account_email'))
-				, $this->app->request->body->get(h\string('account_created'))
-				, $this->app->request->body->get(h\string('account_modified'))
-				) ;
+		$copy = clone $account;
+		$copy->name = $this->app->request->body->get(h\string('account_name'));
+		$copy->email = $this->app->request->body->get(h\string('account_email'));
+		$copy->created = $copy->modified = h\date_time::now();
+		$account->assign($copy) ;
 
 		return $account ;
 	}
@@ -101,13 +98,12 @@ class controller
 		$name = $this->app->request->body->get(h\string('account_key')) ;
 		$account = $this->model->get_by_name(h\string($name)) ;
 
-		$account->assign(account::create
-				( $this->app->request->body->get(h\string('account_name'))
-				, $this->app->request->body->get(h\string('account_email'))
-				, $this->app->request->body->get(h\string('account_created'))
-				, $this->app->request->body->get(h\string('account_modified'))
-				)
-			) ;
+		$copy = clone $account;
+		var_dump($copy);
+		$copy->name = $this->app->request->body->get(h\string('account_name'));
+		$copy->email = $this->app->request->body->get(h\string('account_email'));
+		$copy->modified = h\today();
+		$account->assign($copy) ;
 
 		return $account ;
 	}

@@ -25,7 +25,7 @@
  *
  */
 
-namespace horn\apps\account ;
+namespace horn\apps\user ;
 use \horn\lib as h ;
 
 h\import('lib/collection') ;

@@ -50,13 +50,21 @@ $config = array
 
 	, 'locale' => 'fr_FR.UTF-8'
 	// , 'locale' => 'en_US.UTF-8'
-	, 'db' => array
-		( 'type' => \horn\lib\db\MYSQL
-		, 'host' => 'localhost'
-		, 'user' => 'horn'
-		, 'password' => 'horn'
-		, 'base' => 'horn'
-		, 'charset' => 'utf8'
+
+	, 'datas' => array
+		( 'read' => array
+			( 'type' => \horn\lib\db\MYSQL
+			, 'host' => 'localhost'
+			, 'user' => 'horn'
+			, 'password' => 'horn'
+			, 'base' => 'horn'
+			, 'charset' => 'utf8'
+			)
+		, 'write' => 'read'
+		, 'cache' => array
+			( 'type' => \horn\lib\db\MEMCACHE
+			, 'host' => 'localhost'
+			)
 		)
 	) ;
 

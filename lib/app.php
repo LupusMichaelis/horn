@@ -37,6 +37,47 @@ function run(http\user $user, http\request $in, http\response $out, &$config)
 	return $main ;
 }
 
+class models
+	extends object_public
+{
+	protected	$_stories ;
+	protected	$_users ;
+
+	protected	$_app ;
+
+	protected	$_db ;
+
+	public		function __construct(app $app)
+	{
+		$this->_app = $app ;
+	}
+
+	protected	function &_get_stories()
+	{
+		if(is_null($this->_stories))
+			$this->_stories = new \horn\apps\blog\source($this->db) ;
+
+		return $this->_stories ;
+	}
+
+	protected	function &_get_users()
+	{
+		if(is_null($this->_users))
+			$this->_users = new \horn\apps\user\source($this->db) ;
+
+		return $this->_users ;
+	}
+
+	protected	function &_get_db()
+	{
+		if(is_null($this->_db))
+			$this->_db = h\db\open($this->app->config['datas']['read']);
+
+		return $this->_db ;
+	}
+
+}
+
 class app
 	extends object_public
 {
@@ -44,6 +85,7 @@ class app
 	protected	$_response ;
 
 	protected	$_db ;
+	protected	$_models ;
 
 	protected	$_config ;
 
@@ -54,11 +96,26 @@ class app
 	public		function __construct(http\user $user, http\request $in, http\response $out, $config)
 	{
 		$this->_config = $config ;
+
 		$this->_request = $in ;
 		$this->_response = $out ;
+
+		$this->_db = null ;
+		$this->_models = null ;
+
+		$this->_controllers = collection() ;
+
 		$this->_user = $user ;
 
 		parent::__construct() ;
+	}
+
+	protected	function &_get_models()
+	{
+		if(is_null($this->_models))
+			$this->_models = new models($this) ;
+
+		return $this->_models ;
 	}
 
 	public		function desired_mime_type()
@@ -98,14 +155,6 @@ class app
 		foreach($this->controllers as $ctrl)
 			if($ctrl->do_control())
 				return $ctrl ; ; // We found the responsible
-	}
-
-	protected	function &_get_db()
-	{
-		if(is_null($this->_db))
-			$this->_db = h\db\open($this->config['db']);
-
-		return $this->_db ;
 	}
 
 	protected	function get_canvas_by_mime_type(h\string $type)

@@ -177,7 +177,7 @@ class body
 
 	public		function get(h\string $key)
 	{
-		return $this->parts[(string) $key] ;
+		return h\string($this->parts[(string) $key]) ;
 	}
 }
 

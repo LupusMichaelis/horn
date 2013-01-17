@@ -105,7 +105,7 @@ class crud_controller
 		return true ;
 	}
 
-	private		function do_action($action)
+	private		function do_action(h\string $action)
 	{
 		if(h\string('add')->is_equal($action))
 		{

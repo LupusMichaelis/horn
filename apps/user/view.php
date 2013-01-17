@@ -25,7 +25,7 @@
  *
  */
 
-namespace horn\apps\account ;
+namespace horn\apps\user ;
 use \horn\lib as h ;
 
 h\import('lib/collection') ;
@@ -84,16 +84,6 @@ class account_html_renderer
 		$input = $label->appendChild($od->createElement('input')) ;
 		$input->setAttribute('value', $account->name) ;
 		$input->setAttribute('name', 'account.name') ;
-
-		$label = $div->appendChild($od->createElement('label', 'Created')) ;
-		$input = $label->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $account->created->format(h\date::FMT_YYYY_MM_DD)) ;
-		$input->setAttribute('name', 'account.created') ;
-
-		$label = $div->appendChild($od->createElement('label', 'Modified')) ;
-		$input = $label->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $account->modified->format(h\date::FMT_YYYY_MM_DD)) ;
-		$input->setAttribute('name', 'account.modified') ;
 
 		$label = $div->appendChild($od->createElement('label', 'Email')) ;
 		$input = $label->appendChild($od->createElement('input')) ;

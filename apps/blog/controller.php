@@ -53,10 +53,8 @@ class portal_controller
 
 	protected	function &_get_model()
 	{
-		if(is_null($this->_model))
-			$this->_model = new source($this->app->db) ;
-
-		return $this->_model ;
+		$s = $this->app->models->stories ;
+		return $s ;
 	}
 
 	public		function do_control()
@@ -103,10 +101,8 @@ class legacy_controller
 
 	protected	function &_get_model()
 	{
-		if(is_null($this->_model))
-			$this->_model = new source($this->app->db) ;
-
-		return $this->_model ;
+		$s = $this->app->models->stories ;
+		return $s ;
 	}
 
 	public		function do_control()
@@ -148,10 +144,8 @@ class story_controller
 
 	protected	function &_get_model()
 	{
-		if(is_null($this->_model))
-			$this->_model = new source($this->app->db) ;
-
-		return $this->_model ;
+		$s = $this->app->models->stories ;
+		return $s ;
 	}
 
 	protected	function create_from_http()
@@ -162,12 +156,12 @@ class story_controller
 		if($story instanceof story)
 			$this->_throw('Story already exists') ;
 
-		$story = story::create
-				( $this->app->request->body->get(h\string('story_title'))
-				, $this->app->request->body->get(h\string('story_description'))
-				, $this->app->request->body->get(h\string('story_created'))
-				, $this->app->request->body->get(h\string('story_modified'))
-				) ;
+		$copy = clone $story;
+		$copy->title = $this->app->request->body->get(h\string('story_title'));
+		$copy->description = $this->app->request->body->get(h\string('story_description'));
+		$copy->modified = $this->app->request->body->get(h\string('story_modified'));
+
+		$story->assign($copy);
 
 		return $story ;
 	}
@@ -177,13 +171,12 @@ class story_controller
 		$title = $this->app->request->body->get(h\string('story_key')) ;
 		$story = $this->model->get_by_title(h\string($title)) ;
 
-		$story->assign(story::create
-				( $this->app->request->body->get(h\string('story_title'))
-				, $this->app->request->body->get(h\string('story_description'))
-				, $this->app->request->body->get(h\string('story_created'))
-				, $this->app->request->body->get(h\string('story_modified'))
-				)
-			) ;
+		$copy = clone $story;
+		$copy->title = $this->app->request->body->get(h\string('story_title'));
+		$copy->description = $this->app->request->body->get(h\string('story_description'));
+		$copy->modified = $this->app->request->body->get(h\string('story_modified'));
+
+		$story->assign($copy);
 
 		return $story ;
 	}

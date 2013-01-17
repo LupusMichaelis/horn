@@ -85,16 +85,6 @@ class story_html_renderer
 		$input->setAttribute('value', $story->title) ;
 		$input->setAttribute('name', 'story.title') ;
 
-		$div->appendChild($od->createElement('label', 'Created')) ;
-		$input = $div->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $story->created->format(h\date::FMT_YYYY_MM_DD)) ;
-		$input->setAttribute('name', 'story.created') ;
-
-		$div->appendChild($od->createElement('label', 'Modified')) ;
-		$input = $div->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $story->modified->format(h\date::FMT_YYYY_MM_DD)) ;
-		$input->setAttribute('name', 'story.modified') ;
-
 		$div->appendChild($od->createElement('label', 'Description')) ;
 		$input = $div->appendChild($od->createElement('textarea', $story->description)) ;
 		$input->setAttribute('name', 'story.description') ;
