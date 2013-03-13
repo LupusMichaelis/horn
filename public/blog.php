@@ -4,8 +4,8 @@ use horn\lib as h ;
 
 require 'horn/lib/horn.php' ;
 
-h\import('apps/blog/controller') ;
-h\import('apps/user/controller') ;
+h\import('apps/controllers/blog') ;
+h\import('apps/controllers/user') ;
 
 // Everything is routed to info application
 $config = array

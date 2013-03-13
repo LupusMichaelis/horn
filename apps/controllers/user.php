@@ -38,8 +38,8 @@ h\import('lib/controller') ;
 h\import('lib/time/date_time') ;
 h\import('lib/string') ;
 
-h\import('apps/user/model') ;
-h\import('apps/user/view') ;
+h\import('apps/models/user') ;
+h\import('apps/views/user') ;
 
 class controller
 	extends h\crud_controller
