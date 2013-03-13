@@ -84,11 +84,10 @@ class controller
 		if($account instanceof account)
 			$this->_throw('Story already exists') ;
 
-		$copy = clone $account;
-		$copy->name = $this->app->request->body->get(h\string('account_name'));
-		$copy->email = $this->app->request->body->get(h\string('account_email'));
-		$copy->created = $copy->modified = h\date_time::now();
-		$account->assign($copy) ;
+		$account = new account;
+		$account->name = $this->app->request->body->get(h\string('account_name'));
+		$account->email = $this->app->request->body->get(h\string('account_email'));
+		$account->created = $account->modified = h\today();
 
 		return $account ;
 	}

@@ -20,7 +20,7 @@ $config = array
 			, 'controller' => '\horn\apps\blog\story_controller'
 			)
 		, array
-			( 'base' => '/accounts'
+			( 'base' => '/users'
 			, 'controller' => '\horn\apps\user\controller'
 			)
 		, array

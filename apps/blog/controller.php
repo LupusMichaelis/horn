@@ -156,12 +156,9 @@ class story_controller
 		if($story instanceof story)
 			$this->_throw('Story already exists') ;
 
-		$copy = clone $story;
-		$copy->title = $this->app->request->body->get(h\string('story_title'));
-		$copy->description = $this->app->request->body->get(h\string('story_description'));
-		$copy->modified = $this->app->request->body->get(h\string('story_modified'));
-
-		$story->assign($copy);
+		$story = new story;
+		$story->title = $this->app->request->body->get(h\string('story_title'));
+		$story->description = $this->app->request->body->get(h\string('story_description'));
 
 		return $story ;
 	}
@@ -174,7 +171,7 @@ class story_controller
 		$copy = clone $story;
 		$copy->title = $this->app->request->body->get(h\string('story_title'));
 		$copy->description = $this->app->request->body->get(h\string('story_description'));
-		$copy->modified = $this->app->request->body->get(h\string('story_modified'));
+		$copy->modified = h\today();
 
 		$story->assign($copy);
 
