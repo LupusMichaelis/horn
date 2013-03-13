@@ -32,6 +32,7 @@ h\import('lib/object') ;
 
 const MYSQL = 'mysql' ;
 const COMPOSITE = 'composite' ;
+const MEMCACHE = 'memcache' ;
 
 function open($specification)
 {
