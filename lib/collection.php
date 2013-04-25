@@ -89,7 +89,7 @@ class collection
 	 */
 	static		function merge(/* ... */)
 	{
-		$new = new self ;
+		$new = new static ;
 
 		foreach(func_get_args() as $arg)
 			if(is_array($arg) || $arg instanceof Iterator)
