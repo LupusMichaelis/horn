@@ -34,22 +34,20 @@ class test_suite_collection
 
 	protected	function _test_stack_getter()
 	{
-		$messages = array('Trying to get readonly stack.') ;
-		$expected_exception = '\horn\lib\exception' ;
+		$messages = array('Trying to get stack.') ;
 		$o = $this->target ;
 		$callback = function () use ($o)
 			{ $o->stack ; return true ; } ;
-		$this->add_test($callback, $messages, $expected_exception) ;
+		$this->add_test($callback, $messages) ;
 	}
 
 	protected	function _test_stack_setter()
 	{
-		$messages = array('Trying to set readonly stack.') ;
-		$expected_exception = '\horn\lib\exception' ;
+		$messages = array('Trying to set stack.') ;
 		$o = $this->target ;
 		$callback = function () use ($o)
-			{ $o->stack = array() ; return false ; } ;
-		$this->add_test($callback, $messages, $expected_exception) ;
+			{ $o->stack = array() ; return true ; } ;
+		$this->add_test($callback, $messages) ;
 	}
 
 	protected	function _test_add()

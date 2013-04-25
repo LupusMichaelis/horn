@@ -340,9 +340,10 @@ class collection
 		return $this ;
 	}
 
-	protected	function _get_stack()
+	protected	function &_get_stack()
 	{
-		$this->_throw_readonly_attribute('stack') ;
+		$stack = (array) $this->_stack;
+		return $stack;
 	}
 
 	protected	function _throw_offset_does_not_exists($key)

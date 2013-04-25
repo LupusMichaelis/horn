@@ -81,7 +81,7 @@ h\import('lib/exception') ;
  *
  *	If the attribute is readonly, consider to use _throw_readonly_attribute.
  *
- *	\todo	redonly attribute generic approach
+ *	\todo	readonly attribute generic approach (!= const)
  *	\todo	by-value vs by-ref semantic, find an acceptable way
  *
  */
@@ -118,7 +118,7 @@ class object_base
 #		var_dump(__FUNCTION__, $name, $value) ;
 		$method = "_get_$name" ; 
 		if(method_exists($this, $method))
-			return $this->$method($name) ;
+			return $this->$method() ;
 		else
 			return $this->_get($name) ;
 	} 
