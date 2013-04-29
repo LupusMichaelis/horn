@@ -171,6 +171,16 @@ class collection
 		return 0 < count(\array_intersect($this->_stack, $compared->_stack)) ;
 	}
 
+	/** Find if current collection has keys \param keys
+	 *	\param	$keys collection
+	 *	\return bool
+	 */
+	public		function has_keys(collection $keys)
+	{
+		return \count($keys->_stack) === count(\array_intersect(\array_keys($this->_stack), $keys->_stack)) ;
+	}
+
+
 	/** Remove element that match $value.
 	 *	\return		bool	Success of removing.
 	 */

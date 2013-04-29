@@ -66,7 +66,6 @@ class test_suite_collection
 		$this->add_test($callback, $messages) ;
 		
 		/*
-		
 		$messages = array('Add an element with a numeric index to a h\collection.') ;
 		try
 		{
@@ -142,6 +141,37 @@ class test_suite_collection
 		$callback = function () use ($o)
 			{
 				return isset($o[0]) && $o->search('first') > -1 && $o[0] === 'first' ;
+			} ;
+		$this->add_test($callback, $messages) ;
+	}
+
+	public		function _test_match_keys()
+	{
+		$o = h\c(array('key' => 'value', 'first')) ;
+		$k = h\c(array('key', 0)) ;
+
+		$messages = array('Check are key in collection.') ;
+		$callback = function () use ($o, $k)
+			{
+				return $o->has_keys($k);
+			} ;
+		$this->add_test($callback, $messages) ;
+
+		$k = h\c(array('key21', 0)) ;
+
+		$messages = array('Check are key in collection.') ;
+		$callback = function () use ($o, $k)
+			{
+				return !$o->has_keys($k);
+			} ;
+		$this->add_test($callback, $messages) ;
+
+		$k = h\c(array('key21', 1)) ;
+
+		$messages = array('Check are key in collection.') ;
+		$callback = function () use ($o, $k)
+			{
+				return !$o->has_keys($k);
 			} ;
 		$this->add_test($callback, $messages) ;
 	}
