@@ -150,7 +150,7 @@ class test_suite_collection
 		$o = h\c(array('key' => 'value', 'first')) ;
 		$k = h\c(array('key', 0)) ;
 
-		$messages = array('Check are key in collection.') ;
+		$messages = array('Check is key in collection.') ;
 		$callback = function () use ($o, $k)
 			{
 				return $o->has_keys($k);
@@ -159,7 +159,7 @@ class test_suite_collection
 
 		$k = h\c(array('key21', 0)) ;
 
-		$messages = array('Check are key in collection.') ;
+		$messages = array('Check are keys in collection.') ;
 		$callback = function () use ($o, $k)
 			{
 				return !$o->has_keys($k);
@@ -168,7 +168,7 @@ class test_suite_collection
 
 		$k = h\c(array('key21', 1)) ;
 
-		$messages = array('Check are key in collection.') ;
+		$messages = array('Check are keys in collection.') ;
 		$callback = function () use ($o, $k)
 			{
 				return !$o->has_keys($k);

@@ -42,6 +42,7 @@ $available_units = array
 	( 'test'
 	, 'object'
 	, 'collection'
+	, 'stack'
 	, 'string'
 	, 'time'
 	, 'date'
