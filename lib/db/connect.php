@@ -168,9 +168,29 @@ class database_mysql
 		return $return ;
 	}
 
-	public		function escape(h\string $sql)
+	public		function escape(h\string $sql, $is_nullable=false)
 	{
-		$escaped = h\string($this->_con->real_escape_string($sql->scalar)) ;
+		if(h\string('null')->is_equal($sql))
+			if(false === $is_nullable)
+				$this->_throw('Value is not nullable') ;
+			else
+				$escaped = h\string('null');
+		else
+			$escaped = h\string::format('\'%s\'', $this->_con->real_escape_string($sql->scalar)) ;
+
+		return $escaped ;
+	}
+
+	public		function escape_json(h\string $sql, $is_nullable=false)
+	{
+		if(h\string('null')->is_equal($sql))
+			if(false === $is_nullable)
+				$this->_throw('Value is not nullable') ;
+			else
+				$escaped = h\string('null');
+		else
+			$escaped = h\string::format('\'%s\'', $this->_con->real_escape_string(json_encode($sql->scalar))) ;
+
 		return $escaped ;
 	}
 }
