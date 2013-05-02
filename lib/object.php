@@ -88,6 +88,9 @@ h\import('lib/exception') ;
 abstract
 class object_base
 {
+	const		exception_class = '\horn\lib\exception';
+	protected	$exception_class = self::exception_class;
+
 	/** Clone current object and returns it. If a _clone method
 	 *	exists on the object, it will be used to create the new 
 	 *	object. This _clone member function is mandatory if the
@@ -445,19 +448,64 @@ class object_base
 	}
 	 */
 
-	/** \throw	exception
-	 */
-	protected	function _throw($msg)
+	public		function __call($method_name, $arguments)
 	{
-		throw new exception($msg, dump($this)) ;
+		if(method_exists($this, $method_name))
+			// This is an attempt to access the method from an unallowed scope
+			$this->_throw_format('Function \'%s\' is protected or private in \'%s\'.'
+					, $method_name, get_class($this));
+
+		$result = null;
+		$is_managed = false;
+		foreach(get_class_methods($this) as $handler_method)
+			if(0 === strpos($handler_method, '_call_'))
+				if(true === ($is_managed = $this->$handler_method($method_name, $arguments, $result)))
+					break;
+
+		if($is_managed)
+			return $result;
+
+		$this->_throw_format('Function \'%s\' can\'t be handled', $method_name);
+	}
+
+	protected	function _call_throw($method_name, $arguments, &/*out*/$result)
+	{
+		$pos = strpos($method_name, '_throw');
+		if(0 !== $pos)
+			return false;
+
+		$actual_method_name = substr($method_name, $pos);
+
+		$actual_method_name = $actual_method_name . '_ex';
+		if(!method_exists($this, $actual_method_name))
+			return false;
+
+		$callback = array($this, $actual_method_name);
+		$arguments = array_merge(array($this->get_exception_class()), $arguments);
+
+		$result = call_user_func_array($callback, $arguments);
+
+		return true;
+	}
+
+	private		function get_exception_class()
+	{
+		return $this->exception_class;
 	}
 
 	/** \throw	exception
 	 */
-	protected	function _throw_format($fmt)
+	protected	function _throw_ex($exception_class, $msg)
+	{
+		throw new $exception_class($msg, dump($this)) ;
+	}
+
+	/** \throw	exception
+	 */
+	protected	function _throw_format_ex($exception_class, $fmt)
 	{
 		$msg = call_user_func_array('sprintf', func_get_args()) ;
-		$this->_throw($msg) ;
+		$this->_throw_ex($exception_class, $msg) ;
 	}
 
 	/** \throw	exception
