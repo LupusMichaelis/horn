@@ -118,6 +118,11 @@ class database_mysql
 			$this->charset = $this->specification['charset'] ;
 	}
 
+	protected	function &_get_affected_rows()
+	{
+		return $this->_con->affected_rows;
+	}
+
 	protected	function _throw_query_error()
 	{
 		$this->_throw($this->_con->error) ;
