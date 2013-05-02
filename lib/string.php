@@ -62,7 +62,7 @@ function concatenate($lhs, $rhs)
  */
 class string
 	extends		object_public
-	implements	\arrayaccess, \countable
+	implements	\arrayaccess, \countable, \jsonserializable
 {
 	const		ERR_OVERRUN	= 'Specified offset overrun [begin:%d,end:%d].' ;
 	const		ERR_INVERT	= 'Offsets seems invert [begin:%d,end:%d].' ;
@@ -356,6 +356,12 @@ class string
 	public		function count()
 	{
 		return $this->length() ;
+	}
+
+	// jsonserializable //////////////////////////////////////////////////
+	public		function jsonserialize()
+	{
+		return $this->scalar;
 	}
 }
 
