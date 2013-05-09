@@ -504,7 +504,9 @@ class object_base
 	 */
 	protected	function _throw_format_ex($exception_class, $fmt)
 	{
-		$msg = call_user_func_array('sprintf', func_get_args()) ;
+		$args = func_get_args();
+		array_shift($args);
+		$msg = call_user_func_array('sprintf', $args) ;
 		$this->_throw_ex($exception_class, $msg) ;
 	}
 
