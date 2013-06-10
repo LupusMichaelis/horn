@@ -57,7 +57,6 @@ class database_factory
 	public		function create()
 	{
 		$db = $this->build() ;
-		$db->open() ;
 		return $db ;
 	}
 
@@ -104,6 +103,9 @@ class database_mysql
 
 	public		function open()
 	{
+		if(null !== $this->_con)
+			$this->_throw('Database already connected');
+
 		$this->_con = new \mysqli
 			( $this->specification['host']
 			, $this->specification['user']
@@ -120,7 +122,14 @@ class database_mysql
 
 	protected	function &_get_affected_rows()
 	{
-		return $this->_con->affected_rows;
+		$affected_rows = $this->_con->affected_rows;
+		return $affected_rows;
+	}
+
+	protected	function &_get_insert_id()
+	{
+		$insert_id = $this->_con->insert_id;
+		return $insert_id;
 	}
 
 	protected	function _throw_query_error()
