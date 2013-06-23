@@ -92,6 +92,7 @@ class request
 	const		GET = 'GET' ;
 	const		PUT = 'PUT' ;
 	const		DELETE = 'DELETE' ;
+	const		OPTIONS = 'OPTIONS' ;
 
 	public		$method ;
 	protected	$_uri ;
@@ -126,6 +127,7 @@ class request
 			, 'GET' => self::GET
 			, 'PUT' => self::PUT
 			, 'DELETE' => self::DELETE
+			, 'OPTIONS' => self::OPTIONS
 			) ;
 		return $methods[strtoupper($candidate)] ;
 	}
