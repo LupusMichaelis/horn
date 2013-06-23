@@ -66,7 +66,7 @@ class uri
 
 	public		function _to_string()
 	{
-		return '' ;
+		return $this->_path ;
 	}
 }
 
