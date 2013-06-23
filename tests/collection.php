@@ -175,6 +175,18 @@ class test_suite_collection
 			} ;
 		$this->add_test($callback, $messages) ;
 	}
+
+	public		function _test_jsonserialize()
+	{
+		$a = array('key' => 'value', 'first');
+		$o = h\c($a) ;
+		$messages = array('Try to Jsonify a collection') ;
+		$callback = function () use ($a, $o)
+			{
+				return json_encode($a) === json_encode($o);
+			} ;
+		$this->add_test($callback, $messages) ;
+	}
 }
 
 

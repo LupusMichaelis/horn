@@ -62,7 +62,10 @@ function c($a)
   */
 class collection
 	extends		object_public
-	implements	\Iterator, \ArrayAccess, \Countable
+	implements	\Iterator
+		, \ArrayAccess
+		, \Countable
+		, \JsonSerializable
 {
 	/**
 	 * \see		self::join
@@ -325,6 +328,12 @@ class collection
 		unset($this->_stack[$this->filter_key($key)]) ;
 	}
 
+	/* interface JsonSerializable */
+	public		function jsonSerialize()
+	{
+		return $this->get_stack();
+	}
+
 	/** Clean current elements of the collection, then copy each elements of the
 	 *  copied collection. If it meets an object, the method clone it.
 	 *
@@ -382,5 +391,3 @@ class collection_mutltivalue
 		}
 	}
 }
-
-
