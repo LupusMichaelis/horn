@@ -27,10 +27,10 @@
 
 namespace horn\lib ;
 
-import('lib/registry') ;
+import('lib/collection') ;
 
 class configuration
-	extends registry
+	extends collection
 {
 }
 
