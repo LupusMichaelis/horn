@@ -32,6 +32,21 @@ h\import('lib/object') ;
 h\import('lib/collection') ;
 h\import('lib/configuration');
 
+function auto_build(h\configuration $configuration)
+{
+	$component = null;
+	// We build the onion from core to skin
+	$components = h\c($configuration['components'])->reverse();
+	foreach($components as $layer)
+	{
+		h\import('lib/component/'.$layer);
+		$component_class = "\\horn\\lib\\component\\$layer";
+		$component = new $component_class($configuration, $component);
+	}
+
+	return $component;
+}
+
 class context
 {
 }
@@ -40,27 +55,27 @@ abstract
 class base
 	extends		h\object_public
 {
-	protected	$_next_delegate;
+	protected	$_next;
 	protected	$_configuration;
 
-	public		function __construct(h\configuration $configuration, base $next_delegate = null)
+	public		function __construct(h\configuration $configuration, base $next = null)
 	{
 		$this->_configuration = $configuration;
-		$this->_next_delegate = $next_delegate;
+		$this->_next = $next;
 		parent::__construct();
 	}
 
-	protected	function &_get_next_delegate()
+	protected	function &_get_next()
 	{
-		if($this->has_delegate())
-			return $this->_next_delegate;
+		if($this->has_next())
+			return $this->_next;
 
 		$this->_throw('There is exception no more');
 	}
 
-	public		function has_delegate()
+	public		function has_next()
 	{
-		return !is_null($this->_next_delegate);
+		return !is_null($this->_next);
 	}
 
 	public		function do_process(context $ctx)
@@ -68,8 +83,8 @@ class base
 		if(false === $this->do_before($ctx))
 			return;
 
-		if($this->has_delegate())
-			$this->next_delegate->do_process($ctx);
+		if($this->has_next())
+			$this->next->do_process($ctx);
 		$this->do_after($ctx);
 
 		return $ctx;
