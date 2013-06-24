@@ -1,6 +1,5 @@
 <?php
-/** Delegate that take responsability for http request input (request) and
- *  output (responce)
+/** Model holder
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -26,41 +25,46 @@
  *
  */
 
-namespace horn\lib\component ;
-use \horn\lib as h;
+namespace horn\lib ;
+use \horn\lib as h ;
 
-h\import('lib/component') ;
-h\import('lib/string') ;
+h\import('lib/object') ;
+h\import('lib/services') ;
 
-class content_type
-	extends base
+class model_data
+	extends h\object_public
 {
-	protected	function do_before(context $ctx)
+	public		function __construct(h\model $parent)
 	{
-		$this->do_deduce_content_type($ctx);
-		$this->do_select_renderer($ctx);
-		return true;
+		$this->_model = $parent;
+		$this->_cache = h\collection();
+		parent::__construct();
 	}
 
-	protected	function do_after(context $ctx)
+	protected	$_name;
+
+	protected	$_cache;
+	protected	$_model;
+}
+
+class model
+	extends h\object_public
+{
+	/// TODO readonly
+	protected	$_data;
+
+	public		function __construct(h\service_provider $services)
 	{
+		$this->_data = h\collection();
+		$this->_services = $services;
+		parent::__construct();
 	}
 
-	private		function do_deduce_content_type(context $ctx)
+	protected	function add_data(model_data $data)
 	{
-		$ctx->out->head['Content-type'] = h\string::format
-			( '%s; charset=%s'
-			, $this->configuration['content_type']['mime_type']
-			, $this->configuration['content_type']['encoding']
-			);
+		$this->_data[$data::name] = $data;
 	}
 
-	private		function do_select_renderer(context $ctx)
-	{
-		$renderer = $this->configuration['content_type']['engine'];
-		$ctx->out->body = new $renderer($this->configuration);
-		// array('status' => false, 'results' => h\collection(), 'messages' => h\collection());
-		//$ctx->out->body = h\string('');
-	}
+	protected	$_services;
 }
 

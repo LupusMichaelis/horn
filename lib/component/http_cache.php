@@ -36,7 +36,7 @@ class http_cache
 {
 	protected		function do_before(context $ctx)
 	{
-		$ctx->out->header['Cache-Control'] = 'no-cache';
+		$ctx->out->head['Cache-Control'] = 'no-cache';
 
 		return true;
 	}

@@ -37,10 +37,10 @@ class http_controllers
 	protected		function do_before(context $ctx)
 	{
 		$interfaces = array
-			( 'GET' => 'http_get'
-			, 'POST' => 'http_post'
-			, 'PUT' => 'http_put'
-			, 'DELETE' => 'http_delete'
+			( 'GET'		=> '\horn\lib\http_get'
+			, 'POST'	=> '\horn\lib\http_post'
+			, 'PUT'		=> '\horn\lib\http_put'
+			, 'DELETE'	=> '\horn\lib\http_delete'
 			);
 
 		$http_method = $ctx->in->method;
@@ -48,9 +48,9 @@ class http_controllers
 		if(!isset($interfaces[$http_method]))
 		{
 			$ctx->out->status = 'HTTP/1.1 405 Method Not Allowed';
-			$msg = sprintf('Non-supported method \'%s\' on \'%s\'', $http_method, $uri);
-			$ctx->out->body['status'] = false;
-			$ctx->out->body['messages'][] = $msg;
+			$msg = sprintf('Non-supported method \'%s\' on \'%s\'', $http_method, $ctx->in->head->uri);
+			$ctx->error_handling['status'] = false;
+			$ctx->error_handling['messages'][] = $msg;
 			return false;
 		}
 
@@ -59,8 +59,8 @@ class http_controllers
 		if(!class_exists($controller_class))
 		{
 			$msg = sprintf('Undefined controller class \'%s\'', $controller_class);
-			$ctx->out->body['status'] = false;
-			$ctx->out->body['messages'][] = $msg;
+			$ctx->error_handling['status'] = false;
+			$ctx->error_handling['messages'][] = $msg;
 			return false;
 		}
 
@@ -68,16 +68,16 @@ class http_controllers
 		if(! $ctrl instanceof $interfaces[$http_method])
 		{
 			$ctx->out->status = 'HTTP/1.1 405 Method Not Allowed';
-			$msg = sprintf('Non-supported method \'%s\' on \'%s\'', $http_method, $uri);
-			$ctx->out->body['status'] = false;
-			$ctx->out->body['messages'][] = $msg;
+			$msg = sprintf('Non-supported method \'%s\' on \'%s\'', $http_method, $ctx->in->head->uri);
+			$ctx->error_handling['status'] = false;
+			$ctx->error_handling['messages'][] = $msg;
 			return false;
 		}
 
 		$result = $ctrl->{"do_$http_method"}();
-		$ctx->out->body['status'] = $result[0];
-		isset($result[1]) && $ctx->out->body['results']->join($result[1]);
-		isset($result[2]) && $ctx->out->body['messages']->join($result[2]);
+		$ctx->error_handling['status'] = $result[0];
+		isset($result[1]) && $ctx->results->join($result[1]);
+		isset($result[2]) && $ctx->error_handling['messages']->join($result[2]);
 
 		return true;
 	}

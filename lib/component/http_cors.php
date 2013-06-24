@@ -51,7 +51,7 @@ class http_cors
 				h\string::format('https://%s', $this->configuration['front_base_url'])
 			)
 		);
-		$ctx->out->header->join($cors_headers);
+		$ctx->out->head->join($cors_headers);
 	}
 
 	private		function do_answer_option(context $ctx)

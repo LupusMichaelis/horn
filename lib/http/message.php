@@ -73,12 +73,12 @@ class uri
 class message
 	extends h\object_public
 {
-	public	$header ;
+	public	$head ;
 	public	$body ;
 
 	public function __construct()
 	{
-		$this->header = new header ;
+		$this->head = new head ;
 		$this->body = new body ;
 
 		parent::__construct() ;
@@ -109,7 +109,7 @@ class request
 	static public function create_native()
 	{
 		$native = new self ;
-		$native->header['host'] = $_SERVER['HTTP_HOST'] ;
+		$native->head['host'] = $_SERVER['HTTP_HOST'] ;
 
 		$native->method = self::get_method($_SERVER['REQUEST_METHOD']) ;
 		$native->uri = new uri(h\string($_SERVER['REQUEST_URI'])) ;
@@ -140,7 +140,7 @@ class response
 	public		$status ;
 }
 
-class header
+class head
 	extends \horn\lib\collection
 {
 }

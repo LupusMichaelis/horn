@@ -58,13 +58,13 @@ class http
 	private			function do_render_head(context $ctx)
 	{
 		header($ctx->out->status);
-		foreach($ctx->out->header as $name => $value)
+		foreach($ctx->out->head as $name => $value)
 			// TODO: escape name and values to avoid header injection
 			header(sprintf('%s: %s', $name, $value));
 	}
 
 	private			function do_render_body(context $ctx)
 	{
-		print json_encode($ctx->out->body);
+		print $ctx->out->body->do_render(h\string('front'), $ctx);
 	}
 }

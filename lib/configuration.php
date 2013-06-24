@@ -3,7 +3,7 @@
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2009, Lupus Michaelis
+ *  Copyright	2013, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -26,12 +26,68 @@
  */
 
 namespace horn\lib ;
+use \horn\lib as h;
 
-import('lib/collection') ;
+h\import('lib/collection') ;
+h\import('lib/decorator') ;
+
+function make_configuration(/* ... */)
+{
+	$files = func_get_args();
+	$files = h\c($files);
+
+	$composed_configuration = null;
+	foreach($files as $file)
+	{
+		$file_configuration = /*require*/ $file;
+		$file_configuration = h\c($file_configuration);
+
+		$composed_configuration = new composed_configuration($file_configuration, $composed_configuration);
+	}
+
+	$configuration = new configuration($composed_configuration);
+
+	return $configuration;
+}
 
 class configuration
 	extends collection
 {
+	protected	$_composed;
+
+	public		function __construct(composed_configuration $composed)
+	{
+		$this->_composed = $composed;
+
+		$values = clone $composed->payload;
+		while($composed->has_next())
+		{
+			$composed = $composed->next;
+			$values->join($composed->payload) ;
+		}
+		parent::__construct();
+		$this->join($values);
+	}
+}
+
+class composed_configuration
+	extends decorator
+{
+	protected	$_payload;
+
+	public		function __construct(h\collection $payload, h\composed_configuration $next=null)
+	{
+		$this->_payload = clone $payload;
+		parent::__construct($next);
+	}
+
+	public		function get($key)
+	{
+		if(isset($this->_payload[$key]))
+			return $this->_payload[$key];
+
+		return $this->next->get($key);
+	}
 }
 
 

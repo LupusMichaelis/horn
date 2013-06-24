@@ -1,5 +1,5 @@
 <?php
-/** \file
+/**
  *	Object coherent handling.
  *	\see object_base
  *

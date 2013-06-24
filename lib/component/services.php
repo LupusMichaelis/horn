@@ -36,7 +36,7 @@ class services
 {
 	protected		function do_before(context $ctx)
 	{
-		$ctx->services = get_service_provider($this->configuration);
+		$ctx->services = h\get_service_provider($this->configuration);
 	}
 
 	protected		function do_after(context $ctx)

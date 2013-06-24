@@ -67,7 +67,7 @@ class base
 	public		function do_process(context $ctx)
 	{
 		if(false === $this->do_before($ctx))
-			return;
+			return; // The component failed, thus we shan't continue in inconsistant state
 
 		if($this->has_next())
 			$this->next->do_process($ctx);
