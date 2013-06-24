@@ -31,6 +31,7 @@ use \horn\lib as h;
 h\import('lib/object') ;
 h\import('lib/collection') ;
 h\import('lib/configuration');
+h\import('lib/decorator');
 
 function auto_build(h\configuration $configuration)
 {
@@ -53,29 +54,14 @@ class context
 
 abstract
 class base
-	extends		h\object_public
+	extends		h\decorator
 {
-	protected	$_next;
 	protected	$_configuration;
 
 	public		function __construct(h\configuration $configuration, base $next = null)
 	{
 		$this->_configuration = $configuration;
-		$this->_next = $next;
-		parent::__construct();
-	}
-
-	protected	function &_get_next()
-	{
-		if($this->has_next())
-			return $this->_next;
-
-		$this->_throw('There is exception no more');
-	}
-
-	public		function has_next()
-	{
-		return !is_null($this->_next);
+		parent::__construct($next);
 	}
 
 	public		function do_process(context $ctx)
