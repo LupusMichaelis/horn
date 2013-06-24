@@ -81,7 +81,7 @@ class collection
 	 */
 	public		function get_stack()
 	{
-		return (array) $this->_stack ;
+		return (array) $this->ref_stack() ;
 	}
 
 	/** Merge the argument list in a new collection.
@@ -151,7 +151,7 @@ class collection
 	 */
 	public		function search($needle, $strict=false)
 	{
-		$keys = array_keys($this->_stack, $needle, $strict) ;
+		$keys = array_keys($this->ref_stack(), $needle, $strict) ;
 
 		return $keys ;
 	}
@@ -162,7 +162,7 @@ class collection
 	 */
 	public		function has_value($value)
 	{
-		return in_array($value, $this->_stack) ;
+		return in_array($value, $this->ref_stack()) ;
 	}
 
 	/** Find if the current collection has at least one value from the $compared
@@ -171,7 +171,7 @@ class collection
 	 */
 	public		function has_intersection_with(collection $compared)
 	{
-		return 0 < count(\array_intersect($this->_stack, $compared->_stack)) ;
+		return 0 < count(\array_intersect($this->ref_stack(), $compared->ref_stack())) ;
 	}
 
 	/** Find if current collection has keys \param keys
@@ -180,7 +180,7 @@ class collection
 	 */
 	public		function has_keys(collection $keys)
 	{
-		return \count($keys->_stack) === count(\array_intersect(\array_keys($this->_stack), $keys->_stack)) ;
+		return \count($keys->ref_stack()) === count(\array_intersect(\array_keys($this->ref_stack()), $keys->ref_stack())) ;
 	}
 
 
@@ -197,9 +197,9 @@ class collection
 
 		if($all)
 			foreach($matches as $match)
-				$removed |= count(array_splice($this->_stack, $match, 1)) ;
+				$removed |= count(array_splice($this->ref_stack(), $match, 1)) ;
 		else
-			$removed |= count(array_splice($this->_stack, $matches[0], 1)) ;
+			$removed |= count(array_splice($this->ref_stack(), $matches[0], 1)) ;
 
 		return $removed ;
 	}
@@ -209,7 +209,7 @@ class collection
 	 */
 	public		function push($element)
 	{
-		array_push($this->_stack, $element) ;
+		array_push($this->ref_stack(), $element) ;
 		return $this ;
 	}
 
@@ -218,7 +218,7 @@ class collection
 	 */
 	public		function pop()
 	{
-		return array_pop($this->_stack) ;
+		return array_pop($this->ref_stack()) ;
 	}
 
 	/** Reference the front element of the collection.
@@ -226,9 +226,9 @@ class collection
 	 */
 	public		function & front()
 	{
-		reset($this->_stack) ;
+		reset($this->ref_stack()) ;
 
-		return $this->_stack[key($this->_stack)] ;
+		return $this->ref_stack()[key($this->ref_stack())] ;
 	}
 
 	/** Reference the back element of the collection.
@@ -236,9 +236,9 @@ class collection
 	 */
 	public		function & back()
 	{
-		end($this->_stack) ;
+		end($this->ref_stack()) ;
 
-		return $this->_stack[key($this->_stack)] ;
+		return $this->ref_stack()[key($this->ref_stack())] ;
 	}
 
 	/** Spin off the collection.
@@ -246,7 +246,7 @@ class collection
 	 */
 	public		function reverse()
 	{
-		$this->_stack = array_reverse($this->_stack) ;
+		$this->set_stack(array_reverse($this->ref_stack())) ;
 		return $this ;
 	}
 
@@ -255,7 +255,7 @@ class collection
 	 */
 	public		function has_key($needle)
 	{
-		return array_key_exists($needle, $this->_stack) ;
+		return array_key_exists($needle, $this->ref_stack()) ;
 	}
 
 	/** Import every element of an iterable.
@@ -279,14 +279,14 @@ class collection
 	}
 
 	/* interface Iterator */
-	public		function current()	{ return current($this->_stack) ; }
-	public		function next()		{ return next($this->_stack) ; }
-	public		function key()		{ return key($this->_stack) ; }
-	public		function rewind()	{ return reset($this->_stack) ; }
-	public		function valid()	{ return array_key_exists(key($this->_stack), $this->_stack) ; }
+	public		function current()	{ return current($this->ref_stack()) ; }
+	public		function next()		{ return next($this->ref_stack()) ; }
+	public		function key()		{ return key($this->ref_stack()) ; }
+	public		function rewind()	{ return reset($this->ref_stack()) ; }
+	public		function valid()	{ return array_key_exists(key($this->ref_stack()), $this->ref_stack()) ; }
 
 	/* interface Countable */
-	public		function count()	{ return count($this->_stack) ; }
+	public		function count()	{ return count($this->ref_stack()) ; }
 
 	protected	function filter_key($candidate)
 	{
@@ -302,7 +302,7 @@ class collection
 	/* interface ArrayAccess */
 	public		function offsetExists($key)
 	{
-		return array_key_exists($this->filter_key($key), $this->_stack) ;
+		return array_key_exists($this->filter_key($key), $this->ref_stack()) ;
 	}
 	
 	public		function &offsetGet($key)
@@ -310,22 +310,22 @@ class collection
 		if(!$this->offsetExists($key))
 			$this->_throw_offset_does_not_exists($key) ;
 
-		return $this->_stack[$key] ;
+		return $this->ref_stack()[$key] ;
 	}
 
 	public		function offsetSet($key, $value)
 	{
 		if(is_null($key))
-			$this->_stack[] = $value ;
+			$this->ref_stack()[] = $value ;
 		else
-			$this->_stack[$this->filter_key($key)] = $value ;
+			$this->ref_stack()[$this->filter_key($key)] = $value ;
 
 		return $this->current() ;
 	}
 
 	public		function offsetUnset($key)
 	{
-		unset($this->_stack[$this->filter_key($key)]) ;
+		unset($this->ref_stack()[$this->filter_key($key)]) ;
 	}
 
 	/* interface JsonSerializable */
@@ -342,7 +342,9 @@ class collection
 	 */
 	protected		function _set_stack($rhs)
 	{
-		$this->_stack = array() ;
+		$a = array();
+		$this->set_stack($a);
+		unset($a);
 
 		if(is_array($rhs) || $rhs instanceof iterator)
 			foreach($rhs as $k => $v)
@@ -363,6 +365,16 @@ class collection
 	{
 		// \warning	use $this->get_stack() to get a copy
 		$this->_throw_readonly_attribute('stack') ;
+	}
+
+	protected	function set_stack(& $stack)
+	{
+		$this->_stack = $stack;
+	}
+
+	protected	function &ref_stack()
+	{
+		return $this->_stack;
 	}
 
 	protected	function _throw_offset_does_not_exists($key)
