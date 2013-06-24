@@ -246,7 +246,9 @@ class collection
 	 */
 	public		function reverse()
 	{
-		$this->set_stack(array_reverse($this->ref_stack())) ;
+		$s = $this->ref_stack();
+		$s = array_reverse($s);
+		$this->set_stack($s) ;
 		return $this ;
 	}
 
