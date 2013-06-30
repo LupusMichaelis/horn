@@ -71,8 +71,8 @@ class routing
 		{
 			$ctx->out->status = 'HTTP/1.1 404 Not Found';
 			$msg = sprintf('Non-supported method \'%s\'', $http_method, $path);
-			$ctx->out->body['status'] = false;
-			$ctx->out->body['messages'][] = $msg;
+			$ctx->error_handling['status'] = false;
+			$ctx->error_handling['messages'][] = $msg;
 			return false;
 		}
 

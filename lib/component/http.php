@@ -65,6 +65,6 @@ class http
 
 	private			function do_render_body(context $ctx)
 	{
-		print $ctx->out->body->do_render(h\string('front'), $ctx);
+		print $ctx->out->body->do_render($ctx);
 	}
 }

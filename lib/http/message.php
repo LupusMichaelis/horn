@@ -169,6 +169,16 @@ class body
 		}
 		*/
 
+		/*
+		if(is_null($put_data))
+		{
+			$put_data = file_get_contents('php://input');
+			$put_data = urldecode($put_data);
+			parse_str($put_data, $put_data);
+			$put_data = h\collection::merge($put_data);
+		}
+
+		*/
 		return $native ;
 	}
 

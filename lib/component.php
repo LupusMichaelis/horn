@@ -33,7 +33,7 @@ h\import('lib/collection') ;
 h\import('lib/configuration');
 h\import('lib/decorator');
 
-function auto_build(h\configuration $configuration)
+function build(h\configuration $configuration, context $ctx)
 {
 	$component = null;
 	// We build the onion from core to skin

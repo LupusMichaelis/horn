@@ -28,6 +28,7 @@
 namespace horn\lib ;
 use \horn\lib as h ;
 
+h\import('lib/object') ;
 h\import('lib/collection') ;
 h\import('lib/string') ;
 h\import('lib/model') ;
@@ -53,64 +54,42 @@ interface http_delete
 }
 
 class controller
+	extends h\object_public
 {
-	private		$_model;
-	private		$_segments;
+	protected	$_context;
 
-	public		function __construct(h\collection $segments, h\model $model)
+	public		function __construct(h\component\context $context)
 	{
-		$this->_segments = $segments;
-		$this->_model = $model;
+		$this->_context = $context;
 	}
 
 	protected	function get_model()
 	{
-		return $this->_model;
+		return $this->context->model;
 	}
 
 	protected	function get_segments()
 	{
-		return $this->_segments;
+		return $this->context->segments;
 	}
 
 	protected	function get_search_part()
 	{
-		static $search_part;
-		if(is_null($search_part))
-			$search_part = h\collection::merge($_GET);
-
-		return $search_part;
+		return $this->context->in->head->uri->searchpart;
 	}
 
 	protected	function get_post_data()
 	{
-		static $post_data;
-		if(is_null($post_data))
-			$post_data = h\collection::merge($_POST);
-
-		return $post_data;
+		return $this->context->in->body->iterate();
 	}
 
 	protected	function get_cookie_data()
 	{
-		static $cookie;
-		if(is_null($cookie))
-			$cookie = h\collection::merge($_COOKIE);
-
-		return $cookie;
+		return $this->context->in->head->cookies;
 	}
 
 	protected	function get_put_data()
 	{
-		static $put_data;
-		if(is_null($put_data))
-		{
-			$put_data = file_get_contents('php://input');
-			$put_data = urldecode($put_data);
-			parse_str($put_data, $put_data);
-			$put_data = h\collection::merge($put_data);
-		}
-
-		return $put_data;
+		return $this->context->in->body->post;
 	}
 }

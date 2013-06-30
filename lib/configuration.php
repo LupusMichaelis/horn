@@ -68,6 +68,11 @@ class configuration
 		parent::__construct();
 		$this->join($values);
 	}
+
+	protected	function _clone()
+	{
+		return new static($this->_composed);
+	}
 }
 
 class composed_configuration

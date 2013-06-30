@@ -64,7 +64,7 @@ class http_controllers
 			return false;
 		}
 
-		$ctrl = new $controller_class($ctx->segments, $ctx->model);
+		$ctrl = new $controller_class($ctx);
 		if(! $ctrl instanceof $interfaces[$http_method])
 		{
 			$ctx->out->status = 'HTTP/1.1 405 Method Not Allowed';
