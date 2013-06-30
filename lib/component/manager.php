@@ -1,10 +1,9 @@
 <?php
-/** Delegate that take responsability for http request input (request) and
- *  output (responce)
+/** Component manager
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2009, Lupus Michaelis
+ *  Copyright	2013, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -30,41 +29,4 @@ namespace horn\lib\component ;
 use \horn\lib as h;
 
 h\import('lib/component') ;
-h\import('lib/http') ;
 
-class http
-	extends base
-{
-	protected		function do_before(context $ctx)
-	{
-		// create http_request, http_responce
-		$ctx->in = h\http\create_native();
-		$ctx->out = new h\http\response;
-
-		return true;
-	}
-
-	protected		function do_after(context $ctx)
-	{
-		$this->do_render($ctx);
-	}
-
-	private			function do_render(context $ctx)
-	{
-		$this->do_render_head($ctx);
-		$this->do_render_body($ctx);
-	}
-
-	private			function do_render_head(context $ctx)
-	{
-		header($ctx->out->status);
-		foreach($ctx->out->head as $name => $value)
-			// TODO: escape name and values to avoid header injection
-			header(sprintf('%s: %s', $name, $value));
-	}
-
-	private			function do_render_body(context $ctx)
-	{
-		print $ctx->out->body->do_render($ctx);
-	}
-}

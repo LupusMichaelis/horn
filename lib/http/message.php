@@ -88,12 +88,6 @@ class message
 class request
 	extends message
 {
-	const		POST = 'POST' ;
-	const		GET = 'GET' ;
-	const		PUT = 'PUT' ;
-	const		DELETE = 'DELETE' ;
-	const		OPTIONS = 'OPTIONS' ;
-
 	public		$method ;
 	protected	$_uri ;
 	public		$version ;
@@ -102,34 +96,8 @@ class request
 
 	public		function __construct()
 	{
-		$this->_uri = new uri(h\string('/')) ;
+		$this->_uri = new uri(h\string('')) ;
 		parent::__construct() ;
-	}
-
-	static public function create_native()
-	{
-		$native = new self ;
-		$native->head['host'] = $_SERVER['HTTP_HOST'] ;
-
-		$native->method = self::get_method($_SERVER['REQUEST_METHOD']) ;
-		$native->uri = new uri(h\string($_SERVER['REQUEST_URI'])) ;
-		$native->version = h\string($_SERVER['SERVER_PROTOCOL']) ;
-
-		$native->body = body::create_native() ;
-
-		return $native ;
-	}
-
-	static public function get_method($candidate)
-	{
-		static $methods = array
-			( 'POST' => self::POST
-			, 'GET' => self::GET
-			, 'PUT' => self::PUT
-			, 'DELETE' => self::DELETE
-			, 'OPTIONS' => self::OPTIONS
-			) ;
-		return $methods[strtoupper($candidate)] ;
 	}
 
 }
@@ -148,48 +116,10 @@ class head
 class body
 	extends \horn\lib\object_public
 {
-	private $parts ;
 	public	$content ;
-
-	static public function create_native()
-	{
-		$native = new self ;
-
-		/* XXX Get data from raw input when it is not a multipart
-		$received = file_get_contents('php://input') ;
-		if(strlen($received) === 0)
-		{
-		*/
-			$native->parts->join($_POST) ;
-			$native->parts->join($_FILES) ;
-		/* XXX
-		}
-		else
-		{
-		}
-		*/
-
-		/*
-		if(is_null($put_data))
-		{
-			$put_data = file_get_contents('php://input');
-			$put_data = urldecode($put_data);
-			parse_str($put_data, $put_data);
-			$put_data = h\collection::merge($put_data);
-		}
-
-		*/
-		return $native ;
-	}
 
 	public		function __construct()
 	{
-		$this->parts = h\collection() ;
-	}
-
-	public		function get(h\string $key)
-	{
-		return h\string($this->parts[(string) $key]) ;
 	}
 }
 
