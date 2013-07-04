@@ -48,7 +48,7 @@ class http_controllers
 		if(!isset($interfaces[$http_method]))
 		{
 			$ctx->out->status = 'HTTP/1.1 405 Method Not Allowed';
-			$msg = sprintf('Non-supported method \'%s\' on \'%s\'', $http_method, $ctx->in->head->uri);
+			$msg = sprintf('Non-supported method \'%s\' on \'%s\'', $http_method, $ctx->in->uri);
 			$ctx->error_handling['status'] = false;
 			$ctx->error_handling['messages'][] = $msg;
 			return false;
@@ -68,7 +68,7 @@ class http_controllers
 		if(! $ctrl instanceof $interfaces[$http_method])
 		{
 			$ctx->out->status = 'HTTP/1.1 405 Method Not Allowed';
-			$msg = sprintf('Non-supported method \'%s\' on \'%s\'', $http_method, $ctx->in->head->uri);
+			$msg = sprintf('Non-supported method \'%s\' on \'%s\'', $http_method, $ctx->in->uri);
 			$ctx->error_handling['status'] = false;
 			$ctx->error_handling['messages'][] = $msg;
 			return false;
