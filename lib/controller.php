@@ -75,7 +75,7 @@ class controller
 
 	protected	function get_search_part()
 	{
-		return $this->context->in->head->uri->searchpart;
+		return $this->context->in->uri->searchpart;
 	}
 
 	protected	function get_post_data()

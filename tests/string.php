@@ -65,5 +65,17 @@ class test_suite_string
 			} ;
 		$this->add_test($callback, $messages) ;
 	}
+
+	protected	function _test_encoding()
+	{
+		$messages = array('Tests encoding.') ;
+		$callback = function ()
+			{
+				$s = h\string("UTF-8 string \xC9");
+				var_dump($s->charset);
+				return $s->charset === 'UTF-8';
+			} ;
+		$this->add_test($callback, $messages) ;
+	}
 }
 

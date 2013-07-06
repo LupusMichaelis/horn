@@ -60,6 +60,8 @@ class json_renderer
 	}
 }
 
+h\import('lib/render/strategy');
+
 class html_renderer
 	extends h\renderer
 {
@@ -70,6 +72,7 @@ class html_renderer
 			, 'styles' => $this->configuration['styles']
 			, 'title' => 'Cat Groomer'
 			);
+		$e = new h\render\html_escaper(h\string('UTF-8'));
 		$errors = $context->error_handling['messages'];
 		$template = $context->template;
 		$path = $this->configuration['template']['path'];
