@@ -221,6 +221,14 @@ class collection
 		return array_pop($this->ref_stack()) ;
 	}
 
+	/** Pop the first inserted element.
+	 *	\return		mixed		The poped element.
+	 */
+	public		function shift()
+	{
+		return array_shift($this->ref_stack()) ;
+	}
+
 	/** Reference the front element of the collection.
 	 *	\return		reference on $this
 	 */

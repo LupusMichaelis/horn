@@ -216,6 +216,23 @@ class string
 		return new static(substr($this->_scalar, $begin, $end - $begin)) ;
 	}
 
+	/** Removes spaces and tabs from edges of the string
+	 */
+	public		function trim()
+	{
+		$this->_scalar = trim($this->_scalar);
+	}
+
+	/** Clone the current string and return it trimmed
+	 *  \return	The trimmed string
+	 */
+	public		function trimmed()
+	{
+		$copy = clone $this;
+		$copy->trim();
+		return $copy;
+	}
+
 	/** Search $needle from $offset to end until a match.
 	 *
 	 * \param	$needle		string

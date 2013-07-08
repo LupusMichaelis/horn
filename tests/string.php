@@ -72,8 +72,19 @@ class test_suite_string
 		$callback = function ()
 			{
 				$s = h\string("UTF-8 string \xC9");
-				var_dump($s->charset);
 				return $s->charset === 'UTF-8';
+			} ;
+		$this->add_test($callback, $messages) ;
+	}
+
+	protected	function _test_slice()
+	{
+		$messages = array('Tests slice.') ;
+		$callback = function ()
+			{
+				$s = h\string("This is some ham to slice");
+				$h = $s->slice($s->search('ham'), $s->search('ham') + strlen('ham'));
+				return $h->is_equal(h\string('ham'));
 			} ;
 		$this->add_test($callback, $messages) ;
 	}
