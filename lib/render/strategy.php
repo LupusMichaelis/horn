@@ -1,5 +1,5 @@
 <?php
-/** Rendering strategy
+/** Template strategy
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -25,77 +25,20 @@
  *
  */
 
-namespace horn\lib\render;
+namespace horn\lib;
 use \horn\lib as h;
-
-h\import('lib/object');
-
-class html_escaper
-	extends h\object_public
-{
-	protected	$_charset;
-
-	public		function __construct(h\string $charset)
-	{
-		$this->_charset = clone $charset;
-		parent::__construct();
-	}
-
-	private		function copy_and_convert(h\string $text)
-	{
-		return $text->to_converted($this->charset);
-	}
-
-	/** \see http://php.net/manual/en/function.htmlentities.php */
-	private		function php_htmlentities(/* ... */)
-	{
-		$args = func_get_args();
-
-		//
-		if('ASCII' === $args[2])
-			$args[2] = 'ISO-8859-15';
-
-		$result = call_user_func_array('htmlentities', $args);
-		// If htmlentities encounter an invalid character, it returns an empty string
-		if('' !== $args[0] && '' === $result)
-			$this->_throw('Encoding issue while escaping an HTML string');
-
-		return $result;
-	}
-
-	public		function do_escape_text(h\string $text)
-	{
-		$result = $this->copy_and_convert($text);
-		$result->scalar = $this->php_htmlentities($result->scalar, ENT_NOQUOTES, $result->charset);
-		return $result;
-	}
-
-	public		function do_escape_attribute(h\string $text)
-	{
-		$result = $this->copy_and_convert($text);
-		$result->scalar = $this->php_htmlentities($result->scalar, ENT_QUOTES, $result->charset);
-		return $result;
-	}
-
-	// Helpers ////////////////////////////////
-	public		function t($text)
-	{
-		if(! $text instanceof h\string)
-			$text = h\string($text);
-
-		return $this->do_escape_text($text);
-	}
-
-	public		function a($text)
-	{
-		if(! $text instanceof h\string)
-			$text = h\string($text);
-
-		return $this->do_escape_attribute($text);
-	}
-}
 
 class template_engine
 	extends h\object_public
 {
+}
+
+abstract
+class template_strategy
+	extends h\object_public
+{
+	abstract
+	public		function do_parse(h\string $content);
+	abstract
+	public		function do_process($context);
 }

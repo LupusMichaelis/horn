@@ -25,13 +25,13 @@
  *
  */
 
-namespace horn\lib;
+namespace horn\lib\render;
 use \horn\lib as h;
 
 h\import('lib/object');
 
 abstract
-class renderer
+class base
 	extends h\object_public
 {
 	protected	$_configuration;
@@ -46,8 +46,8 @@ class renderer
 	public		function do_render(h\component\context $context);
 }
 
-class json_renderer
-	extends h\renderer
+class json
+	extends base
 {
 	public		function do_render(h\component\context $context)
 	{
@@ -60,23 +60,52 @@ class json_renderer
 	}
 }
 
+h\import('lib/render/escaper');
 h\import('lib/render/strategy');
 
-class html_renderer
-	extends h\renderer
+class html
+	extends base
 {
+	protected	$_strategy;
+	public		function __construct(h\configuration $configuration)
+	{
+		parent::__construct($configuration);
+		$this->init_strategy();
+	}
+
+	private		function init_strategy()
+	{
+		//$this->configuration['template']['path'];
+		$this->_strategy = new php_include_strategy;
+		$this->strategy->escaper = new h\render\html_escaper(h\string('UTF-8'));
+		$this->strategy->path = $this->configuration['template']['path'];
+	}
+
 	public		function do_render(h\component\context $context)
 	{
-		$doc = (object) array
-			( 'scripts' => $this->configuration['scripts']
-			, 'styles' => $this->configuration['styles']
-			, 'title' => 'Cat Groomer'
+		$view_context = (object) array
+			( 'errors' => $context->error_handling['messages']
+			, 'doc' => (object) array
+				( 'scripts' => $this->configuration['scripts']
+				, 'styles' => $this->configuration['styles']
+				, 'title' => 'Cat Groomer'
+				)
 			);
-		$e = new h\render\html_escaper(h\string('UTF-8'));
-		$errors = $context->error_handling['messages'];
-		$template = $context->template;
-		$path = $this->configuration['template']['path'];
-		include h\string::format($path . '%s.php', $template);
+
+		$this->strategy->do_render($context->template, $view_context);
+	}
+}
+
+class php_include_strategy
+	extends h\object_public
+{
+	protected	$_escaper;
+	protected	$_path;
+
+	public		function do_render($name, $c)
+	{
+		$e = $this->escaper;
+		include h\string::format('%s/%s.php', $this->path, $name);
 	}
 }
 
