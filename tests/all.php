@@ -48,6 +48,7 @@ $available_units = array
 	, 'date'
 #	, 'file'
 	, 'sql'
+	, 'mustache'
 	) ;
 
 // We throw some exception and catch them, to test behaviour. Xdebug will trace exception

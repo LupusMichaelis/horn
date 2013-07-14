@@ -29,11 +29,7 @@ namespace horn\lib\mustache;
 use \horn\lib as h;
 
 h\import('lib/object') ;
-
-class parser
-	extends h\object_public
-{
-}
+h\import('lib/mustache/tag') ;
 
 class processor
 	extends h\object_public
@@ -42,87 +38,6 @@ class processor
 	{
 	}
 }
-
-abstract
-class tag
-	extends h\object_public
-{
-}
-
-class begin
-	extends tag
-{
-}
-
-class raw
-	extends tag
-{
-	public		$content;
-}
-
-class variable
-	extends tag
-{
-	public		$name;
-}
-
-class section
-	extends tag
-{
-	public		$name;
-}
-
-class inverted
-	extends tag
-{
-	public		$name;
-}
-
-class unescaped
-	extends tag
-{
-	public		$name;
-}
-
-class comment
-	extends tag
-{
-}
-
-class partial
-	extends tag
-{
-	public		$name;
-}
-
-class set_delimiter
-	extends tag
-{
-	public		$delimiter;
-}
-
-class close
-	extends tag
-{
-	public		$name;
-}
-
-class end
-	extends tag
-{
-}
-
-const MUSTACHE_BEGIN = 0;
-const MUSTACHE_RAW = 1;
-const MUSTACHE_VARIABLE = 2;
-const MUSTACHE_SECTION = 3;
-const MUSTACHE_INVERTED = 4;
-const MUSTACHE_UNESCAPED = 5;
-const MUSTACHE_COMMENT = 6;
-const MUSTACHE_PARTIALS = 7;
-const MUSTACHE_SET_DELIMITER = 8;
-const MUSTACHE_CLOSE = 9;
-const MUSTACHE_END = 10;
 
 function escape($s)
 {
@@ -138,14 +53,14 @@ function render_extract_section(h\collection $parser_stack, h\string $section_na
 		$element = $parser_stack->shift();
 		$sub_parser_stack[] = $element;
 
-		if(in_array($element['context'], array(MUSTACHE_SECTION, MUSTACHE_INVERTED)))
-			$element['name']->is_equal($section_name) and ++$depth;
-		elseif(MUSTACHE_CLOSE === $element['context'])
+		if($element instanceof tag\section || $element instanceof tag\inverted)
+			$element->name->is_equal($section_name) and ++$depth;
+		elseif($element instanceof tag\close)
 		{
-			$element['name']->is_equal($section_name) and --$depth;
+			$element->name->is_equal($section_name) and --$depth;
 
-		if(0 === $depth)
-			break;
+			if(0 === $depth)
+				break;
 		}
 	} while(!is_null($element));
 
@@ -165,20 +80,20 @@ function render_template_recursive(h\collection $parser_stack, $context = array(
 		$sub_parser_stack = null;
 		$element = $parser_stack->shift();
 
-		if(MUSTACHE_RAW === $element['context'])
-			$output[] = $element['content'];
-		elseif(MUSTACHE_VARIABLE === $element['context'])
+		if($element instanceof tag\raw)
+			$output[] = $element->content;
+		elseif($element instanceof tag\variable)
 		{
-			$variable_name = $element['name'];
+			$variable_name = $element->name;
 			if(isset($context->$variable_name))
 			{
 				$variable = $context->$variable_name;
 				$output[] = escape($variable);
 			}
 		}
-		elseif(MUSTACHE_SECTION === $element['context'])
+		elseif($element instanceof tag\section)
 		{
-			$variable_name = $element['name'];
+			$variable_name = $element->name;
 			$sub_parser_stack = render_extract_section($parser_stack, $variable_name);
 
 			if(isset($context->$variable_name) && $context->$variable_name)
@@ -193,24 +108,24 @@ function render_template_recursive(h\collection $parser_stack, $context = array(
 					$output[] = render_template_recursive($sub_parser_stack, $variable);
 			}
 		}
-		elseif(MUSTACHE_INVERTED === $element['context'])
+		elseif($element instanceof tag\inverted)
 		{
-			$variable_name = $element['name'];
+			$variable_name = $element->name;
 			$sub_parser_stack = render_extract_section($parser_stack, $variable_name);
 
 			if(!isset($context->$variable_name) || !$context->$variable_name)
 				$output[] = render_template_recursive($sub_parser_stack);
 		}
-		elseif(MUSTACHE_UNESCAPED === $element['context'])
+		elseif($element instanceof tag\unescaped)
 		{
-			$variable_name = $element['name'];
+			$variable_name = $element->name;
 			if(isset($context->$variable_name))
 			{
 				$variable = $context->$variable_name;
 				$output[] = (string) $variable;
 			}
 		}
-		elseif(MUSTACHE_CLOSE === $element['context'])
+		elseif($element instanceof tag\close)
 		{
 			//break;
 		}
@@ -219,107 +134,110 @@ function render_template_recursive(h\collection $parser_stack, $context = array(
 	return implode('', $output);
 }
 
-function parse_mustache(h\string $template)
+function parse(h\string $template)
 {
-	$begin = 0;
-	$end = 0;
-	$opening_delimiter = '{{';
-	$ending_delimiter = '}}';
-	$mustache_context = MUSTACHE_RAW;
-
-	$parser_stack = h\collection();
-
-	$parser_stack[] = array('context' => MUSTACHE_BEGIN);
-
-	do
-	{
-		// Open tag ////////////////////////////////////////////////////////////////////
-		$end = $template->search($opening_delimiter, $begin);
-		if(-1 === $end)
-			$end = $template->length();
-
-		$parser_stack[] = array
-			( 'context' => MUSTACHE_RAW
-			, 'content' => $template->slice($begin, $end)
-			);
-		$begin = $end;
-
-		if($template->length() === $begin)
-			break;
-
-		// Close tag ///////////////////////////////////////////////////////////////////
-		$begin += strlen($opening_delimiter);
-		$end = $template->search($ending_delimiter, $begin);
-
-		$first = $template[$begin];
-		++$begin;
-		if($first->is_equal(h\string('#')))
-		{
-			$parser_stack[] = array
-				( 'context' => MUSTACHE_SECTION
-				, 'name' => $template->slice($begin, $end)
-				);
-		}
-		elseif($first->is_equal(h\string('^')))
-		{
-			$parser_stack[] = array
-				( 'context' => MUSTACHE_INVERTED
-				, 'name' => $template->slice($begin, $end)
-				);
-		}
-		elseif($first->is_equal(h\string('/')))
-		{
-			$parser_stack[] = array
-				( 'context' => MUSTACHE_CLOSE
-				, 'name' => $template->slice($begin, $end)
-				);
-		}
-		elseif($first->is_equal(h\string('!')))
-		{
-			$parser_stack[] = array
-				( 'context' => MUSTACHE_COMMENT
-				, 'content' => $template->slice($begin, $end)
-				);
-		}
-		elseif($first->is_equal(h\string('{')))
-		{
-			if('}' !== $template[++$end])
-				throw 'Ill-formed';
-
-			$parser_stack[] = array
-				( 'context' => MUSTACHE_UNESCAPED
-				, 'name' => $template->slice($begin, $end - 1)->trimmed()
-				);
-		}
-		elseif($first->is_equal(h\string('&')))
-		{
-			$parser_stack[] = array
-				( 'context' => MUSTACHE_UNESCAPED
-				, 'name' => $template->slice($begin, $end)->trimmed()
-				);
-		}
-		elseif($first->is_equal(h\string('>')))
-		{
-			throw 'TODO';
-		}
-		elseif($first->is_equal(h\string('=')))
-		{
-			throw 'TODO';
-		}
-		else
-		{
-			$parser_stack[] = array
-				( 'context' => MUSTACHE_VARIABLE
-				, 'name' => $template->slice($begin - 1, $end)->trimmed()
-				);
-		}
-
-		$begin = $end = $end + strlen($ending_delimiter);
-	} while(true);
-
-	$parser_stack[] = array('context' => MUSTACHE_END);
-
-	return $parser_stack;
+	$parser = new parser;
+	return $parser->do_parse($template);
 }
 
+class parser
+	extends h\object_public
+{
+	const		OPENING_DELIMITER = '{{';
+	const		CLOSING_DELIMITER = '}}';
+
+	public		function do_parse(h\string $template)
+	{
+		$begin = 0;
+		$end = 0;
+		$opening_delimiter = self::OPENING_DELIMITER;
+		$closing_delimiter = self::CLOSING_DELIMITER;
+
+		$parser_stack = h\collection();
+		$parser_stack[] = new tag\begin;
+
+		do
+		{
+			// Open tag ////////////////////////////////////////////////////////////////////
+			$end = $template->search($opening_delimiter, $begin);
+			if(-1 === $end)
+				$end = $template->length();
+
+			$element = new tag\raw;
+			$element->content = $template->slice($begin, $end);
+			$parser_stack[] = $element;
+
+			$begin = $end;
+
+			if($template->length() === $begin)
+				break;
+
+			// Close tag ///////////////////////////////////////////////////////////////////
+			$begin += strlen($opening_delimiter);
+			$end = $template->search($closing_delimiter, $begin);
+
+			$first = $template[$begin];
+			++$begin;
+			if($first->is_equal(h\string('#')))
+			{
+				$element =  new tag\section;
+				$element->name = $template->slice($begin, $end);
+				$parser_stack[] = $element;
+			}
+			elseif($first->is_equal(h\string('^')))
+			{
+				$element = new tag\inverted;
+				$element->name = $template->slice($begin, $end);
+				$parser_stack[] = $element;
+			}
+			elseif($first->is_equal(h\string('/')))
+			{
+				$element = new tag\close;
+				$element->name = $template->slice($begin, $end);
+				$parser_stack[] = $element;
+			}
+			elseif($first->is_equal(h\string('!')))
+			{
+				$element = new tag\comment;
+				$element->content = $template->slice($begin, $end);
+				$parser_stack[] = $element;
+			}
+			elseif($first->is_equal(h\string('{')))
+			{
+				if('}' !== $template[++$end])
+					throw 'Ill-formed';
+
+				$element = new tag\unescaped;
+				$element->name = $template->slice($begin, $end - 1)->trimmed();
+				$parser_stack[] = $element;
+			}
+			elseif($first->is_equal(h\string('&')))
+			{
+				$element = new tag\unescaped;
+				$element->name = $template->slice($begin, $end - 1)->trimmed();
+				$parser_stack[] = $element;
+			}
+			elseif($first->is_equal(h\string('>')))
+			{
+				throw 'TODO';
+			}
+			elseif($first->is_equal(h\string('=')))
+			{
+				throw 'TODO';
+			}
+			else
+			{
+				$element = new tag\variable;
+				$element->name = $template->slice($begin - 1, $end)->trimmed();
+				$parser_stack[] = $element;
+			}
+
+			$begin = $end = $end + strlen($closing_delimiter);
+		} while(true);
+
+		$parser_stack[] = new tag\end;
+
+		return $parser_stack;
+	}
+}
 

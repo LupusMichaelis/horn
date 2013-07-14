@@ -23,7 +23,7 @@ class test_suite_mustache
 		$callback = function ()
 			{
 				$template = h\string('No tag at all!');
-				$parsed = h\mustache\parse_mustache($template);
+				$parsed = h\mustache\parse($template);
 				return 3 === count($parsed);
 			} ;
 		$this->add_test($callback, $messages) ;
@@ -32,7 +32,7 @@ class test_suite_mustache
 		$callback = function ()
 			{
 				$template = h\string('This is a {{tag}}!');
-				$parsed = h\mustache\parse_mustache($template);
+				$parsed = h\mustache\parse($template);
 				return 5 === count($parsed);
 			} ;
 		$this->add_test($callback, $messages) ;
@@ -41,7 +41,7 @@ class test_suite_mustache
 		$callback = function ()
 			{
 				$template = h\string('This is a {{#section}}Ok?{{/section}}');
-				$parsed = h\mustache\parse_mustache($template);
+				$parsed = h\mustache\parse($template);
 				return 7 === count($parsed);
 			} ;
 		$this->add_test($callback, $messages) ;
@@ -51,7 +51,7 @@ class test_suite_mustache
 	{
 		$messages = array('Tests mustache render filled variable') ;
 		$template = h\string('This is a \'{{variable}}\' with a {{#variable}}section{{/variable}}');
-		$parsed = h\mustache\parse_mustache($template);
+		$parsed = h\mustache\parse($template);
 
 		$expected = 'This is a \'thing\' with a section';
 		$context = (object) array('variable' => 'thing');
@@ -65,7 +65,7 @@ class test_suite_mustache
 
 		$messages = array('Tests mustache render empty variable') ;
 		$expected = 'This is a \'\' with a ';
-		$parsed = h\mustache\parse_mustache($template);
+		$parsed = h\mustache\parse($template);
 		$context = (object) array();
 
 		$callback = function () use ($parsed, $expected, $context)
@@ -77,7 +77,7 @@ class test_suite_mustache
 
 		$template = h\string('This is a \'{{variable}}\' with no {{^variable}}section{{/variable}}');
 		$expected = 'This is a \'thing\' with no ';
-		$parsed = h\mustache\parse_mustache($template);
+		$parsed = h\mustache\parse($template);
 		$context = (object) array('variable' => 'thing');
 
 		$messages = array('Tests mustache not section with set variable') ;
@@ -90,7 +90,7 @@ class test_suite_mustache
 
 		$template = h\string('This is a \'{{variable}}\' with no {{^variable}}section{{/variable}}');
 		$expected = 'This is a \'\' with no section';
-		$parsed = h\mustache\parse_mustache($template);
+		$parsed = h\mustache\parse($template);
 		$context = (object) array();
 
 		$messages = array('Tests mustache not section with not set variable') ;
@@ -101,4 +101,5 @@ class test_suite_mustache
 			} ;
 		$this->add_test($callback, $messages) ;
 	}
+
 }
