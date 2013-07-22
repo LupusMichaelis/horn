@@ -113,7 +113,7 @@ class parser
 		$closing_delimiter = self::CLOSING_DELIMITER;
 
 		$parser_stack = h\collection();
-		$parser_stack[] = array('context' => MUSTACHE_BEGIN);
+		$parser_stack[] = new tag\begin;
 
 		do
 		{
@@ -122,10 +122,10 @@ class parser
 			if(-1 === $end)
 				$end = $template->length();
 
-			$parser_stack[] = array
-				( 'context' => MUSTACHE_RAW
-				, 'content' => $template->slice($begin, $end)
-				);
+			$element = new tag\raw;
+			$element->content = $template->slice($begin, $end);
+			$parser_stack[] = $element;
+
 			$begin = $end;
 
 			if($template->length() === $begin)
@@ -139,48 +139,42 @@ class parser
 			++$begin;
 			if($first->is_equal(h\string('#')))
 			{
-				$parser_stack[] = array
-					( 'context' => MUSTACHE_SECTION
-					, 'name' => $template->slice($begin, $end)
-					);
+				$element =  new tag\section;
+				$element->name = $template->slice($begin, $end);
+				$parser_stack[] = $element;
 			}
 			elseif($first->is_equal(h\string('^')))
 			{
-				$parser_stack[] = array
-					( 'context' => MUSTACHE_INVERTED
-					, 'name' => $template->slice($begin, $end)
-					);
+				$element = new tag\inverted;
+				$element->name = $template->slice($begin, $end);
+				$parser_stack[] = $element;
 			}
 			elseif($first->is_equal(h\string('/')))
 			{
-				$parser_stack[] = array
-					( 'context' => MUSTACHE_CLOSE
-					, 'name' => $template->slice($begin, $end)
-					);
+				$element = new tag\close;
+				$element->name = $template->slice($begin, $end);
+				$parser_stack[] = $element;
 			}
 			elseif($first->is_equal(h\string('!')))
 			{
-				$parser_stack[] = array
-					( 'context' => MUSTACHE_COMMENT
-					, 'content' => $template->slice($begin, $end)
-					);
+				$element = new tag\comment;
+				$element->content = $template->slice($begin, $end);
+				$parser_stack[] = $element;
 			}
 			elseif($first->is_equal(h\string('{')))
 			{
 				if('}' !== $template[++$end])
 					throw 'Ill-formed';
 
-				$parser_stack[] = array
-					( 'context' => MUSTACHE_UNESCAPED
-					, 'name' => $template->slice($begin, $end - 1)->trimmed()
-					);
+				$element = new tag\unescaped;
+				$element->name = $template->slice($begin, $end - 1)->trimmed();
+				$parser_stack[] = $element;
 			}
 			elseif($first->is_equal(h\string('&')))
 			{
-				$parser_stack[] = array
-					( 'context' => MUSTACHE_UNESCAPED
-					, 'name' => $template->slice($begin, $end)->trimmed()
-					);
+				$element = new tag\unescaped;
+				$element->name = $template->slice($begin, $end - 1)->trimmed();
+				$parser_stack[] = $element;
 			}
 			elseif($first->is_equal(h\string('>')))
 			{
@@ -192,18 +186,16 @@ class parser
 			}
 			else
 			{
-				$parser_stack[] = array
-					( 'context' => MUSTACHE_VARIABLE
-					, 'name' => $template->slice($begin - 1, $end)->trimmed()
-					);
+				$element = new tag\variable;
+				$element->name = $template->slice($begin - 1, $end)->trimmed();
+				$parser_stack[] = $element;
 			}
 
 			$begin = $end = $end + strlen($closing_delimiter);
 		} while(true);
 
-		$parser_stack[] = array('context' => MUSTACHE_END);
+		$parser_stack[] = new tag\end;
 
 		return $parser_stack;
 	}
 }
-
