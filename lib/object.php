@@ -465,7 +465,7 @@ class object_base
 		if($is_managed)
 			return $result;
 
-		$this->_throw_format('Function \'%s\' can\'t be handled', $method_name);
+		$this->_throw_format('Function \'%s\'::\'%s\' can\'t be handled', get_class($this), $method_name);
 	}
 
 	protected	function _call_throw($method_name, $arguments, &/*out*/$result)
