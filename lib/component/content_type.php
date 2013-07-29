@@ -44,6 +44,7 @@ class content_type
 
 	protected	function do_after(context $ctx)
 	{
+		$ctx->out->body->content = $ctx->renderer->do_render($ctx);
 	}
 
 	private		function do_deduce_content_type(context $ctx)
@@ -58,9 +59,7 @@ class content_type
 	private		function do_select_renderer(context $ctx)
 	{
 		$renderer = $this->configuration['content_type']['engine'];
-		$ctx->out->body = new $renderer($this->configuration);
-		// array('status' => false, 'results' => h\collection(), 'messages' => h\collection());
-		//$ctx->out->body = h\string('');
+		$ctx->renderer = new $renderer($this->configuration);
 	}
 }
 

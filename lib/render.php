@@ -92,7 +92,7 @@ class html
 				)
 			);
 
-		$this->strategy->do_render($context->template, $view_context);
+		$this->strategy->do_render($context->template_name, $view_context);
 	}
 }
 
@@ -102,7 +102,7 @@ class php_include_strategy
 	protected	$_escaper;
 	protected	$_path;
 
-	public		function do_render($name, $c)
+	public		function do_render(h\string $name, $c)
 	{
 		$e = $this->escaper;
 		include h\string::format('%s/%s.php', $this->path, $name);
