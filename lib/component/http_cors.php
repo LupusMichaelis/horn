@@ -57,23 +57,35 @@ class http_cors
 	private		function do_answer_option(context $ctx)
 	{
 		/// @see http://www.html5rocks.com/en/tutorials/cors/
-		if('OPTIONS' === $ctx->in->method)
-		{
-			if(isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
-			{
-				$requested_method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'];
-				if(!in_array($requested_method, $this->http_verbs))
-				{
-					$ctx->out->status = 'HTTP/1.1 405 Method Not Allowed';
-					$msg = sprintf('Non-supported method \'%s\' on \'%s\'', $requested_method, $uri);
-					$ctx->out->body->status = false;
-					$ctx->out->body->messages[] = $msg;
-					return false;
-				}
+		if('OPTIONS' !== $ctx->in->method)
+			return true; // continue chain
 
-				return true;
-			}
+		// At this point, HTTP OPTIONS was requested. That means we have to determine if
+		// the request is valid and allowed, then we abort any further operations.
+
+		if(!isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']))
+		{
+			$ctx->out->status = 'HTTP/1.1 400 Bad Request';
+			$ctx->error_handling['status'] = false;
+			$ctx->error_handling['messages'][] = '';
+			return false;
 		}
+
+		$requested_method = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'];
+		if(in_array($requested_method, $this->http_verbs))
+		{
+			$ctx->out->status = 'HTTP/1.1 200 Ok';
+			$ctx->error_handling['status'] = true;
+			return false;
+		}
+
+		$ctx->out->status = 'HTTP/1.1 405 Method Not Allowed';
+		$msg = sprintf('Non-supported method \'%s\' on \'%s\''
+				, $requested_method, $ctx->in->uri);
+		$ctx->error_handling['status'] = false;
+		$ctx->error_handling['messages'][] = $msg;
+
+		return false;
 	}
 
 
