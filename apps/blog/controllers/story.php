@@ -72,12 +72,10 @@ class story_controller
 
 	public		function do_read()
 	{
-		$this->resource['type'] = '\horn\apps\blog\story';
-		$story = $this->model->get_by_title($this->resource['title']);
+		$story = $this->model->get_by_title($this->segments['title']);
 		return array(true, compact('story'));
 
 		/* Read a collection
-		$this->resource['type'] = '\horn\apps\blog\stories';
 		$stories = $this->model->get_all();
 		return array(true, compact('stories'));
 		*/
@@ -95,6 +93,8 @@ class story_controller
 		$copy->modified = h\today();
 
 		$story->assign($copy);
+		header('HTTP/1.1 200 OK');
+		// XXX header('Location:')
 
 		return array(true, compact('story'));
 	}
@@ -105,37 +105,10 @@ class story_controller
 		$title = $post->get(h\string('story_key'));
 		$this->model->delete_by_title(h\string($title));
 
+		header('HTTP/1.1 201 Created');
+		// XXX header('Location:')
+
 		return array(true);
 	}
 }
-
-/*
-	protected	function uri_to($resource)
-	{
-		$base = h\concatenate($this->app->config['base'], $this->config['base']);
-		return $base.'/'.\urlencode($resource->title);
-	}
-
-	protected	function prepare_render()
-	{
-		$doc = $this->app->response->body->content;
-		$doc->canvas->title = h\string('My new blog');
-		$mimetype = $this->app->response->header['Content-type']->head(
-			$this->app->response->header['Content-type']->search(';') - 1
-			);
-
-		if(h\string('text/html')->is_equal($mimetype))
-		{
-			$doc->register('\horn\apps\blog\story', '\horn\apps\blog\story_html_renderer');
-			$doc->register('\horn\apps\blog\stories', '\horn\apps\blog\story_html_renderer');
-		}
-		elseif(h\string('application/rss+xml')->is_equal($mimetype))
-		{
-			$doc->register('\horn\apps\blog\stories', '\horn\apps\blog\story_rss_renderer');
-		}
-		else
-			$this->_throw_format('Unknown mimetype \'%s\'', $mimetype);
-
-	}
-*/
 
