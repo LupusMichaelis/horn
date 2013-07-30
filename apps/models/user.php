@@ -49,7 +49,7 @@ class source
 	{
 		$sql = h\string::format(
 				'insert into accounts (name, email, created, modified)'
-				.'	values (\'%s\', \'%s\', \'%s\', \'%s\')'
+				.'	values (%s, %s, %s, %s)'
 				, $this->source->escape($account->name)
 				, $this->source->escape($account->email)
 				, $this->source->escape($account->created->format(h\date::FMT_YYYY_MM_DD))
@@ -62,10 +62,10 @@ class source
 	{
 		$id = $this->cache->search_first($account) ;
 		$sql = h\string::format(
-				'update accounts set name = \'%s\''
-				.', email = \'%s\''
-				.', created = \'%s\''
-				.', modified = \'%s\''
+				'update accounts set name = %s'
+				.', email = %s'
+				.', created = %s'
+				.', modified = %s'
 				.' where id = %d'
 				, $this->source->escape($account->name)
 				, $this->source->escape($account->email)
@@ -91,7 +91,7 @@ class source
 
 	public		function get_by_name(h\string $name)
 	{
-		$sql = h\string::format('select * from accounts where name = \'%s\''
+		$sql = h\string::format('select * from accounts where name = %s'
 				, $this->source->escape($name)) ;
 		$rows = $this->source->query($sql) ;
 		$accounts = $this->accounts_from_select($rows) ;
@@ -103,7 +103,7 @@ class source
 
 	public		function get_by_email(h\string $email)
 	{
-		$sql = h\string::format('select * from accounts where email = \'%s\''
+		$sql = h\string::format('select * from accounts where email = %s'
 				, $this->source->escape($email)) ;
 		$rows = $this->source->query($sql) ;
 		$accounts = $this->accounts_from_select($rows) ;

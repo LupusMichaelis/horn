@@ -48,7 +48,7 @@ class source
 	{
 		$sql = h\string::format(
 				'insert into stories (caption, description, created, modified)'
-				.'	values (\'%s\', \'%s\', \'%s\', \'%s\')'
+				.'	values (%s, %s, %s, %s)'
 				, $this->source->escape($story->title)
 				, $this->source->escape($story->description)
 				, $this->source->escape($story->created->format(h\date::FMT_YYYY_MM_DD))
@@ -61,10 +61,10 @@ class source
 	{
 		$id = $this->cache->search_first($story) ;
 		$sql = h\string::format(
-				'update stories set caption = \'%s\''
-				.', description = \'%s\''
-				.', created = \'%s\''
-				.', modified = \'%s\''
+				'update stories set caption = %s'
+				.', description = %s'
+				.', created = %s'
+				.', modified = %s'
 				.' where id = %d'
 				, $this->source->escape($story->title)
 				, $this->source->escape($story->description)
@@ -90,7 +90,7 @@ class source
 
 	public		function get_by_title(h\string $title)
 	{
-		$sql = h\string::format('select * from stories where caption = \'%s\''
+		$sql = h\string::format('select * from stories where caption = %s'
 				, $this->source->escape($title)) ;
 		$rows = $this->source->query($sql) ;
 		$stories = $this->stories_from_select($rows) ;
@@ -104,7 +104,7 @@ class source
 	{
 		$sql = h\string::format
 			('select * from stories s right join legacy_stories ls'
-				.'	on s.id = ls.story_id where path = \'%s\''
+				.'	on s.id = ls.story_id where path = %s'
 				, $this->source->escape($legacy_path)) ;
 		$rows = $this->source->query($sql) ;
 		$stories = $this->stories_from_select($rows) ;
