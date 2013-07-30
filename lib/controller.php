@@ -33,6 +33,7 @@ h\import('lib/collection') ;
 h\import('lib/string') ;
 h\import('lib/model') ;
 
+////////////////////////////////////////////////////////////////////////////////
 interface http_get
 {
 	function do_get();
@@ -53,6 +54,8 @@ interface http_delete
 	function do_delete();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+abstract
 class controller
 	extends h\object_public
 {
@@ -91,5 +94,60 @@ class controller
 	protected	function get_put_data()
 	{
 		return $this->context->in->body->post;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+abstract
+class crud_controller
+	extends controller
+	implements http_get, http_post
+{
+	abstract public function do_create();
+	abstract public function do_read();
+	abstract public function do_update();
+	abstract public function do_delete();
+
+	public		function do_get()
+	{
+		return $this->do_read();
+	}
+
+	public		function do_post()
+	{
+		$action = $this->context->segments['action'];
+		if($this->create_verb->is_equal($action))
+		{
+			$this->do_create();
+		}
+		elseif($this->edit_verb->is_equal($action))
+		{
+			$this->do_update();
+		}
+		elseif($this->delete_verb->is_equal($action))
+		{
+			$this->do_delete();
+		}
+	}
+
+	// XXX This should be configured or set in context
+	protected		function &_create_verb()
+	{
+		return h\string('add');
+	}
+
+	protected		function &_read_verb()
+	{
+		return null;
+	}
+
+	protected		function &_update_verb()
+	{
+		return h\string('edit');
+	}
+
+	protected		function &_delete_verb()
+	{
+		return h\string('delete');
 	}
 }
