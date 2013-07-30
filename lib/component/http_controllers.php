@@ -36,6 +36,8 @@ class http_controllers
 {
 	protected		function do_before(context $ctx)
 	{
+		$ctx->results = h\collection();
+
 		$interfaces = array
 			( 'GET'		=> '\horn\lib\http_get'
 			, 'POST'	=> '\horn\lib\http_post'
