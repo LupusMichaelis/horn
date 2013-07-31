@@ -91,8 +91,12 @@ class html
 				, 'title' => $this->configuration['title']
 				)
 			, 'results' => $context->results
+			, 'params' => array
+				( 'resource' => $context->results->key()
+				, 'action' => $context->template_action
+				, 'type' => 'html'
+				)
 			);
-
 		$this->strategy->do_render($context->template_name, $view_context);
 	}
 }
@@ -103,10 +107,24 @@ class php_include_strategy
 	protected	$_escaper;
 	protected	$_path;
 
+	public		function template_for(h\string $resource, h\string $action, h\string $type)
+	{
+		return h\string::format('%s-%s.%s', $resource, $action, $type);
+	}
+
 	public		function do_render(h\string $name, $c)
 	{
 		$e = $this->escaper;
 		include h\string::format('%s/%s.php', $this->path, $name);
+	}
+
+	public		function r($resource, $action, $type, $context)
+	{
+		foreach(array('resource', 'action', 'type') as $var)
+			$$var instanceof h\string or $$var = h\string($$var);
+
+		$template_file = $this->template_for($resource, $action, $type);
+		return $this->do_render($template_file, $context);
 	}
 }
 

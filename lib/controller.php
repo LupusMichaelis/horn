@@ -174,7 +174,6 @@ class resource
 	abstract public function update_from_http_request_post_data($story);
 	abstract public function delete($story);
 	abstract public function uri_of($story);
-	abstract public function template_of($action);
 }
 
 abstract
@@ -204,8 +203,7 @@ class crud_controller
 
 	public		function do_get()
 	{
-		//$this->context->template->select($this->resource->template_of($this->action));
-		$this->context->template_name = $this->resource->template_of($this->action);
+		$this->context->template_action = $this->action;
 		return $this->do_read();
 	}
 

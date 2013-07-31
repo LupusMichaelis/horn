@@ -63,12 +63,6 @@ class story_resource
 {
 	public		$name = 'story';
 	public		$class = '\horn\apps\blog\story';// story::class;
-	public		$templates = array
-		( 'create' => ''
-		, 'read' => 'page.html'
-		, 'update' => ''
-		, 'delete' => ''
-		);
 
 	const		not_found = '';
 	const		conflict = 'Story already exists';
@@ -116,14 +110,6 @@ class story_resource
 		$uri = sprintf('/stories/%s', rawurlencode($story->title));
 		return $uri;
 	}
-
-	public		function template_of($action)
-	{
-		if(!isset($this->templates[(string) $action]))
-			$this->_throw_format('Template for action \'%s\' unknown', $action);
-
-		return h\string($this->templates[(string) $action]);
-	}
+}
 
 	// $stories = $this->model->get_all();
-}

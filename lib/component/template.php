@@ -38,6 +38,7 @@ class template
 	{
 		$ctx->template = new $this->configuration['template']['engine']($this->configuration['template']);
 		$ctx->template_name = h\string($this->configuration['template']['name']);
+		$ctx->template_action = h\string($this->configuration['template']['action']);
 
 		return true;
 	}

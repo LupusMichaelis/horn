@@ -105,6 +105,7 @@ return array
 		( 'engine'	=> '\horn\lib\render\php_include_strategy'
 		, 'path'	=> 'horn/apps/blog/templates'
 		, 'name'	=> 'page.html'
+		, 'action'	=> 'read'
 		)
 /* XXX legacy
 	, 'template' => array

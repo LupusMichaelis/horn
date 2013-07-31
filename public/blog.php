@@ -30,6 +30,8 @@ function main()
 	@$ctx->results;
 	@$ctx->content_type;
 	@$ctx->template;
+	@$ctx->template_name;
+	@$ctx->template_action;
 	@$ctx->error_handling;
 
 	$config = h\make_configuration(require '../blog.config.php');

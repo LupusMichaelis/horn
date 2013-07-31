@@ -52,8 +52,10 @@
 		</div>
 <?php else: ?>
         <div>
-		  <h1><?php echo $e->t($c->results['story']->title) ?></h1>
-		  <p><?php echo $e->t($c->results['story']->description) ?></p>
+<?php echo $this->r($c->params['resource']
+		, $c->params['action']
+		, $c->params['type']
+		, $c->results['story']); ?>
         </div>
 <?php endif ?>
     </div>
