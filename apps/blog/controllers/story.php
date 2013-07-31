@@ -69,7 +69,7 @@ class story_controller
 		$title = h\string($title);
 		$story = $this->get_model()->get_by_title($title);
 
-		if(! $story instanceof account)
+		if(! $story instanceof story)
 		{
 			$this->not_found();
 			return array(false, compact('title'));

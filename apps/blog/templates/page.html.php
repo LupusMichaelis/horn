@@ -52,6 +52,8 @@
 		</div>
 <?php else: ?>
         <div>
+		  <h1><?php echo $e->t($c->results['story']->title) ?></h1>
+		  <p><?php echo $e->t($c->results['story']->description) ?></p>
         </div>
 <?php endif ?>
     </div>

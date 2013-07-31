@@ -90,6 +90,7 @@ class html
 				, 'styles' => $this->configuration['styles']
 				, 'title' => $this->configuration['title']
 				)
+			, 'results' => $context->results
 			);
 
 		$this->strategy->do_render($context->template_name, $view_context);
