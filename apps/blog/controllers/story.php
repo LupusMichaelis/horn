@@ -78,7 +78,7 @@ class story_resource
 	public		function of_http_request_post_data()
 	{
 		$post = $this->ctrl->get_post_data();
-		$title = $post->get(h\string('story_title'));
+		$title = $post[h\string('story_title')];
 		$story = $this->ctrl->get_model()->get_by_title(h\string($title));
 		return $story;
 	}
@@ -93,9 +93,10 @@ class story_resource
 	public		function update_from_http_request_post_data($story)
 	{
 		$post = $this->ctrl->get_post_data();
-		$story->title = $post->get(h\string('story_title'));
-		$story->description = $post->get(h\string('story_description'));
+		$story->title = h\string($post['story_title']);
+		$story->description = h\string($post['story_description']);
 		$story->modified = h\today();
+		$this->ctrl->get_model()->update($story);
 	}
 
 	public		function delete($story)

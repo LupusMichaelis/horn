@@ -80,13 +80,15 @@ class controller
 	{
 		// XXX that should've belong in a searchpart object
 		$searchpart = array();
-		parse_str($this->context->in->uri->searchpart->tail(1), $searchpart);
+		if(0 === $this->context->in->uri->searchpart->search('?'))
+			parse_str($this->context->in->uri->searchpart->tail(1), $searchpart);
+
 		return h\c($searchpart);
 	}
 
 	public		function get_post_data()
 	{
-		return $this->context->in->body->iterate();
+		return $this->context->in->body->content;
 	}
 
 	public		function get_cookie_data()
@@ -134,8 +136,8 @@ class controller
 	{
 		$this->context->out->head['Location'] = sprintf
 			( '%s://%s%s'
-			, $this->context->in->uri->scheme
-			, $this->context->in->uri->hostname
+			, 'http' // $this->context->in->scheme
+			, $this->context->in->head['host']
 			, $uri
 			);
 	}
@@ -143,6 +145,7 @@ class controller
 	public		function redirect_to($to)
 	{
 		$this->status(301, 'Moved Permanently');
+		$this->location($to);
 	}
 
 	public		function redirect_to_updated($to)
@@ -199,43 +202,47 @@ class crud_controller
 				$this->action = h\string($action);
 				break;
 			}
+		$this->context->template_action = $this->action;
 	}
 
 	public		function do_get()
 	{
-		$this->context->template_action = $this->action;
 		return $this->do_read();
 	}
 
 	public		function do_post()
 	{
 		if($this->create_verb->is_equal($this->action))
-			$this->do_create();
-		elseif($this->edit_verb->is_equal($this->action))
-			$this->do_update();
+			return $this->do_create();
+		elseif($this->update_verb->is_equal($this->action))
+			return $this->do_update();
 		elseif($this->delete_verb->is_equal($this->action))
-			$this->do_delete();
+			return $this->do_delete();
 	}
 
 	// XXX This should be configured or set in context
-	protected		function &_create_verb()
+	protected		function &_get_create_verb()
 	{
-		return h\string('add');
+		$s = h\string('add');
+		return $s;
 	}
 
-	protected		function &_read_verb()
+	protected		function &_get_read_verb()
 	{
-		return null;
+		$s = h\string('read');
+		return $s;
 	}
 
-	protected		function &_update_verb()
+	protected		function &_get_update_verb()
 	{
-		return h\string('edit');
+		$s = h\string('edit');
+		return $s;
 	}
 
-	protected		function &_delete_verb()
+	protected		function &_get_delete_verb()
 	{
-		return h\string('delete');
+		$s = h\string('delete');
+		return $s;
 	}
 
 	public		function do_create()
@@ -249,6 +256,8 @@ class crud_controller
 			$this->http_conflict();
 			return array(false, null, array($this->resource->conflict));
 		}
+
+		$this->action = $this->read_verb;
 
 		$$name = $this->resource->create_from_http_request_post_data();
 		return array(true, compact($name));
@@ -276,11 +285,13 @@ class crud_controller
 		$$name = $this->resource->of_http_request_uri();
 
 		$copy = clone $$name;
-		$this->resource->of_http_request_post_data($copy);
+		$this->resource->update_from_http_request_post_data($copy);
 		$$name->assign($copy);
 
 		$uri = $this->resource->uri_of($$name);
 		$this->redirect_to($uri);
+
+		$this->action = $this->read_verb;
 
 		return array(true, compact($name));
 	}
@@ -295,6 +306,8 @@ class crud_controller
 
 		$uri = $this->resource->uri_of_parent();
 		$this->redirect_to($uri);
+
+		$this->action = $this->read_verb;
 
 		return array(true);
 	}
