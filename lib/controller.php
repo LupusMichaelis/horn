@@ -25,13 +25,13 @@
  *
  */
 
-namespace horn\lib ;
-use \horn\lib as h ;
+namespace horn\lib;
+use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/collection') ;
-h\import('lib/string') ;
-h\import('lib/model') ;
+h\import('lib/object');
+h\import('lib/collection');
+h\import('lib/string');
+h\import('lib/model');
 
 ////////////////////////////////////////////////////////////////////////////////
 interface http_get
@@ -94,6 +94,64 @@ class controller
 	protected	function get_put_data()
 	{
 		return $this->context->in->body->post;
+	}
+
+	public		function ok()
+	{
+		$this->status(200, 'OK');
+	}
+
+	public		function no_content()
+	{
+		$this->status(204, 'Not found');
+	}
+
+	public		function forbidden()
+	{
+		$this->status(403, 'Forbidden');
+	}
+
+	public		function not_found()
+	{
+		$this->status(404, 'Not found');
+	}
+
+	public		function http_conflict()
+	{
+		$this->status(409, 'Conflict');
+	}
+
+	public		function redirect_to_created($to)
+	{
+		$this->status(201, 'Created');
+		$this->location($to);
+	}
+
+	public		function location($uri)
+	{
+		$this->context->out->head['Location'] = sprintf
+			( '%s://%s%s'
+			, $this->context->in->uri->scheme
+			, $this->context->in->uri->hostname
+			, $uri
+			);
+	}
+
+	public		function redirect_to($to)
+	{
+		$this->status(301, 'Moved Permanently');
+	}
+
+	public		function redirect_to_updated($to)
+	{
+		$this->ok();
+		$this->location($to);
+	}
+
+	public		function status($code, $message)
+	{
+		$this->context->out->status = sprintf('%s %s %s'
+				, $this->context->in->version, $code, $message);
 	}
 }
 

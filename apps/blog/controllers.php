@@ -28,6 +28,6 @@
 use \horn\lib as h ;
 h\import('lib/controller');
 
-require './controllers/user.php';
-require './controllers/story.php';
-require './controllers/legacy.php';
+require 'controllers/user.php';
+require 'controllers/story.php';
+require 'controllers/legacy.php';

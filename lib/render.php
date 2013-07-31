@@ -88,7 +88,7 @@ class html
 			, 'doc' => (object) array
 				( 'scripts' => $this->configuration['scripts']
 				, 'styles' => $this->configuration['styles']
-				, 'title' => 'Cat Groomer'
+				, 'title' => $this->configuration['title']
 				)
 			);
 

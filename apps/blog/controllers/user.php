@@ -57,7 +57,7 @@ class controller
 
 		if($account instanceof account)
 		{
-			header('HTTP/1.1 409 Conflict');
+			$this->http_conflict();
 			return array(false, null, array('Account already exists')) ;
 		}
 
@@ -75,7 +75,7 @@ class controller
 		$account = $this->model->get_by_name($this->resource['title']) ;
 		if(! $account instanceof account)
 		{
-			header('HTTP/1.1 404 Not found');
+			$this->not_found();
 			return array(false);
 		}
 
@@ -100,21 +100,23 @@ class controller
 		$copy->modified = h\today();
 		$account->assign($copy) ;
 
-		header('HTTP/1.1 200 OK');
+		//$uri = $this->uri_of($account);
+		$uri = sprintf('/accounts/%s', rawurlencode($name));
+		$this->redirect_to($uri);
 
 		return array(true, compact('account')) ;
 	}
 
-	public function do_delete();
+	public function do_delete()
 	{
 		$name = $this->get_post_data(h\string('account_key')) ;
 		$account = $this->model->get_by_name(h\string($name)) ;
 		$this->model->delete($account) ;
 
-		header('HTTP/1.1 201 Created');
-		// XXX header('Location:')
+		$uri = '/accounts';
+		$this->redirect_after_delete($uri);
 
-		return array(true, compact('account')) ;
+		return array(true, compact('uri', 'account')) ;
 	}
 }
 

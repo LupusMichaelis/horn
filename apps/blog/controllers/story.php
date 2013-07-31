@@ -32,7 +32,6 @@ h\import('lib/collection') ;
 h\import('lib/string') ;
 h\import('lib/regex') ;
 
-h\import('lib/app') ;
 h\import('lib/db/connect') ;
 
 h\import('lib/time/date_time') ;
@@ -42,25 +41,19 @@ h\import('apps/views/blog') ;
 h\import('apps/views/page_html') ;
 
 class story_controller
-	extends h\crub_controller
+	extends h\crud_controller
 {
-	protected	function &_get_model()
-	{
-		$s = $this->app->models->stories;
-		return $s;
-	}
-
 	public		function do_create()
 	{
 		$post = $this->get_post_data();
 
 		$title = $post->get(h\string('story_title'));
-		$story = $this->model->get_by_title(h\string($title));
+		$story = $this->get_model()->get_by_title(h\string($title));
 
 		if($story instanceof story)
 		{
-			header('HTTP/1.1 409 Conflict');
-			return array(false, null, array('Story already exists'))
+			$this->http_conflict();
+			return array(false, null, array('Story already exists'));
 		}
 
 		$story = new story;
@@ -72,7 +65,16 @@ class story_controller
 
 	public		function do_read()
 	{
-		$story = $this->model->get_by_title($this->segments['title']);
+		$title = $this->get_segments()['title'];
+		$title = h\string($title);
+		$story = $this->get_model()->get_by_title($title);
+
+		if(! $story instanceof account)
+		{
+			$this->not_found();
+			return array(false, compact('title'));
+		}
+
 		return array(true, compact('story'));
 
 		/* Read a collection
@@ -93,8 +95,10 @@ class story_controller
 		$copy->modified = h\today();
 
 		$story->assign($copy);
-		header('HTTP/1.1 200 OK');
-		// XXX header('Location:')
+
+		//$uri = $this->uri_of($story);
+		$uri = sprintf('/stories/%s', rawurlencode($title));
+		$this->redirect_to($uri);
 
 		return array(true, compact('story'));
 	}
@@ -105,8 +109,8 @@ class story_controller
 		$title = $post->get(h\string('story_key'));
 		$this->model->delete_by_title(h\string($title));
 
-		header('HTTP/1.1 201 Created');
-		// XXX header('Location:')
+		$uri = '/stories';
+		$this->redirect_to_created($uri);
 
 		return array(true);
 	}

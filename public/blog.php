@@ -1,78 +1,38 @@
 <?php
 
-use horn\lib as h ;
 
-require 'horn/lib/horn.php' ;
+namespace horn\lib\apps\blog;
+use horn\lib as h;
 
-h\import('apps/controllers/blog') ;
-h\import('apps/controllers/user') ;
+$config = require '../blog.config.php';
+ini_set('include_path', sprintf('%s:%s'
+			, ini_get('include_path')
+			, $config['install_path']
+			));
 
-// Everything is routed to info application
-$config = array
-	( 'app' => '\horn\lib\app'
-	, 'scheme' => 'http'
-	, 'domain' => 'horn.localhost'
-	, 'base' => '/fakeroot'
+require 'horn/lib/horn.php';
+h\import('apps/blog/controllers') ;
 
-	, 'controllers' => array
-		( array
-			( 'base' => '/stories'
-			, 'controller' => '\horn\apps\blog\story_controller'
-			)
-		, array
-			( 'base' => '/users'
-			, 'controller' => '\horn\apps\user\controller'
-			)
-		, array
-			( 'base' => null
-			, 'controller' => '\horn\apps\blog\legacy_controller'
-			)
-		, array
-			( 'base' => null
-			, 'controller' => '\horn\apps\blog\portal_controller'
-			)
-		)
+h\import('lib/configuration');
+h\import('lib/controller');
+h\import('lib/component');
 
-	, 'renderer' => array
-		( 'text/html' => '\horn\apps\blog\page_html'
-		, 'application/rss+xml' => '\horn\lib\feed_rss'
-		)
+h\import('lib/render');
 
-	, 'views' => array()
+main();
 
-	, 'content-types' => array
-		( 'availables' => array
-			( 'html' => 'text/html'
-			, 'rss' => 'application/rss+xml'
-			)
-		, 'default' => 'html'
-		)
+function main()
+{
+	$ctx = new h\component\context;
+	@$ctx->in;
+	@$ctx->out;
+	@$ctx->services;
+	@$ctx->results;
+	@$ctx->content_type;
+	@$ctx->template;
+	@$ctx->error_handling;
 
-	, 'locale' => 'fr_FR.UTF-8'
-	// , 'locale' => 'en_US.UTF-8'
-
-	, 'datas' => array
-		( 'read' => array
-			( 'type' => \horn\lib\db\MYSQL
-			, 'host' => 'localhost'
-			, 'user' => 'horn'
-			, 'password' => 'horn'
-			, 'base' => 'horn'
-			, 'charset' => 'utf8'
-			)
-		, 'write' => 'read'
-		, 'cache' => array
-			( 'type' => \horn\lib\db\MEMCACHE
-			, 'host' => 'localhost'
-			)
-		)
-	) ;
-
-$in = \horn\lib\http\request::create_native() ;
-$out = new \horn\lib\http\response ;
-
-$user = \horn\lib\http\user::create_native() ;
-
-\horn\lib\run($user, $in, $out, $config) ;
-\horn\lib\render($out) ;
-
+	$config = h\make_configuration(require '../blog.config.php');
+	$component = h\component\build($config, $ctx);
+	$component->do_process($ctx);
+}

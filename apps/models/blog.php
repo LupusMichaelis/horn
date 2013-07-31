@@ -30,18 +30,19 @@ use \horn\lib as h ;
 
 h\import('lib/collection') ;
 h\import('lib/string') ;
+h\import('lib/model');
 
 class source
-	extends h\object_public
+	extends h\model
 {
 	protected	$_source ;
 	private		$cache ;
 
-	public		function __construct(h\db\database $db)
+	public		function __construct(h\service_provider $service)
 	{
-		$this->_source = $db ;
+		$this->_source = $service->get('db');
 		$this->cache = h\collection() ;
-		parent::__construct() ;
+		parent::__construct($service);
 	}
 
 	public		function insert(story $story)
