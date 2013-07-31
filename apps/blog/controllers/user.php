@@ -32,8 +32,7 @@ h\import('lib/collection') ;
 h\import('lib/string') ;
 h\import('lib/regex') ;
 
-h\import('lib/app') ;
-h\import('lib/controller') ;
+h\import('lib/controller');
 
 h\import('lib/time/date_time') ;
 h\import('lib/string') ;
