@@ -78,7 +78,10 @@ class controller
 
 	public		function get_search_part()
 	{
-		return $this->context->in->uri->searchpart;
+		// XXX that should've belong in a searchpart object
+		$searchpart = array();
+		parse_str($this->context->in->uri->searchpart->tail(1), $searchpart);
+		return h\c($searchpart);
 	}
 
 	public		function get_post_data()
@@ -181,13 +184,6 @@ class crud_controller
 	extends controller
 	implements http_get, http_post
 {
-	/*
-	abstract public function do_create();
-	abstract public function do_read();
-	abstract public function do_update();
-	abstract public function do_delete();
-	*/
-
 	protected	$_resource;
 	protected	$_action;
 
@@ -197,8 +193,12 @@ class crud_controller
 		$this->_action = h\string('read');
 		parent::__construct($context);
 
-		$this->context->segments->has_key('action')
-			and $this->action = $this->context->segments['action'];
+		foreach(array('edit', 'delete') as $action)
+			if($this->get_search_part()->has_key($action))
+			{
+				$this->action = h\string($action);
+				break;
+			}
 	}
 
 	public		function do_get()

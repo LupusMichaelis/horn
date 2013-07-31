@@ -48,14 +48,14 @@
     <div>
 <?php if(0 < count($c->errors)): ?>
         <div class='error'>
-		  <h2><?php echo $e->t($c->errors[0]);?></h2>
-		</div>
+          <h2><?php echo $e->t($c->errors[0]);?></h2>
+        </div>
 <?php else: ?>
         <div>
 <?php echo $this->r($c->params['resource']
-		, $c->params['action']
-		, $c->params['type']
-		, $c->results['story']); ?>
+        , $c->params['action']
+        , $c->params['type']
+        , $c->results['story']); ?>
         </div>
 <?php endif ?>
     </div>
