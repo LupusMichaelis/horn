@@ -43,76 +43,87 @@ h\import('apps/views/page_html');
 class story_controller
 	extends h\crud_controller
 {
-	public		function do_create()
+	public		function __construct(h\component\context $context)
 	{
-		$post = $this->get_post_data();
-
-		$title = $post->get(h\string('story_title'));
-		$story = $this->get_model()->get_by_title(h\string($title));
-
-		if($story instanceof story)
-		{
-			$this->http_conflict();
-			return array(false, null, array('Story already exists'));
-		}
-
-		$story = new story;
-		$story->title = $post->get(h\string('story_title'));
-		$story->description = $post->get(h\string('story_description'));
-
-		return array(true, compact('story'));
-	}
-
-	public		function do_read()
-	{
-		$title = $this->get_segments()['title'];
-		$title = h\string($title);
-		$story = $this->get_model()->get_by_title($title);
-
-		if(! $story instanceof story)
-		{
-			$this->not_found();
-			return array(false, compact('title'));
-		}
-
-		return array(true, compact('story'));
-
-		/* Read a collection
-		$stories = $this->model->get_all();
-		return array(true, compact('stories'));
-		*/
-	}
-
-	public		function do_update()
-	{
-		$post = $this->get_post_data();
-		$title = $post->get(h\string('story_key'));
-		$story = $this->model->get_by_title(h\string($title));
-
-		$copy = clone $story;
-		$copy->title = $post->get(h\string('story_title'));
-		$copy->description = $post->get(h\string('story_description'));
-		$copy->modified = h\today();
-
-		$story->assign($copy);
-
-		//$uri = $this->uri_of($story);
-		$uri = sprintf('/stories/%s', rawurlencode($title));
-		$this->redirect_to($uri);
-
-		return array(true, compact('story'));
-	}
-
-	public		function do_delete()
-	{
-		$post = $this->get_post_data();
-		$title = $post->get(h\string('story_key'));
-		$this->model->delete_by_title(h\string($title));
-
-		$uri = '/stories';
-		$this->redirect_to_created($uri);
-
-		return array(true);
+		parent::__construct($context, new story_resource($this));
 	}
 }
 
+class stories_controller
+	extends h\crud_controller
+{
+	public		function __construct(h\component\context $context)
+	{
+		parent::__construct($context, new stories_resource($this));
+	}
+}
+
+class story_resource
+	extends h\resource
+{
+	public		$name = 'story';
+	public		$class = '\horn\apps\blog\story';// story::class;
+	public		$templates = array
+		( 'create' => ''
+		, 'read' => 'page.html'
+		, 'update' => ''
+		, 'delete' => ''
+		);
+
+	const		not_found = '';
+	const		conflict = 'Story already exists';
+
+	public		function of_http_request_uri()
+	{
+		$title = $this->ctrl->get_segments()['title'];
+		$title = h\string($title);
+		$story = $this->ctrl->get_model()->get_by_title($title);
+		return $story;
+	}
+
+	public		function of_http_request_post_data()
+	{
+		$post = $this->ctrl->get_post_data();
+		$title = $post->get(h\string('story_title'));
+		$story = $this->ctrl->get_model()->get_by_title(h\string($title));
+		return $story;
+	}
+
+	public		function create_from_http_request_post_data()
+	{
+		$story = new story;
+		$this->update_from_http_request_post_data($story);
+		return $story;
+	}
+
+	public		function update_from_http_request_post_data($story)
+	{
+		$post = $this->ctrl->get_post_data();
+		$story->title = $post->get(h\string('story_title'));
+		$story->description = $post->get(h\string('story_description'));
+		$story->modified = h\today();
+	}
+
+	public		function delete($story)
+	{
+		$post = $this->ctrl->get_post_data();
+		$title = $post->get(h\string('story_title'));
+		return $this->ctrl->model->delete_by_title(h\string($title));
+	}
+
+	public		function uri_of($story)
+	{
+		$uri = sprintf('/stories/%s', rawurlencode($story->title));
+		return $uri;
+	}
+
+	public		function template_of($action)
+	{
+		if(!isset($this->templates[(string) $action]))
+			$this->_throw_format('Template for action \'%s\' unknown', $action);
+
+		return h\string($this->templates[(string) $action]);
+	}
+
+	// $stories = $this->model->get_all();
+}

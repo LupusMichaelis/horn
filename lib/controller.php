@@ -66,32 +66,32 @@ class controller
 		$this->_context = $context;
 	}
 
-	protected	function get_model()
+	public		function get_model()
 	{
 		return $this->context->model;
 	}
 
-	protected	function get_segments()
+	public		function get_segments()
 	{
 		return $this->context->segments;
 	}
 
-	protected	function get_search_part()
+	public		function get_search_part()
 	{
 		return $this->context->in->uri->searchpart;
 	}
 
-	protected	function get_post_data()
+	public		function get_post_data()
 	{
 		return $this->context->in->body->iterate();
 	}
 
-	protected	function get_cookie_data()
+	public		function get_cookie_data()
 	{
 		return $this->context->in->head->cookies;
 	}
 
-	protected	function get_put_data()
+	public		function get_put_data()
 	{
 		return $this->context->in->body->post;
 	}
@@ -157,35 +157,66 @@ class controller
 
 ////////////////////////////////////////////////////////////////////////////////
 abstract
+class resource
+	extends h\object_public
+{
+	protected	$_ctrl;
+
+	public		function __construct(h\crud_controller $ctrl)
+	{
+		$this->_ctrl = $ctrl;
+		parent::__construct();
+	}
+
+	abstract public function of_http_request_uri();
+	abstract public function of_http_request_post_data();
+	abstract public function create_from_http_request_post_data();
+	abstract public function update_from_http_request_post_data($story);
+	abstract public function delete($story);
+	abstract public function uri_of($story);
+	abstract public function template_of($action);
+}
+
+abstract
 class crud_controller
 	extends controller
 	implements http_get, http_post
 {
+	/*
 	abstract public function do_create();
 	abstract public function do_read();
 	abstract public function do_update();
 	abstract public function do_delete();
+	*/
+
+	protected	$_resource;
+	protected	$_action;
+
+	public		function __construct(h\component\context $context, h\resource $resource)
+	{
+		$this->_resource = $resource;
+		$this->_action = h\string('read');
+		parent::__construct($context);
+
+		$this->context->segments->has_key('action')
+			and $this->action = $this->context->segments['action'];
+	}
 
 	public		function do_get()
 	{
+		//$this->context->template->select($this->resource->template_of($this->action));
+		$this->context->template_name = $this->resource->template_of($this->action);
 		return $this->do_read();
 	}
 
 	public		function do_post()
 	{
-		$action = $this->context->segments['action'];
-		if($this->create_verb->is_equal($action))
-		{
+		if($this->create_verb->is_equal($this->action))
 			$this->do_create();
-		}
-		elseif($this->edit_verb->is_equal($action))
-		{
+		elseif($this->edit_verb->is_equal($this->action))
 			$this->do_update();
-		}
-		elseif($this->delete_verb->is_equal($action))
-		{
+		elseif($this->delete_verb->is_equal($this->action))
 			$this->do_delete();
-		}
 	}
 
 	// XXX This should be configured or set in context
@@ -207,5 +238,66 @@ class crud_controller
 	protected		function &_delete_verb()
 	{
 		return h\string('delete');
+	}
+
+	public		function do_create()
+	{
+		$name = $this->resource->name;
+		$class = $this->resource->class;
+		$$name = $this->resource->of_http_request_post_data();
+
+		if($$name instanceof $class)
+		{
+			$this->http_conflict();
+			return array(false, null, array($this->resource->conflict));
+		}
+
+		$$name = $this->resource->create_from_http_request_post_data();
+		return array(true, compact($name));
+	}
+
+	public		function do_read()
+	{
+		$name = $this->resource->name;
+		$class = $this->resource->class;
+		$$name = $this->resource->of_http_request_uri();
+
+		if(! $$name instanceof $class)
+		{
+			$this->not_found();
+			return array(false, null, array($this->resource->not_found));
+		}
+
+		return array(true, compact($name));
+	}
+
+	public		function do_update()
+	{
+		$name = $this->resource->name;
+		$class = $this->resource->class;
+		$$name = $this->resource->of_http_request_uri();
+
+		$copy = clone $$name;
+		$this->resource->of_http_request_post_data($copy);
+		$$name->assign($copy);
+
+		$uri = $this->resource->uri_of($$name);
+		$this->redirect_to($uri);
+
+		return array(true, compact($name));
+	}
+
+	public		function do_delete()
+	{
+		$name = $this->resource->name;
+		$class = $this->resource->class;
+		$$name = $this->resource->of_http_request_uri();
+
+		$this->resource->delete($$name);
+
+		$uri = $this->resource->uri_of_parent();
+		$this->redirect_to($uri);
+
+		return array(true);
 	}
 }
