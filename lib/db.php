@@ -25,8 +25,8 @@
  *
  */
 
-namespace horn\lib\db ;
-use horn\lib as h ;
+namespace horn\lib\db;
+use horn\lib as h;
 
-h\import('lib/db/connect') ;
+h\import('lib/db/connect');
 

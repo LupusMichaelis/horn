@@ -25,11 +25,11 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/collection') ;
+h\import('lib/object');
+h\import('lib/collection');
 
 class decorator
 	extends object_public

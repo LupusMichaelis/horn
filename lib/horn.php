@@ -28,19 +28,19 @@
 
 /** \package horn
  */
-namespace horn\lib ;
+namespace horn\lib;
 
-require 'horn/lib/module.php' ;
-import('lib/object') ;
+require 'horn/lib/module.php';
+import('lib/object');
 
 function dump($variable)
 {
-	ob_start() ;
-	\var_dump($variable) ;
-	$desc = ob_get_contents() ;
-	ob_end_clean() ;
+	ob_start();
+	\var_dump($variable);
+	$desc = ob_get_contents();
+	ob_end_clean();
 
-	return $desc ;
+	return $desc;
 }
 
 

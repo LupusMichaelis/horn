@@ -25,20 +25,20 @@
  *
  */
 
-namespace horn\apps\blog ;
-use \horn\lib as h ;
+namespace horn\apps\blog;
+use \horn\lib as h;
 
-h\import('lib/collection') ;
-h\import('lib/string') ;
-h\import('lib/regex') ;
+h\import('lib/collection');
+h\import('lib/string');
+h\import('lib/regex');
 
-h\import('lib/db/connect') ;
+h\import('lib/db/connect');
 
-h\import('lib/time/date_time') ;
+h\import('lib/time/date_time');
 
-h\import('apps/models/blog') ;
-h\import('apps/views/blog') ;
-h\import('apps/views/page_html') ;
+h\import('apps/models/blog');
+h\import('apps/views/blog');
+h\import('apps/views/page_html');
 
 class story_controller
 	extends h\crud_controller

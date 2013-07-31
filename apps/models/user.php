@@ -25,24 +25,24 @@
  *
  */
 
-namespace horn\apps\user ;
-use \horn\lib as h ;
+namespace horn\apps\user;
+use \horn\lib as h;
 
-h\import('lib/collection') ;
-h\import('lib/string') ;
+h\import('lib/collection');
+h\import('lib/string');
 
 class source
 	extends h\object_public
 {
-	protected	$_source ;
+	protected	$_source;
 
-	private		$cache ;
+	private		$cache;
 
 	public		function __construct(h\db\database $db)
 	{
-		$this->_source = $db ;
-		$this->cache = h\collection() ;
-		parent::__construct() ;
+		$this->_source = $db;
+		$this->cache = h\collection();
+		parent::__construct();
 	}
 
 	public		function insert(account $account)
@@ -54,13 +54,13 @@ class source
 				, $this->source->escape($account->email)
 				, $this->source->escape($account->created->format(h\date::FMT_YYYY_MM_DD))
 				, $this->source->escape($account->modified->format(h\date::FMT_YYYY_MM_DD))
-				) ;
-		$this->source->query($sql) ;
+				);
+		$this->source->query($sql);
 	}
 
 	public		function update(account $account)
 	{
-		$id = $this->cache->search_first($account) ;
+		$id = $this->cache->search_first($account);
 		$sql = h\string::format(
 				'update accounts set name = %s'
 				.', email = %s'
@@ -72,55 +72,55 @@ class source
 				, $this->source->escape($account->created->format(h\date::FMT_YYYY_MM_DD))
 				, $this->source->escape($account->modified->format(h\date::FMT_YYYY_MM_DD))
 				, $id
-				) ;
-		$this->source->query($sql) ;
+				);
+		$this->source->query($sql);
 	}
 
 	public		function delete(account $account)
 	{
-		$id = $this->cache->search_first($account) ;
-		$sql = h\string::format('delete from accounts where id=%d', $id) ;
-		$this->source->query($sql) ;
+		$id = $this->cache->search_first($account);
+		$sql = h\string::format('delete from accounts where id=%d', $id);
+		$this->source->query($sql);
 	}
 
 	public		function get_all()
 	{
-		$rows = $this->source->query(h\string('select * from accounts')) ;
-		return $this->accounts_from_select($rows) ;
+		$rows = $this->source->query(h\string('select * from accounts'));
+		return $this->accounts_from_select($rows);
 	}
 
 	public		function get_by_name(h\string $name)
 	{
 		$sql = h\string::format('select * from accounts where name = %s'
-				, $this->source->escape($name)) ;
-		$rows = $this->source->query($sql) ;
-		$accounts = $this->accounts_from_select($rows) ;
+				, $this->source->escape($name));
+		$rows = $this->source->query($sql);
+		$accounts = $this->accounts_from_select($rows);
 
 		return isset($accounts[0])
 			? $accounts[0]
-			: null ;
+			: null;
 	}
 
 	public		function get_by_email(h\string $email)
 	{
 		$sql = h\string::format('select * from accounts where email = %s'
-				, $this->source->escape($email)) ;
-		$rows = $this->source->query($sql) ;
-		$accounts = $this->accounts_from_select($rows) ;
+				, $this->source->escape($email));
+		$rows = $this->source->query($sql);
+		$accounts = $this->accounts_from_select($rows);
 
 		return isset($accounts[0])
 			? $accounts[0]
-			: null ;
+			: null;
 	}
 
 	private		function accounts_from_select($rows)
 	{
-		$accounts = new accounts ;
+		$accounts = new accounts;
 
 		foreach($rows as $row)
 		{
 			if(isset($this->cache[$row['id']]))
-				$new = $this->cache[$row['id']] ;
+				$new = $this->cache[$row['id']];
 			else
 			{
 				$new = account::create
@@ -128,14 +128,14 @@ class source
 					, $row['email']
 					, $row['created']
 					, $row['modified']
-					) ;
-				$this->cache[$row['id']] = $new ;
+					);
+				$this->cache[$row['id']] = $new;
 			}
 
-			$accounts->push($new) ;
+			$accounts->push($new);
 		}
 
-		return $accounts ;
+		return $accounts;
 	}
 }
 
@@ -143,32 +143,32 @@ class source
 class account
 	extends h\object_public
 {
-	protected	$_name ;
-	protected	$_email ;
-	protected	$_created ;
-	protected	$_modified ;
+	protected	$_name;
+	protected	$_email;
+	protected	$_created;
+	protected	$_modified;
 
-	// public	$owner ;
+	// public	$owner;
 	public		function __construct()
 	{
-		$this->_name = new h\string ;
-		$this->_email = new h\string ;
-		$this->_created = h\today() ;
-		$this->_modified = h\today() ;
+		$this->_name = new h\string;
+		$this->_email = new h\string;
+		$this->_created = h\today();
+		$this->_modified = h\today();
 
-		parent::__construct() ;
+		parent::__construct();
 	}
 
 	static
 	public		function create($name, $email, $created, $modified)
 	{
-		$new = new static ;
-		$new->name = h\string($name) ;
-		$new->email = h\string($email) ;
-		$new->created = h\date::new_from_sql($created) ;
-		$new->modified = h\date::new_from_sql($modified) ;
+		$new = new static;
+		$new->name = h\string($name);
+		$new->email = h\string($email);
+		$new->created = h\date::new_from_sql($created);
+		$new->modified = h\date::new_from_sql($modified);
 
-		return $new ;
+		return $new;
 	}
 }
 

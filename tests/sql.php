@@ -26,59 +26,59 @@
  *
  */
 
-namespace tests ;
-use horn\lib as h ;
-use horn\lib\test as t ;
+namespace tests;
+use horn\lib as h;
+use horn\lib\test as t;
 
-h\import('lib/sql/database') ;
+h\import('lib/sql/database');
 
 class test_suite_sql
 	extends t\suite_object
 {
 	public		function __construct()
 	{
-		parent::__construct('Database') ;
-		$dbcon = new \mysqli('localhost', 'test', 'test', 'test') ;
+		parent::__construct('Database');
+		$dbcon = new \mysqli('localhost', 'test', 'test', 'test');
 		$this->providers[] = function () use ($dbcon) {
 			// I know, this is unsecure
-			$forge = new h\sql\forge($dbcon) ;
+			$forge = new h\sql\forge($dbcon);
 
-			return $forge ;
-		} ;
+			return $forge;
+		};
 	}
 
 	protected	function _test_select_from()
 	{
-		$db = $this->target ;
+		$db = $this->target;
 
 		$query = $db->select()
-			->from('pictures') ;
-		$this->_assert_equals((string) $query, 'select * from pictures') ;
+			->from('pictures');
+		$this->_assert_equals((string) $query, 'select * from pictures');
 
-		return $query ;
+		return $query;
 	}
 
 	protected	function _test_select_from_where()
 	{
-		$select = $this->_test_select_from() ;
+		$select = $this->_test_select_from();
 
-		$this->_assert_equals('select * from pictures', (string) $select) ;
+		$this->_assert_equals('select * from pictures', (string) $select);
 
 		$where = $select
 			->where('id');
 
 		$this->_assert_equals('select * from pictures where id'
-				, (string) $where) ;
+				, (string) $where);
 
 		$where_equals = $where
-			->equals(10) ;
+			->equals(10);
 
 		$this->_assert_equals('select * from pictures where id=10'
-				, (string) $where_equals) ;
+				, (string) $where_equals);
 
-		$where_in = $select->where('id')->in(h\collection(1, 2)) ;
+		$where_in = $select->where('id')->in(h\collection(1, 2));
 		$this->_assert_equals('select * from pictures where id in (1, 2)'
-				, (string) $where_in) ;
+				, (string) $where_in);
 	}
 }
 

@@ -28,9 +28,9 @@
 namespace horn\lib\mustache;
 use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/mustache/tag') ;
-h\import('lib/mustache/processor') ;
+h\import('lib/object');
+h\import('lib/mustache/tag');
+h\import('lib/mustache/processor');
 
 interface escaper
 {

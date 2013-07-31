@@ -24,53 +24,53 @@
  *  along with Horn Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace horn\lib\sql ;
-use \horn\lib as h ;
+namespace horn\lib\sql;
+use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/collection') ;
+h\import('lib/object');
+h\import('lib/collection');
 
 class where
 	extends h\object_public
 {
-	protected $_stack ;
+	protected $_stack;
 
 	public		function __construct($operand)
 	{
-		$this->_stack = h\collection() ;
-		parent::__construct() ;
-		$this->stack[] = $operand ;
+		$this->_stack = h\collection();
+		parent::__construct();
+		$this->stack[] = $operand;
 	}
 
 	public		function equals($operand)
 	{
-		$this->stack[] = '=' ;
-		$this->stack[] = $operand ;
+		$this->stack[] = '=';
+		$this->stack[] = $operand;
 
-		return $this ;
+		return $this;
 	}
 
 	public		function in(h\collection $list)
 	{
-		$this->stack[] = ' in ' ;
-		$this->stack[] = '('.$list->implode(', ').')' ;
+		$this->stack[] = ' in ';
+		$this->stack[] = '('.$list->implode(', ').')';
 
-		return $this ;
+		return $this;
 	}
 
 	protected	function _to_string()
 	{
-		return $this->stack->implode('') ;
+		return $this->stack->implode('');
 	}
 
 	/*
 		if(count($this->criteria) > 0)
 		{
-			$where = ' where ' ;
+			$where = ' where ';
 			foreach($this->criteria as $c)
 			{
-				$c = $this->criteria[0] ;
-				$where = " where {$c[0]}={$c[1]}" ;
+				$c = $this->criteria[0];
+				$where = " where {$c[0]}={$c[1]}";
 			}
 	*/
 }

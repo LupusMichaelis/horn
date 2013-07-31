@@ -33,23 +33,23 @@ class legacy_controller
 {
 	protected	function &_get_model()
 	{
-		$s = $this->context->models->stories ;
-		return $s ;
+		$s = $this->context->models->stories;
+		return $s;
 	}
 
 	public		function do_control()
 	{
-		$path = h\string($this->app->request->uri->path) ;
-		$legacy = $this->model->get_by_legacy_path($path) ;
+		$path = h\string($this->app->request->uri->path);
+		$legacy = $this->model->get_by_legacy_path($path);
 
 		if(! $legacy instanceof story)
 		{
 			header('HTTP/1.1 404 Document not found');
-			return array(false) ;
+			return array(false);
 		}
 
-		$this->context->router->redirect_to($this->uri_to($legacy)) ;
-		return array(true) ;
+		$this->context->router->redirect_to($this->uri_to($legacy));
+		return array(true);
 	}
 
 }

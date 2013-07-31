@@ -25,22 +25,22 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/object') ;
-import('lib/collection') ;
+import('lib/object');
+import('lib/collection');
 
 /** Can be call with two or one parameter
  *
  */
 function callback()
 {
-	$args = func_get_args() ;
+	$args = func_get_args();
 	switch(count($args))
 	{
-		case 1: return new callback($args[0]) ;
-		case 2: return new callback(array($args[0], $args[1])) ;
-		default: throw new \exception('No callback supplied.') ;
+		case 1: return new callback($args[0]);
+		case 2: return new callback(array($args[0], $args[1]));
+		default: throw new \exception('No callback supplied.');
 	}
 }
 
@@ -53,33 +53,33 @@ class callback
 	 */
 	public		function __construct($native)
 	{
-		parent::__construct() ;
-		$this->native = $native ;
+		parent::__construct();
+		$this->native = $native;
 	}
 
 	/**
 	 */
 	public		function __invoke()
 	{
-		return call_user_func_array($this->native, func_get_args()) ;
+		return call_user_func_array($this->native, func_get_args());
 	}
 
 	protected	function _set_native($native)
 	{
 		if(!is_callable($native))
-			$this->_throw_bad_callback($native) ;
+			$this->_throw_bad_callback($native);
 
-		$this->_native = $native ;
+		$this->_native = $native;
 	}
 
 	protected	function _throw_bad_callback($native)
 	{
-		$desc = dump($native) ;
-		$this->_throw_format('Bad callback \'%s\' supplied.', $desc) ;
+		$desc = dump($native);
+		$this->_throw_format('Bad callback \'%s\' supplied.', $desc);
 	}
 
 	/**
 	 */
-	protected	$_native ;
+	protected	$_native;
 }
 

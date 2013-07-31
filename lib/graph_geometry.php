@@ -26,59 +26,59 @@
  *
  */
 
-namespace horn ;
+namespace horn;
 
-import('lib/object') ;
+import('lib/object');
 
 /** Position in screen
  */
 class point
 	extends object_public
 {
-	public		$height ;
-	public		$width ;
+	public		$height;
+	public		$width;
 
 	static
 	public		function create_origin()
 	{
-		return new point(0, 0) ;
+		return new point(0, 0);
 	}
 
 	public		function __construct($width, $height)
 	{
-		$this->width = $width ;
-		$this->height = $height ;
+		$this->width = $width;
+		$this->height = $height;
 	}
 
 	protected	function _clone()
 	{
-		return new static($this->width, $this->height) ;
+		return new static($this->width, $this->height);
 	}
 }
 
 class box
 	extends object_public
 {
-	protected	$_top_left ;
-	protected	$_bottom_right ;
+	protected	$_top_left;
+	protected	$_bottom_right;
 
 	public		function __construct(point $top_left = null, point $bottom_right = null)
 	{
-		$this->top_left = is_null($top_left) ? new point(0, 0) : $top_left ;
-		$this->bottom_right = is_null($bottom_right) ? new point(0, 0) : $bottom_right ;
+		$this->top_left = is_null($top_left) ? new point(0, 0) : $top_left;
+		$this->bottom_right = is_null($bottom_right) ? new point(0, 0) : $bottom_right;
 	}
 }
 
 class line
 	extends object_public
 {
-	protected	$_first ;
-	protected	$_second ;
+	protected	$_first;
+	protected	$_second;
 
 	public		function __construct(point $first = null, point $second = null)
 	{
-		$this->first = is_null($first) ? new point(0, 0) : $first ;
-		$this->second = is_null($second) ? new point(0, 0) : $second ;
+		$this->first = is_null($first) ? new point(0, 0) : $first;
+		$this->second = is_null($second) ? new point(0, 0) : $second;
 	}
 
 }

@@ -25,13 +25,13 @@
  *
  */
 
-namespace horn\lib\inet ;
+namespace horn\lib\inet;
 
-import('lib/inet/host') ;
-import('lib/string') ;
-import('lib/collection') ;
-import('lib/regex') ;
-import('lib/regex-defs') ;
+import('lib/inet/host');
+import('lib/string');
+import('lib/collection');
+import('lib/regex');
+import('lib/regex-defs');
 
 /** \brief		HTTP handling
   *
@@ -40,76 +40,76 @@ import('lib/regex-defs') ;
 class webproxy
 	extends		object_protected
 {
-	protected	$_url ;
-	protected	$_socket ;
+	protected	$_url;
+	protected	$_socket;
 
 	/** \brief
 	 *	\todo		Test what kind of URL is privide
 	 */
 	static public function from_url(url $url)
 	{
-		$new = new self ;
-		$new->url = $url ;
-		$new->socket = curl_init($url) ;
-		return $new ;
+		$new = new self;
+		$new->url = $url;
+		$new->socket = curl_init($url);
+		return $new;
 	}
 
 	static public	function duplicate(webproxy $from)
 	{
-		$new = new self ;
-		$new->url = clone $from->url ;
-		$new->socket = $from->copy_socket() ;
+		$new = new self;
+		$new->url = clone $from->url;
+		$new->socket = $from->copy_socket();
 
-		return $new ;
+		return $new;
 	}
 
 	/**  \brief		Avoid arbitrary webproxy
 	  */
 	protected	function __construct()
 	{
-		parent::__construct() ;
+		parent::__construct();
 	}
 
 	protected	function _set_socket($socket)
 	{
 		$this->_socket = is_resource($socket)
 			? curl_copy_handle($socket)
-			: null ;
+			: null;
 	}
 
 	public		function __destruct()
 	{
 		if(is_resource($this->socket))
-			curl_close($this->socket) ;
+			curl_close($this->socket);
 	}
 
 	public			function refresh()
 	{
-		curl_close($this->socket) ;
-		$this->_socket = curl_init($this->url) ;
+		curl_close($this->socket);
+		$this->_socket = curl_init($this->url);
 	}
 
 	public		function open()
 	{
-		curl_exec($con) ;
+		curl_exec($con);
 	}
 
 	public		function ping()
 	{
-		curl_setopt($this->socket, CURLOPT_NOBODY, true) ;
-		curl_setopt($this->socket, CURLOPT_FOLLOWLOCATION, false) ;
-		curl_exec($this->socket) ;
+		curl_setopt($this->socket, CURLOPT_NOBODY, true);
+		curl_setopt($this->socket, CURLOPT_FOLLOWLOCATION, false);
+		curl_exec($this->socket);
 		if(curl_errno($this->socket))
-			return curl_error($this->socket) ;
+			return curl_error($this->socket);
 		else
-			return curl_getinfo($this->socket, CURLINFO_HTTP_CODE) ;
+			return curl_getinfo($this->socket, CURLINFO_HTTP_CODE);
 	}
 }
 
 
 	public		function __tostring()
 	{
-		return $this->literal->__tostring() ;
+		return $this->literal->__tostring();
 	}
 }
 
@@ -126,14 +126,14 @@ class urn extends uri
   */
 class url extends uri
 {
-	const ERR_MALFORMED				= 'URL\'s not valid.' ;
+	const ERR_MALFORMED				= 'URL\'s not valid.';
 
-	const ERR_SCHEME_NO				= 'Scheme not found.' ;
-	const ERR_SCHEME_BAD			= 'Malformed scheme.' ;
-	const ERR_SCHEME_NOT_SUPPORTED	= 'Scheme is not supported.' ;
+	const ERR_SCHEME_NO				= 'Scheme not found.';
+	const ERR_SCHEME_BAD			= 'Malformed scheme.';
+	const ERR_SCHEME_NOT_SUPPORTED	= 'Scheme is not supported.';
 
-	protected		$_scheme ;
-	protected		$_locator ;
+	protected		$_scheme;
+	protected		$_locator;
 
 	/** \brief		This method must implement a way to reduce the
 	 *				processed literal to a canonical literal string. 
@@ -144,125 +144,125 @@ class url extends uri
 	public		function normalize()
 	{
 		if($this->scheme instanceof string_ex)
-			$this->scheme->lowcase() ;
+			$this->scheme->lowcase();
 		else
-			return false ;
+			return false;
 
-		$this->sync_literal() ;
-		return true ;
+		$this->sync_literal();
+		return true;
 	}
 
 	public		function sync_literal()
 	{
-		$this->literal->reset() ;
-		$this->literal->glue($this->scheme, ':', $this->location) ;
+		$this->literal->reset();
+		$this->literal->glue($this->scheme, ':', $this->location);
 	}
 
 	protected	function parse()
 	{
-		$scheme_sep_pos = $this->literal->search(':') ;
+		$scheme_sep_pos = $this->literal->search(':');
 		if($scheme_sep_pos < 0)
-			throw new exception(self::ERR_SCHEME_NO) ;
+			throw new exception(self::ERR_SCHEME_NO);
 
-		$this->scheme = $this->literal->head($scheme_sep_pos - 1) ;
-		$this->locator = $this->literal->tail($scheme_sep_pos + 1) ;
+		$this->scheme = $this->literal->head($scheme_sep_pos - 1);
+		$this->locator = $this->literal->tail($scheme_sep_pos + 1);
 
-		$this->is_scheme_supported() ;
+		$this->is_scheme_supported();
 	}
 
 	protected function is_scheme_supported()
 	{
-		return true ;
+		return true;
 	}
 }
 
 class url_inet extends url
 {
-	const		ERR_LOCATOR_SLASH	= 'Trailing slash missing.' ;
-	const		ERR_NO_HOST			= 'Host missing.' ;
+	const		ERR_LOCATOR_SLASH	= 'Trailing slash missing.';
+	const		ERR_NO_HOST			= 'Host missing.';
 
-	protected	$_user ;
-	protected	$_password ;
-	protected	$_host ;
-	protected	$_port ;
-	protected	$_path ;
-	protected	$_search ;
-	protected	$_id ;
+	protected	$_user;
+	protected	$_password;
+	protected	$_host;
+	protected	$_port;
+	protected	$_path;
+	protected	$_search;
+	protected	$_id;
 
 	// Maybe I had to document that ? :-D
 	protected	function parse()
 	{
-		parent::parse() ;
+		parent::parse();
 
-		$re = new regex('^'.RE_URL.'$') ;
-		$re->match($this->literal) ;
-		$pieces = $re->get_pieces_by_match(0) ;
+		$re = new regex('^'.RE_URL.'$');
+		$re->match($this->literal);
+		$pieces = $re->get_pieces_by_match(0);
 
 		if(!is_null($pieces['user']))
 		{
 			$this->user = $this->literal->slice
-			($pieces['user'][0], $pieces['user'][1]) ;
+			($pieces['user'][0], $pieces['user'][1]);
 			if(!is_null($pieces['password']))
 				$this->password = $this->literal->slice
-				($pieces['password'][0], $pieces['password'][1]) ;
+				($pieces['password'][0], $pieces['password'][1]);
 		}
 
 		if(!is_null($pieces['host']))
 			$this->host = new host($this->literal->slice
-				($pieces['host'][0], $pieces['host'][1])) ;
+				($pieces['host'][0], $pieces['host'][1]));
 		elseif(!is_null($pieces['inet4']))
 			$this->host = host::new_inet4($this->literal->slice
-				($pieces['host'][0], $pieces['host'][1])) ;
+				($pieces['host'][0], $pieces['host'][1]));
 		elseif(!is_null($pieces['inet6']))
 			$this->host = host::new_inet6($this->literal->slice
-				($pieces['host'][0], $pieces['host'][1])) ;
+				($pieces['host'][0], $pieces['host'][1]));
 		else
-			throw new exception(self::ERR_NO_HOST) ;
+			throw new exception(self::ERR_NO_HOST);
 
 		if(!is_null($pieces['port']))
 			$this->port = $this->literal->slice
 				($pieces['port'][0], $pieces['port'][1])
-				->as_integer() ;
+				->as_integer();
 
 		if(!is_null($pieces['path']))
 			$this->path = new path($this->literal->slice
-				($pieces['path'][0], $pieces['path'][1])) ;
+				($pieces['path'][0], $pieces['path'][1]));
 
-#		var_dump($pieces['path'], $this->path) ;
+#		var_dump($pieces['path'], $this->path);
 
 		if(!is_null($pieces['search']))
 			$this->search = $this->literal->slice
-				($pieces['search'][0], $pieces['search'][1]) ;
+				($pieces['search'][0], $pieces['search'][1]);
 
 		if(!is_null($pieces['id']))
 			$this->id = $this->literal->slice
-				($pieces['id'][0], $pieces['id'][1]) ;
+				($pieces['id'][0], $pieces['id'][1]);
 	}
 
 }
 
 class path
 {
-	protected	$_literal ;
-	protected	$_nodes ;
+	protected	$_literal;
+	protected	$_nodes;
 
 	public		function __construct(string_ex $source)
 	{
-		$this->literal = $source ;
-		$this->nodes = new collection ;
+		$this->literal = $source;
+		$this->nodes = new collection;
 	}
 
 	public		function __tostring()
 	{
-		return (string) $this->literal ;
+		return (string) $this->literal;
 	}
 
 	protected	function parse()
 	{
-		$re = new regex("^".RE_PATH."$") ;
-		$re->match($this->literal) ;
+		$re = new regex("^".RE_PATH."$");
+		$re->match($this->literal);
 
-		$this->nodes = $this->literal->explode('/') ;
+		$this->nodes = $this->literal->explode('/');
 	}
 }
 
@@ -278,15 +278,15 @@ class url_db
 class url_db
 	extends url_inet
 {
-	protected	$_space ;
-	protected	$_table ;
+	protected	$_space;
+	protected	$_table;
 
 	protected	function parse()
 	{
-		parent::parse() ;
+		parent::parse();
 
-		$this->space = new string_ex($this->path) ;
-		$this->space = $this->space->tail(1) ;
+		$this->space = new string_ex($this->path);
+		$this->space = $this->space->tail(1);
 	}
 }
 

@@ -26,29 +26,29 @@
  *
  */
 
-namespace horn\lib\http ;
-use horn\lib as h ;
+namespace horn\lib\http;
+use horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/string') ;
-h\import('lib/exception') ;
-h\import('lib/http/message') ;
+h\import('lib/object');
+h\import('lib/string');
+h\import('lib/exception');
+h\import('lib/http/message');
 
-const		POST = 'POST' ;
-const		GET = 'GET' ;
-const		PUT = 'PUT' ;
-const		DELETE = 'DELETE' ;
-const		OPTIONS = 'OPTIONS' ;
+const		POST = 'POST';
+const		GET = 'GET';
+const		PUT = 'PUT';
+const		DELETE = 'DELETE';
+const		OPTIONS = 'OPTIONS';
 
 function create_native()
 {
-	$native = new request ;
-	$native->head['host'] = h\string($_SERVER['HTTP_HOST']) ;
+	$native = new request;
+	$native->head['host'] = h\string($_SERVER['HTTP_HOST']);
 	$native->head['cookie'] = h\collection::merge($_COOKIE);
 
-	$native->method = validate_http_method($_SERVER['REQUEST_METHOD']) ;
-	$native->uri = new uri(h\string($_SERVER['REQUEST_URI'])) ;
-	$native->version = h\string($_SERVER['SERVER_PROTOCOL']) ;
+	$native->method = validate_http_method($_SERVER['REQUEST_METHOD']);
+	$native->uri = new uri(h\string($_SERVER['REQUEST_URI']));
+	$native->version = h\string($_SERVER['SERVER_PROTOCOL']);
 
 	$native->body = new body;
 
@@ -63,7 +63,7 @@ function create_native()
 	elseif(POST === $native->method)
 		$native->body->content = h\collection::merge($_POST, $_FILES);
 
-	return $native ;
+	return $native;
 }
 
 function validate_http_method($candidate)
@@ -74,9 +74,9 @@ function validate_http_method($candidate)
 		, 'PUT' => PUT
 		, 'DELETE' => DELETE
 		, 'OPTIONS' => OPTIONS
-		) ;
+		);
 	if(isset($methods[strtoupper($candidate)]))
-		return $methods[strtoupper($candidate)] ;
+		return $methods[strtoupper($candidate)];
 
 	throw new h\exception(h\string::format('Method verb \'%s\' is not supported', $candidate));
 }

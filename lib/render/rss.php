@@ -1,44 +1,44 @@
 <?php
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/object') ;
-import('lib/string') ;
-import('lib/collection') ;
-import('lib/markup/rss') ;
+import('lib/object');
+import('lib/string');
+import('lib/collection');
+import('lib/markup/rss');
 
 class feed_rss
 	extends object_public
 {
-	protected	$_canvas ;
-	private		$_helpers ;
+	protected	$_canvas;
+	private		$_helpers;
 
 	public		function __construct()
 	{
-		$this->_canvas = markup\rss::create() ;
-		$this->_helpers = new collection ;
-		parent::__construct() ;
+		$this->_canvas = markup\rss::create();
+		$this->_helpers = new collection;
+		parent::__construct();
 	}
 
 	public		function register($name, $callback)
 	{
-		$this->_helpers[$name] = $callback ;
+		$this->_helpers[$name] = $callback;
 	}
 
 	public		function render($template, $resource)
 	{
 		if(is_null($resource['type']))
-			$this->_throw('Type not set for resource') ;
+			$this->_throw('Type not set for resource');
 
 		if(!isset($this->_helpers[$resource['type']]))
-			$this->_throw_format('No resource for \'%s\'.', $resource['type']) ;
+			$this->_throw_format('No resource for \'%s\'.', $resource['type']);
 
 		if(!isset($template['display']))
-			$this->_throw_format('No display in template specification.') ;
+			$this->_throw_format('No display in template specification.');
 
-		$renderer = $this->_helpers[$resource['type']] ;
-		$h = new $renderer($this->_canvas->root) ;
-		$h->{(string)$template['display']}($resource['model'], $template['mode']) ;
+		$renderer = $this->_helpers[$resource['type']];
+		$h = new $renderer($this->_canvas->root);
+		$h->{(string)$template['display']}($resource['model'], $template['mode']);
 	}
 
 	protected	function _to_string()

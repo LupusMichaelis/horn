@@ -24,52 +24,52 @@
  *  along with Horn Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace horn\lib\sql ;
-use \horn\lib as h ;
+namespace horn\lib\sql;
+use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/collection') ;
+h\import('lib/object');
+h\import('lib/collection');
 
-h\import('lib/sql/where') ;
+h\import('lib/sql/where');
 
 class query
 	extends h\object_public
 {
-	protected	$_table ;
-	protected	$_where ;
+	protected	$_table;
+	protected	$_where;
 
 	private		$_inplace = false;
 
 	public		function __construct($inplace = null)
 	{
-		parent::__construct() ;
-		$this->_inplace = $inplace ;
+		parent::__construct();
+		$this->_inplace = $inplace;
 	}
 
 	protected	function q()
 	{
-		return $this->_inplace ? $this : clone $this ;
+		return $this->_inplace ? $this : clone $this;
 	}
 
 	public		function where($operand)
 	{
-		$q = $this->q() ;
-		$q->where = new where($operand) ;
-		return $q ;
+		$q = $this->q();
+		$q->where = new where($operand);
+		return $q;
 	}
 
 	public		function equals($operand)
 	{
-		$q = $this->q() ;
-		$q->where->equals($operand) ;
-		return $q ;
+		$q = $this->q();
+		$q->where->equals($operand);
+		return $q;
 	}
 
 	public		function in($list)
 	{
-		$q = $this->q() ;
-		$q->where->in($list) ;
-		return $q ;
+		$q = $this->q();
+		$q->where->in($list);
+		return $q;
 	}
 }
 

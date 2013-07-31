@@ -31,20 +31,20 @@
 
 /** \package horn
  */
-namespace horn\filesystem ;
-use horn as h ;
+namespace horn\filesystem;
+use horn as h;
 
-import('lib/object') ;
+import('lib/object');
 
-const KILOBI = 1024 ;
-const MEGABI = 1048576 ;
+const KILOBI = 1024;
+const MEGABI = 1048576;
 
 function path($string)
 {
 	if(! $string instanceof h\string)
-		$string = h\string($string) ;
+		$string = h\string($string);
 
-	$path = new path($string) ;
+	$path = new path($string);
 }
 
 class path
@@ -52,14 +52,14 @@ class path
 {
 	public		function __construct(string_ex $path)
 	{
-		$this->_path = $path->explode('/') ;
+		$this->_path = $path->explode('/');
 	}
 
 	protected	function _set_path(string $path)
 	{
 	}
 
-	protected	$_path ;
+	protected	$_path;
 }
 
 class filesystem

@@ -1,29 +1,29 @@
 <?php
 
-namespace horn\lib\test ;
-use horn\lib as h ;
-use horn\lib\test as t ;
+namespace horn\lib\test;
+use horn\lib as h;
+use horn\lib\test as t;
 
 function cli_renderer(t\suite $suite)
 {
-	$howmany = count($suite->cases) ;
-	$count = 0 ;
-	$errors = 0 ;
-	$out = array() ;
+	$howmany = count($suite->cases);
+	$count = 0;
+	$errors = 0;
+	$out = array();
 	foreach($suite->cases as $case)
 	{
-		//assert(!is_null($case->success)) ;
+		//assert(!is_null($case->success));
 
-		++$count ;
+		++$count;
 		$out[] = sprintf('[%d/%d] %s (%s)'
 			, $count, $howmany
 			, $case->message
-			, $case->success ? $case->on_true : $case->on_false) ;
-		$case->success or ++$errors ;
+			, $case->success ? $case->on_true : $case->on_false);
+		$case->success or ++$errors;
 	}
 
-	print "\n".implode($out, "\n")."\n" ;
-	printf("[%s] (%d/%d)\n", $suite->name, $count - $errors, $count) ;
+	print "\n".implode($out, "\n")."\n";
+	printf("[%s] (%d/%d)\n", $suite->name, $count - $errors, $count);
 }
 
 /*
@@ -32,7 +32,7 @@ class cli_runner
 {
 	public		function __construct()
 	{
-		parent::__construct() ;
+		parent::__construct();
 	}
 }
 
@@ -42,7 +42,7 @@ class cli_renderer
 {
 	public		function message($fmt)
 	{
-		echo call_user_func_array('sprintf', func_get_args()), "\n" ;
+		echo call_user_func_array('sprintf', func_get_args()), "\n";
 	}
 
 	public		function log(context $test)

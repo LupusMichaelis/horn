@@ -1,39 +1,39 @@
 <?php
 
-namespace tests ;
-use horn\lib as h ;
-use horn\lib\test as t ;
+namespace tests;
+use horn\lib as h;
+use horn\lib\test as t;
 
-h\import('lib/horn') ;
-h\import('lib/test') ;
+h\import('lib/horn');
+h\import('lib/test');
 
 class test_suite_test
 	extends t\suite
 {
 	public		function __construct($message = 'Autotest')
 	{
-		parent::__construct($message) ;
+		parent::__construct($message);
 	}
 
 	public		function _test()
 	{
-		$this->assert(true) ;
+		$this->assert(true);
 
-		$this->_test_equal(1, 1) ;
-		$this->_test_is_scalar(1) ;
-		$this->_test_is_integer(1) ;
+		$this->_test_equal(1, 1);
+		$this->_test_is_scalar(1);
+		$this->_test_is_integer(1);
 
-		$this->_test_equal(1., 1.) ;
-#		$this->_test_equal(0.1 * 0.1, .01) ;
-		$this->_test_is_scalar(1.) ;
-		$this->_test_is_float(1.) ;
+		$this->_test_equal(1., 1.);
+#		$this->_test_equal(0.1 * 0.1, .01);
+		$this->_test_is_scalar(1.);
+		$this->_test_is_float(1.);
 
-		$this->_test_is_scalar(true) ;
-		$this->_test_is_scalar(false) ;
-		$this->_test_is_null(null) ;
-		$this->_test_class_exists('\stdclass') ;
-		$this->_test_is_object(new \stdclass) ;
-		$this->_test_is_a(new \stdclass, '\stdclass') ;
+		$this->_test_is_scalar(true);
+		$this->_test_is_scalar(false);
+		$this->_test_is_null(null);
+		$this->_test_class_exists('\stdclass');
+		$this->_test_is_object(new \stdclass);
+		$this->_test_is_a(new \stdclass, '\stdclass');
 
 		// $this->_test_th
 	}
@@ -43,7 +43,7 @@ class test_suite_test
 	 */
 	public		function provides()
 	{
-		return null ;
+		return null;
 	}
 
 }

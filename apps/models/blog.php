@@ -25,23 +25,23 @@
  *
  */
 
-namespace horn\apps\blog ;
-use \horn\lib as h ;
+namespace horn\apps\blog;
+use \horn\lib as h;
 
-h\import('lib/collection') ;
-h\import('lib/string') ;
+h\import('lib/collection');
+h\import('lib/string');
 h\import('lib/model');
 
 class source
 	extends h\model
 {
-	protected	$_source ;
-	private		$cache ;
+	protected	$_source;
+	private		$cache;
 
 	public		function __construct(h\service_provider $service)
 	{
 		$this->_source = $service->get('db');
-		$this->cache = h\collection() ;
+		$this->cache = h\collection();
 		parent::__construct($service);
 	}
 
@@ -54,13 +54,13 @@ class source
 				, $this->source->escape($story->description)
 				, $this->source->escape($story->created->format(h\date::FMT_YYYY_MM_DD))
 				, $this->source->escape($story->modified->format(h\date::FMT_YYYY_MM_DD))
-				) ;
-		$this->source->query($sql) ;
+				);
+		$this->source->query($sql);
 	}
 
 	public		function update(story $story)
 	{
-		$id = $this->cache->search_first($story) ;
+		$id = $this->cache->search_first($story);
 		$sql = h\string::format(
 				'update stories set caption = %s'
 				.', description = %s'
@@ -72,33 +72,33 @@ class source
 				, $this->source->escape($story->created->format(h\date::FMT_YYYY_MM_DD))
 				, $this->source->escape($story->modified->format(h\date::FMT_YYYY_MM_DD))
 				, $id
-				) ;
-		$this->source->query($sql) ;
+				);
+		$this->source->query($sql);
 	}
 
 	public		function delete(story $story)
 	{
-		$id = $this->cache->search_first($story) ;
-		$sql = h\string::format('delete from stories where id=%d', $id) ;
-		$this->source->query($sql) ;
+		$id = $this->cache->search_first($story);
+		$sql = h\string::format('delete from stories where id=%d', $id);
+		$this->source->query($sql);
 	}
 
 	public		function get_all()
 	{
-		$rows = $this->source->query(h\string('select * from stories')) ;
-		return $this->stories_from_select($rows) ;
+		$rows = $this->source->query(h\string('select * from stories'));
+		return $this->stories_from_select($rows);
 	}
 
 	public		function get_by_title(h\string $title)
 	{
 		$sql = h\string::format('select * from stories where caption = %s'
-				, $this->source->escape($title)) ;
-		$rows = $this->source->query($sql) ;
-		$stories = $this->stories_from_select($rows) ;
+				, $this->source->escape($title));
+		$rows = $this->source->query($sql);
+		$stories = $this->stories_from_select($rows);
 
 		return isset($stories[0])
 			? $stories[0]
-			: null ;
+			: null;
 	}
 
 	public		function get_by_legacy_path(h\string $legacy_path)
@@ -106,29 +106,29 @@ class source
 		$sql = h\string::format
 			('select * from stories s right join legacy_stories ls'
 				.'	on s.id = ls.story_id where path = %s'
-				, $this->source->escape($legacy_path)) ;
-		$rows = $this->source->query($sql) ;
-		$stories = $this->stories_from_select($rows) ;
+				, $this->source->escape($legacy_path));
+		$rows = $this->source->query($sql);
+		$stories = $this->stories_from_select($rows);
 
 		return isset($stories[0])
 			? $stories[0]
-			: null ;
+			: null;
 	}
 
 	public		function user_is_granted(story $story, h\http\user $user, h\acl $rights = null)
 	{
 		// XXX By default, deny access
-		return false ;
+		return false;
 	}
 
 	private		function stories_from_select($rows)
 	{
-		$stories = new stories ;
+		$stories = new stories;
 
 		foreach($rows as $row)
 		{
 			if(isset($this->cache[$row['id']]))
-				$new = $this->cache[$row['id']] ;
+				$new = $this->cache[$row['id']];
 			else
 			{
 				$new = story::create
@@ -136,14 +136,14 @@ class source
 					, $row['description']
 					, $row['created']
 					, $row['modified']
-					) ;
-				$this->cache[$row['id']] = $new ;
+					);
+				$this->cache[$row['id']] = $new;
 			}
 
-			$stories->push($new) ;
+			$stories->push($new);
 		}
 
-		return $stories ;
+		return $stories;
 	}
 }
 
@@ -151,32 +151,32 @@ class source
 class story
 	extends h\object_public
 {
-	protected	$_title ;
-	protected	$_description ;
-	protected	$_created ;
-	protected	$_modified ;
+	protected	$_title;
+	protected	$_description;
+	protected	$_created;
+	protected	$_modified;
 
-	// public	$owner ;
+	// public	$owner;
 	public		function __construct()
 	{
-		$this->_title = new h\string ;
-		$this->_description = new h\string ;
-		$this->_created = h\today() ;
-		$this->_modified = h\today() ;
+		$this->_title = new h\string;
+		$this->_description = new h\string;
+		$this->_created = h\today();
+		$this->_modified = h\today();
 
-		parent::__construct() ;
+		parent::__construct();
 	}
 
 	static
 	public		function create($title, $description, $created, $modified)
 	{
-		$new = new static ;
-		$new->title = h\string($title) ;
-		$new->description = h\string($description) ;
-		$new->created = h\date::new_from_sql($created) ;
-		$new->modified = h\date::new_from_sql($modified) ;
+		$new = new static;
+		$new->title = h\string($title);
+		$new->description = h\string($description);
+		$new->created = h\date::new_from_sql($created);
+		$new->modified = h\date::new_from_sql($modified);
 
-		return $new ;
+		return $new;
 	}
 }
 

@@ -25,39 +25,39 @@
  *
  */
 
-namespace horn\apps\user ;
-use \horn\lib as h ;
+namespace horn\apps\user;
+use \horn\lib as h;
 
-h\import('lib/collection') ;
-h\import('lib/string') ;
-h\import('lib/regex') ;
+h\import('lib/collection');
+h\import('lib/string');
+h\import('lib/regex');
 
 h\import('lib/controller');
 
-h\import('lib/time/date_time') ;
-h\import('lib/string') ;
+h\import('lib/time/date_time');
+h\import('lib/string');
 
-h\import('apps/models/user') ;
-h\import('apps/views/user') ;
+h\import('apps/models/user');
+h\import('apps/views/user');
 
 class controller
 	extends h\crud_controller
 {
 	protected	function &_get_model()
 	{
-		$s = $this->context->models->users ;
-		return $s ;
+		$s = $this->context->models->users;
+		return $s;
 	}
 
 	public function do_create()
 	{
-		$name = $this->get_search_part(h\string('account_name')) ;
-		$account = $this->model->get_by_name(h\string($name)) ;
+		$name = $this->get_search_part(h\string('account_name'));
+		$account = $this->model->get_by_name(h\string($name));
 
 		if($account instanceof account)
 		{
 			$this->http_conflict();
-			return array(false, null, array('Account already exists')) ;
+			return array(false, null, array('Account already exists'));
 		}
 
 		$account = new account;
@@ -65,20 +65,20 @@ class controller
 		$account->email = $this->get_post_data(h\string('account_email'));
 		$account->created = $account->modified = h\today();
 
-		return array(true, compact('account')) ;
+		return array(true, compact('account'));
 	}
 
 	public function do_read()
 	{
-		$this->resource['type'] = '\horn\apps\user\account' ;
-		$account = $this->model->get_by_name($this->resource['title']) ;
+		$this->resource['type'] = '\horn\apps\user\account';
+		$account = $this->model->get_by_name($this->resource['title']);
 		if(! $account instanceof account)
 		{
 			$this->not_found();
 			return array(false);
 		}
 
-		return array(true, compact('account')) ;
+		return array(true, compact('account'));
 	}
 	/*
 	protected	function get_collection()
@@ -90,32 +90,32 @@ class controller
 
 	public function do_update()
 	{
-		$name = $this->get_post_data(h\string('account_key')) ;
-		$account = $this->model->get_by_name(h\string($name)) ;
+		$name = $this->get_post_data(h\string('account_key'));
+		$account = $this->model->get_by_name(h\string($name));
 
 		$copy = clone $account;
 		$copy->name = $this->get_post_data(h\string('account_name'));
 		$copy->email = $this->get_post_data(h\string('account_email'));
 		$copy->modified = h\today();
-		$account->assign($copy) ;
+		$account->assign($copy);
 
 		//$uri = $this->uri_of($account);
 		$uri = sprintf('/accounts/%s', rawurlencode($name));
 		$this->redirect_to($uri);
 
-		return array(true, compact('account')) ;
+		return array(true, compact('account'));
 	}
 
 	public function do_delete()
 	{
-		$name = $this->get_post_data(h\string('account_key')) ;
-		$account = $this->model->get_by_name(h\string($name)) ;
-		$this->model->delete($account) ;
+		$name = $this->get_post_data(h\string('account_key'));
+		$account = $this->model->get_by_name(h\string($name));
+		$this->model->delete($account);
 
 		$uri = '/accounts';
 		$this->redirect_after_delete($uri);
 
-		return array(true, compact('uri', 'account')) ;
+		return array(true, compact('uri', 'account'));
 	}
 }
 

@@ -25,47 +25,47 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
 final
 class module
 {
 	// Stack loaded files. Default values are set to avoid conflicts.
 	static
-	private		$_loaded = array('horn/lib/horn.php', 'horn/lib/module.php') ;
+	private		$_loaded = array('horn/lib/horn.php', 'horn/lib/module.php');
 
 	static
-	private		$_include_path = 'horn/' ;
+	private		$_include_path = 'horn/';
 
 	static
 	public		function set_include_path($include_path)
 	{
-		$original = static::$_include_path ;
-		static::$_loaded = str_replace($original, $include_path, static::$_loaded) ;
-		static::$_include_path = $include_path ;
+		$original = static::$_include_path;
+		static::$_loaded = str_replace($original, $include_path, static::$_loaded);
+		static::$_include_path = $include_path;
 	}
 
 	static
 	public		function load_file($file_name)
 	{
 		if(in_array($file_name, self::$_loaded))
-			return ;
+			return;
 
-		self::$_loaded[] = $file_name ;
-		require $file_name ;
+		self::$_loaded[] = $file_name;
+		require $file_name;
 	}
 
 	static
 	public		function load($module_name)
 	{
-		//$module_name = implode('/', explode('.', $module_name)) ;
-		self::load_file(self::$_include_path . $module_name . '.php') ;
+		//$module_name = implode('/', explode('.', $module_name));
+		self::load_file(self::$_include_path . $module_name . '.php');
 	}
 }
 
 function import($module)
 {
-	return module::load($module) ;
+	return module::load($module);
 }
 
 

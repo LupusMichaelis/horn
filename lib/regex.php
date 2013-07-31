@@ -25,102 +25,102 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/string') ;
+import('lib/string');
 
 class regex
 	extends		object_public
 {
-	protected	$_pattern ;
-	protected	$_delimiter ;
-	protected	$_results ;
+	protected	$_pattern;
+	protected	$_delimiter;
+	protected	$_results;
 
-	protected	$_matches ;
+	protected	$_matches;
 
 	public		function __construct($pattern, $delimiter='`')
 	{
-		$this->delimiter = $delimiter ;
+		$this->delimiter = $delimiter;
 
 		// \todo check for delimiters in the pattern, and escape them
 
 		if($pattern instanceof string)
-			$this->pattern = clone $pattern ;
+			$this->pattern = clone $pattern;
 		if(is_null($pattern))
-			$this->pattern = new string ;
+			$this->pattern = new string;
 		else
-			$this->pattern = new string((string) $pattern) ;
+			$this->pattern = new string((string) $pattern);
 	}
 
 	public		function match(string $subject)
 	{
-		$pattern = sprintf("%1\$s%2\$s%1\$s", $this->delimiter, $this->pattern) ;
+		$pattern = sprintf("%1\$s%2\$s%1\$s", $this->delimiter, $this->pattern);
 		$result = preg_match_all
 			( $pattern
 			, $subject
 			, $this->_matches
-			, PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER) > 0 ;
-#		var_dump($this->matches) ;
+			, PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER) > 0;
+#		var_dump($this->matches);
 
-		return $result ;
+		return $result;
 	}
 
 	public		function get_matches()
 	{
-#		var_dump($this->matches) ;
-		return $this->get_result(0) ;
+#		var_dump($this->matches);
+		return $this->get_result(0);
 	}
 
 	public		function get_result($offset)
 	{
-		$submatches = new collection ;
+		$submatches = new collection;
 		if(array_key_exists($offset, $this->matches))
 			foreach($this->matches[$offset] as $name => $match)
 			{
-				$begin = $match[1] ;
+				$begin = $match[1];
 				if($begin < 0)
-					$submatches[$name] = null ;
+					$submatches[$name] = null;
 				else
 				{
-					$end = $begin + strlen($match[0]) ;
-					$submatches[$name] = new collection($begin, $end) ;
+					$end = $begin + strlen($match[0]);
+					$submatches[$name] = new collection($begin, $end);
 				}
 			}
 
-		return $submatches ;
+		return $submatches;
 	}
 
 	public		function get_pieces_by_match($offset)
 	{
-#		var_dump(__FUNCTION__, $offset) ; die('here') ;
-		$pieces = new collection ;
+#		var_dump(__FUNCTION__, $offset) ; die('here');
+		$pieces = new collection;
 
-#		var_dump($this->matches) ;
+#		var_dump($this->matches);
 
 		foreach($this->matches as $name => $result)
 		{
-			$pieces[$name] = null ;
+			$pieces[$name] = null;
 
 			// no matches for this set, so proceding
 			if(!is_array($result))
-				continue ;
+				continue;
 
 			if(!array_key_exists($offset, $result))
-				continue ;
+				continue;
 
-			$match = $result[$offset] ;
+			$match = $result[$offset];
 			if(!is_array($match))
-				continue ;
+				continue;
 
-			$begin = $match[1] ;
-			$end = $begin + strlen($match[0]) ;
+			$begin = $match[1];
+			$end = $begin + strlen($match[0]);
 			if($begin > -1 and $end > -1)
-				$pieces[$name] = new collection($begin, $end) ;
+				$pieces[$name] = new collection($begin, $end);
 			else
-				$pieces[$name] = null ;
+				$pieces[$name] = null;
 		}
 
-		return $pieces ;
+		return $pieces;
 	}
 }
 

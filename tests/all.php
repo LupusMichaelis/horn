@@ -26,17 +26,17 @@
  *
  */
 
-ini_set('include_path', $_SERVER['HOME'].'/php-libs/:.') ;
+ini_set('include_path', $_SERVER['HOME'].'/php-libs/:.');
 
-use horn\lib as h ;
-use horn\lib\test as t ;
+use horn\lib as h;
+use horn\lib\test as t;
 
-require'horn/lib/horn.php' ;
+require'horn/lib/horn.php';
 
-h\import('lib/test') ;
-h\import('lib/test/cli') ;
+h\import('lib/test');
+h\import('lib/test/cli');
 
-define('DEBUG', true) ;
+define('DEBUG', true);
 
 $available_units = array
 	( 'test'
@@ -49,21 +49,21 @@ $available_units = array
 #	, 'file'
 	, 'sql'
 	, 'mustache'
-	) ;
+	);
 
 // We throw some exception and catch them, to test behaviour. Xdebug will trace exception
 // (even catched) and eventually prints it on stdout. So we ask it to stfu.
-ini_set('xdebug.show_exception_trace', 0) ;
+ini_set('xdebug.show_exception_trace', 0);
 
 if($argc == 1)
 {
-	$units = $available_units ;
+	$units = $available_units;
 }
 else
 {
-	array_shift($argv) ;
-	$units = array_intersect($available_units, $argv) ;
-	$unknown_units = array_diff($argv, $available_units) ;
+	array_shift($argv);
+	$units = array_intersect($available_units, $argv);
+	$unknown_units = array_diff($argv, $available_units);
 
 	if(count($unknown_units))
 		die(sprintf("Unknown units [%s]\n", implode('|', $unknown_units)));
@@ -71,22 +71,22 @@ else
 
 foreach($units as $unit)
 {
-	require_once "tests/{$unit}.php" ;
+	require_once "tests/{$unit}.php";
 
 	try
 	{
-		$unit_class = "\\tests\\test_suite_$unit" ;
-		$uc = new $unit_class ;
-		# $uc() ;
-		$uc->run() ;
-		t\cli_renderer($uc) ;
+		$unit_class = "\\tests\\test_suite_$unit";
+		$uc = new $unit_class;
+		# $uc();
+		$uc->run();
+		t\cli_renderer($uc);
 	}
 	catch(\exception $e)
 	{
 		echo $e->getMessage(), "\n" ; 
 		echo $e->getTraceAsString(), "\n" ; 
 
-		if(DEBUG) throw $e ;
+		if(DEBUG) throw $e;
 	}
 }
 

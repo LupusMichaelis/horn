@@ -6,10 +6,10 @@
  *	\project        DogStyle
  */
 
-namespace horn\lib\component ;
+namespace horn\lib\component;
 use \horn\lib as h;
 
-h\import('lib/component') ;
+h\import('lib/component');
 
 class model
 	extends base

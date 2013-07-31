@@ -24,60 +24,60 @@
  *  along with Horn Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace horn\lib\sql ;
-use \horn\lib as h ;
+namespace horn\lib\sql;
+use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/collection') ;
+h\import('lib/object');
+h\import('lib/collection');
 
-h\import('lib/sql/query') ;
+h\import('lib/sql/query');
 
 class select
 	extends query
 {
-	protected	$_fields ;
-	protected	$_criteria ;
+	protected	$_fields;
+	protected	$_criteria;
 
 	public		function __construct(h\collection $fields = null)
 	{
-		$this->_fields = h\collection() ;
-		$this->_criteria = h\collection() ;
-		parent::__construct() ;
-		$this->fields = $fields ;
+		$this->_fields = h\collection();
+		$this->_criteria = h\collection();
+		parent::__construct();
+		$this->fields = $fields;
 	}
 
 	public		function values($fields)
 	{
-		$q = $this->q(); ;
-		$q->values[] = $fields ;
-		return $q ;
+		$q = $this->q();;
+		$q->values[] = $fields;
+		return $q;
 	}
 
 	public		function insert($fields)
 	{
-		$q = new insert($this) ;
-		$q->fields = $fields ;
-		return $q ;
+		$q = new insert($this);
+		$q->fields = $fields;
+		return $q;
 	}
 
 	public		function from($table)
 	{
-		$q = $this->q(); ;
-		$q->table = $table ;
-		return $q ;
+		$q = $this->q();;
+		$q->table = $table;
+		return $q;
 	}
 
 	protected	function _to_string()
 	{
-		$pattern = 'select %s from %s' ;
+		$pattern = 'select %s from %s';
 		$fields = count($this->fields)
 			? $this->fields->implode(', ')
-			: '*' ;
-		$select = sprintf($pattern, $fields, $this->table) ;
+			: '*';
+		$select = sprintf($pattern, $fields, $this->table);
 
 		$where = (string) $this->_where;
 
-		return strlen($where) ? "$select where $where" : $select ;
+		return strlen($where) ? "$select where $where" : $select;
 	}
 }
 

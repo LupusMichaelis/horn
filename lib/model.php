@@ -25,11 +25,11 @@
  *
  */
 
-namespace horn\lib ;
-use \horn\lib as h ;
+namespace horn\lib;
+use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/services') ;
+h\import('lib/object');
+h\import('lib/services');
 
 class model_data
 	extends h\object_public

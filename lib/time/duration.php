@@ -25,9 +25,9 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/collection') ;
+import('lib/collection');
 
 // \todo		refactor to make it lazy
 class day_array
@@ -35,25 +35,25 @@ class day_array
 {
 	static		function range(date $first, date $last)
 	{
-		$week = new self ;
-		$day = $first ;
-		$week->push($day) ;
+		$week = new self;
+		$day = $first;
+		$week->push($day);
 
 		do
 		{
-			$day = $day->tomorrow() ;
-			$week->push($day) ;
+			$day = $day->tomorrow();
+			$week->push($day);
 		}
-		while(!$day->is_equal($last)) ;
+		while(!$day->is_equal($last));
 
-		return $week ;
+		return $week;
 	}
 
 	/*
 	static		function new_week()
 	{
-		$week = new self ;
-		return $week ;
+		$week = new self;
+		return $week;
 	}
 	*/
 }
@@ -61,59 +61,59 @@ class day_array
 class week
 	extends		day_array
 {
-	protected	$_week ;
-	protected	$_year ;
+	protected	$_week;
+	protected	$_year;
 
 	static		function of(date $day)
 	{
-		$year = (int) strftime('%Y', $day->timestamp) ;
-		$week = (int) strftime('%V', $day->timestamp) ;
+		$year = (int) strftime('%Y', $day->timestamp);
+		$week = (int) strftime('%V', $day->timestamp);
 
-		return new self($year, $week) ;
+		return new self($year, $week);
 	}
 
 	public		function __construct($year, $weekno)
 	{
-		$this->week = $weekno ;
-		$this->year = $year ;
+		$this->week = $weekno;
+		$this->year = $year;
 
-		$day = date::new_from_format("$year-W$weekno") ;
-		$this->push($day) ;
+		$day = date::new_from_format("$year-W$weekno");
+		$this->push($day);
 		while($day->get_day_of_week() != 7)
 		{
-			$day = $day->tomorrow() ;
-			$this->push($day) ;
+			$day = $day->tomorrow();
+			$this->push($day);
 		}
 
 		// The day can be any day in a week. So we start to push
 		// the asked day, then we push comming days, then we revert the day's storage, then we push
 		// the passed days until the first, and revert the storage.
 		/*
-		$aday = $day ;
-		$this->push($aday) ;
+		$aday = $day;
+		$this->push($aday);
 
 		while($aday->get_day_of_week() != 7)
 		{
-			$aday = $aday->tomorrow() ;
-			$this->push($aday) ;
+			$aday = $aday->tomorrow();
+			$this->push($aday);
 		}
 
-		$this->reverse() ;
-		$aday = $day ;
+		$this->reverse();
+		$aday = $day;
 
 		while($aday->get_day_of_week() != 1)
 		{
-			$aday = $aday->yesterday() ;
-			$this->push($aday) ;
+			$aday = $aday->yesterday();
+			$this->push($aday);
 		}
 
-		$this->reverse() ;
+		$this->reverse();
 		*/
 	}
 
 	public		function offsetSet($offset, $value)
 	{
-		throw new exception('Read-only collection') ;
+		throw new exception('Read-only collection');
 	}
 
 	public		function offsetGet($offset)
@@ -129,22 +129,22 @@ class week
 				, 'friday' => 4
 				, 'saturday' => 5
 				, 'sunday' => 6
-				) ;
+				);
 
-			$offset = isset($days[$offset]) ? $days[$offset] : -1 ;
+			$offset = isset($days[$offset]) ? $days[$offset] : -1;
 		}
 
 		if(!is_integer($offset) || $offset < 0 || $offset > 6)
-			throw new exception('Unknown day') ;
+			throw new exception('Unknown day');
 
-#		$date = date::new_from_format("{$this->year}-W{$this->week} $offset") ;
+#		$date = date::new_from_format("{$this->year}-W{$this->week} $offset");
 
-		return parent::offsetGet($offset) ;
+		return parent::offsetGet($offset);
 	}
 
 	public		function offsetExits($offset)
 	{
-		return !($offset < 0 && 7 < $offset) ;
+		return !($offset < 0 && 7 < $offset);
 	}
 }
 

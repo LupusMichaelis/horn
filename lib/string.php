@@ -25,10 +25,10 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/object') ;
-import('lib/collection') ;
+import('lib/object');
+import('lib/collection');
 
 /** Check if the provided variable is a string or not
  *  \param	any		$variable
@@ -36,21 +36,21 @@ import('lib/collection') ;
  */
 function is_string($variable)
 {
-	return $variable instanceof string || \is_string($variable) ;
+	return $variable instanceof string || \is_string($variable);
 }
 
 /** Cast $converted in a string
  */
 function string($converted)
 {
-	return new string($converted) ;
+	return new string($converted);
 }
 
 /** Concatenate two strings
  */
 function concatenate($lhs, $rhs)
 {
-	return string($lhs)->append(string($rhs)) ;
+	return string($lhs)->append(string($rhs));
 }
 
 /** 	Implementation of a string class that handle encoding issues. The API try
@@ -64,8 +64,8 @@ class string
 	extends		object_public
 	implements	\arrayaccess, \countable, \jsonserializable
 {
-	const		ERR_OVERRUN	= 'Specified offset overrun [begin:%d,end:%d].' ;
-	const		ERR_INVERT	= 'Offsets seems invert [begin:%d,end:%d].' ;
+	const		ERR_OVERRUN	= 'Specified offset overrun [begin:%d,end:%d].';
+	const		ERR_INVERT	= 'Offsets seems invert [begin:%d,end:%d].';
 
 	protected	$_scalar ;	///< PHP native string
 	protected	$_charset ;	///< PHP native string that contains the name of the charset
@@ -78,18 +78,18 @@ class string
 	 */
 	public		function __construct($copied=null, $charset=null)
 	{
-		parent::__construct() ;
+		parent::__construct();
 
 		if(!is_null($copied))
-			$copied = (string) $copied ;
+			$copied = (string) $copied;
 
 		if(!is_null($charset) && !is_string($charset))
-			$this->_throw('charset') ;
+			$this->_throw('charset');
 
-		$this->scalar = $copied ;
-		$this->charset = $charset ;
+		$this->scalar = $copied;
+		$this->charset = $charset;
 
-		$this->_auto_charset() ;
+		$this->_auto_charset();
 	}
 
 	/** Autodetect the charset/encoding of the encapsulate string
@@ -97,9 +97,9 @@ class string
 	 */
 	protected	function _auto_charset()
 	{
-		$this->_charset = mb_detect_encoding($this->_scalar) ;
+		$this->_charset = mb_detect_encoding($this->_scalar);
 		if(false === $this->_charset)
-			$this->_throw('Charset detection failed') ;
+			$this->_throw('Charset detection failed');
 	}
 
 	/** Factory method to forge string from a format string
@@ -112,32 +112,32 @@ class string
 	static
 	public function format(/* $format, $arg1, $arg2, ... , $argn */)
 	{
-		$s = new static ;
-		$args = func_get_args() ;
-		$s->_scalar = call_user_func_array('sprintf', $args) ;
+		$s = new static;
+		$args = func_get_args();
+		$s->_scalar = call_user_func_array('sprintf', $args);
 
-		return $s ;
+		return $s;
 	}
 
 	/**
 	 */
 	public		function _to_string()
 	{
-		return (string) $this->_scalar ;
+		return (string) $this->_scalar;
 	}
 
 	/** Cast scalar string to integer.
 	 */
 	public		function as_integer()
 	{
-		return (int) $this->_scalar ;
+		return (int) $this->_scalar;
 	}
 
 	/** \todo	length relative to encoding
 	 */
 	public		function length()
 	{
-		return strlen($this->_scalar) ;
+		return strlen($this->_scalar);
 	}
 
 	/**	Stick $sticker at begin of string.
@@ -146,9 +146,9 @@ class string
 	 */
 	public		function prepend(string $sticker)
 	{
-		$this->_scalar = $sticker->_scalar . $this->_scalar ;
-		$this->_auto_charset() ;
-		return $this ;
+		$this->_scalar = $sticker->_scalar . $this->_scalar;
+		$this->_auto_charset();
+		return $this;
 	}
 
 	/**	Concatenate $sticker at back of string.
@@ -157,9 +157,9 @@ class string
 	 */
 	public		function append(string $sticker)
 	{
-		$this->_scalar .= $sticker->_scalar ;
-		$this->_auto_charset() ;
-		return $this ;
+		$this->_scalar .= $sticker->_scalar;
+		$this->_auto_charset();
+		return $this;
 	}
 
 	/**	Factory method that gets caracters from 0 to $offset position from $this string.
@@ -171,9 +171,9 @@ class string
 	public		function head($offset)
 	{
 		if($offset > $this->length())
-			$this->_throw_format(self::ERR_OVERRUN, null, $offset, $this->length()) ;
+			$this->_throw_format(self::ERR_OVERRUN, null, $offset, $this->length());
 
-		return new static(substr($this->_scalar, 0, $offset+1)) ;
+		return new static(substr($this->_scalar, 0, $offset+1));
 	}
 
 	/**	Factory method that gets caracters from $offset to last position from $this string.
@@ -185,14 +185,14 @@ class string
 	public		function tail($offset)
 	{
 		if($offset > $this->length()-1)
-			$this->_throw_format(self::ERR_OVERRUN, $offset, null, $this->length()) ;
+			$this->_throw_format(self::ERR_OVERRUN, $offset, null, $this->length());
 
-		return new static(substr($this->_scalar, $offset)) ;
+		return new static(substr($this->_scalar, $offset));
 	}
 
 	/** Factory method that creates a new string [$begin,$end[
 	 *	\code
-	 *			$s = new string("My pretty string.") ;
+	 *			$s = new string("My pretty string.");
 	 *			$s->slice(0,2) ; // "My"
 	 *			$s->slice(3,9) ; // "pretty"
 	 *			$s->slice($s->search("str"), $s->length() - 1) ; // "string"
@@ -206,14 +206,14 @@ class string
 	 */
 	public		function slice($begin, $end)
 	{
-		$len = strlen($this->_scalar) ;
+		$len = strlen($this->_scalar);
 		if($begin > $end)
-			$this->_throw_format(self::ERR_INVERT, $begin, $end) ;
+			$this->_throw_format(self::ERR_INVERT, $begin, $end);
 
 		if($begin > $len or $end > $len)
-			$this->_throw_format(self::ERR_OVERRUN, $begin, $end, $len) ;
+			$this->_throw_format(self::ERR_OVERRUN, $begin, $end, $len);
 
-		return new static(substr($this->_scalar, $begin, $end - $begin)) ;
+		return new static(substr($this->_scalar, $begin, $end - $begin));
 	}
 
 	/** Removes spaces and tabs from edges of the string
@@ -243,12 +243,12 @@ class string
 	public		function search($needle, $offset=0)
 	{
 		if($needle instanceof self)
-			$needle = $needle->_scalar ;
+			$needle = $needle->_scalar;
 		elseif(!\is_string($needle))
-			$needle = (string) $needle ;
+			$needle = (string) $needle;
 
-		$pos = strpos($this->_scalar, $needle, $offset) ;
-		return $pos === false ? -1 : $pos ;
+		$pos = strpos($this->_scalar, $needle, $offset);
+		return $pos === false ? -1 : $pos;
 	}
 	
 	/** 
@@ -258,7 +258,7 @@ class string
 	 */
 	public		function compare(string $rhs)
 	{
-		return strcmp($this->_scalar, $rhs->_scalar) ;
+		return strcmp($this->_scalar, $rhs->_scalar);
 	}
 
 	/** Explode.
@@ -268,14 +268,14 @@ class string
 	  */
 	public		function explode($c4)
 	{
-		$result = new collection ;
+		$result = new collection;
 
-		$pieces = explode($c4, $this->_scalar) ;
+		$pieces = explode($c4, $this->_scalar);
 		if($pieces !== false)
 			foreach($pieces as $piece)
-				$result[] = new static($piece) ;
+				$result[] = new static($piece);
 
-		return $result ;
+		return $result;
 	}
 
 	/** Set every alphabetic characters to lowercase in $this.
@@ -283,8 +283,8 @@ class string
 	  */
 	public		function lowcase()
 	{
-		$this->_scalar = strtolower($this->_scalar) ;
-		return $this ;
+		$this->_scalar = strtolower($this->_scalar);
+		return $this;
 	}
 
 	/** Factory that creates a new string from $this, and set every alphabetic characters to lower case.
@@ -293,8 +293,8 @@ class string
 	  */
 	public		function to_lower()
 	{
-		$new = clone $this ;
-		return $new->lowcase() ;
+		$new = clone $this;
+		return $new->lowcase();
 	}
 
 	/** Set every alphabetic caracters of this to upcase.
@@ -302,8 +302,8 @@ class string
 	 */
 	public		function upcase()
 	{
-		$this->_scalar = strtoupper($this->_scalar) ;
-		return $this ;
+		$this->_scalar = strtoupper($this->_scalar);
+		return $this;
 	}
 
 	/** Factory that creates a new string from $this, and set every alphabetic characters of the new
@@ -313,8 +313,8 @@ class string
 	  */
 	public		function to_upper()
 	{
-		$new = clone $this ;
-		return $new->upcase() ;
+		$new = clone $this;
+		return $new->upcase();
 	}
 
 	/** Convert scalar string to the requiered encoding and set $this to the charset.
@@ -324,17 +324,17 @@ class string
 	 */
 	public		function convert($charset)
 	{
-		$this->_scalar = mb_convert_encoding($this->_scalar, $charset, $this->charset) ;
-		$this->charset = $charset ;
-		return $this ;
+		$this->_scalar = mb_convert_encoding($this->_scalar, $charset, $this->charset);
+		$this->charset = $charset;
+		return $this;
 	}
 
 	/**
 	 */
 	public		function to_converted($charset)
 	{
-		$converted = mb_convert_encoding($this->_scalar, $charset, $this->charset) ;
-		return new static($converted, $charset) ;
+		$converted = mb_convert_encoding($this->_scalar, $charset, $this->charset);
+		return new static($converted, $charset);
 	}
 
 
@@ -343,36 +343,36 @@ class string
 	{
 		if($this->offsetExists($offset))
 		{
-			$begin = $this->head($offset - 1)->_scalar ;
-			$end = $this->tail($offset + 1)->_scalar ;
-			$this->_scalar = $begin . $end ;
+			$begin = $this->head($offset - 1)->_scalar;
+			$end = $this->tail($offset + 1)->_scalar;
+			$this->_scalar = $begin . $end;
 		}
 		else 
-			$this->_throw_unexpected() ;
+			$this->_throw_unexpected();
 
-		return null ;
+		return null;
 	}
 
 	public		function offsetSet($offset, $value)
 	{
-		$this->_scalar{$offset} = $value ;
-		$this->_auto_charset() ;
+		$this->_scalar{$offset} = $value;
+		$this->_auto_charset();
 	}
 
 	public		function offsetExists($offset)
 	{
-		return -1 < $offset && $offset < strlen($this->_scalar) ;
+		return -1 < $offset && $offset < strlen($this->_scalar);
 	}
 
 	public		function offsetGet($offset)
 	{
-		return $this->slice($offset, $offset+1) ;
+		return $this->slice($offset, $offset+1);
 	}
 
 	// countable /////////////////////////////////////////////////////////
 	public		function count()
 	{
-		return $this->length() ;
+		return $this->length();
 	}
 
 	// jsonserializable //////////////////////////////////////////////////

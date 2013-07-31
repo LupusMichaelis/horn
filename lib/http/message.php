@@ -1,10 +1,10 @@
 <?php
 
-namespace horn\lib\http ;
+namespace horn\lib\http;
 
-use horn\lib as h ;
+use horn\lib as h;
 
-h\import('lib/collection') ;
+h\import('lib/collection');
 
 class searchpart
 	extends h\collection_mutltivalue
@@ -12,28 +12,28 @@ class searchpart
 	static
 	public		function from_string(string $s)
 	{
-		$new = new static ;
+		$new = new static;
 
-		$parts = $s->explode('&') ;
+		$parts = $s->explode('&');
 		foreach($parts as $part)
 		{
-			$pos = $part->search('=') ;
+			$pos = $part->search('=');
 			if($pos !== false)
 			{
-				$name = $part->head($pos) ;
-				$value = $part->tail($pos + 1) ;
+				$name = $part->head($pos);
+				$value = $part->tail($pos + 1);
 			}
 			else
 			{
-				$name = $part ;
-				$value = null ;
+				$name = $part;
+				$value = null;
 			}
 
-			$pos = $name->search('[]') ;
+			$pos = $name->search('[]');
 			if($pos !== false)
-				$name = $name->head(-2) ;
+				$name = $name->head(-2);
 
-			$new[$name] = urldecode($value) ;
+			$new[$name] = urldecode($value);
 		}
 	}
 }
@@ -41,63 +41,63 @@ class searchpart
 class uri
 	extends h\object_public
 {
-	protected	$_path ;
-	protected	$_searchpart ;
+	protected	$_path;
+	protected	$_searchpart;
 
 	public		function __construct(h\string $raw = null)
 	{
 		if($raw === null)
-			$raw = h\string('') ;
+			$raw = h\string('');
 
-		$qmark = $raw->search('?') ;
+		$qmark = $raw->search('?');
 		if($qmark > -1)
 		{
-			$this->_path = $raw->head($qmark - 1) ;
-			$this->_searchpart = $raw->tail($qmark) ;
+			$this->_path = $raw->head($qmark - 1);
+			$this->_searchpart = $raw->tail($qmark);
 		}
 		else
 		{
-			$this->_path = $raw ;
-			$this->_searchpart = h\string('') ;
+			$this->_path = $raw;
+			$this->_searchpart = h\string('');
 		}
 
-		parent::__construct() ;
+		parent::__construct();
 	}
 
 	public		function _to_string()
 	{
-		return $this->_path ;
+		return $this->_path;
 	}
 }
 
 class message
 	extends h\object_public
 {
-	public	$head ;
-	public	$body ;
+	public	$head;
+	public	$body;
 
 	public function __construct()
 	{
-		$this->head = new head ;
-		$this->body = new body ;
+		$this->head = new head;
+		$this->body = new body;
 
-		parent::__construct() ;
+		parent::__construct();
 	}
 }
 
 class request
 	extends message
 {
-	public		$method ;
-	protected	$_uri ;
-	public		$version ;
+	public		$method;
+	protected	$_uri;
+	public		$version;
 
-	public		$body ;
+	public		$body;
 
 	public		function __construct()
 	{
-		$this->_uri = new uri(h\string('')) ;
-		parent::__construct() ;
+		$this->_uri = new uri(h\string(''));
+		parent::__construct();
 	}
 
 }
@@ -105,7 +105,7 @@ class request
 class response
 	extends message
 {
-	public		$status ;
+	public		$status;
 }
 
 class head
@@ -116,7 +116,7 @@ class head
 class body
 	extends \horn\lib\object_public
 {
-	public	$content ;
+	public	$content;
 
 	public		function __construct()
 	{

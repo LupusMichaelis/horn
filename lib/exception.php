@@ -28,12 +28,12 @@
 
 /** \package horn
  */
-namespace horn\lib ;
+namespace horn\lib;
 
 function throw_format($fmt /*, $args*/)
 {
-	$msg = call_user_func_array('sprintf', func_get_args()) ;
-	throw new exception($msg, null) ;
+	$msg = call_user_func_array('sprintf', func_get_args());
+	throw new exception($msg, null);
 }
 
 /**
@@ -42,12 +42,12 @@ function throw_format($fmt /*, $args*/)
 class exception
 	extends \exception
 {
-	private		$throwee ;
+	private		$throwee;
 
 	public		function __construct($msg, $that)
 	{
-		parent::__construct($msg) ;
-		$this->throwee = $that ;
+		parent::__construct($msg);
+		$this->throwee = $that;
 	}
 }
 

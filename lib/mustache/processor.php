@@ -28,8 +28,8 @@
 namespace horn\lib\mustache;
 use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/mustache/parser') ;
+h\import('lib/object');
+h\import('lib/mustache/parser');
 
 class processor
 	extends h\object_public

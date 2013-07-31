@@ -25,13 +25,13 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/time/time') ;
-import('lib/time/date') ;
+import('lib/time/time');
+import('lib/time/date');
 
 // WTF ! Why must I set the timzone, why set the tz is safer than using
 // system setting ? Must I set the clock at every scrip invokation ?
-date_default_timezone_set('Europe/Paris') ;
+date_default_timezone_set('Europe/Paris');
 
 

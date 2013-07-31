@@ -25,29 +25,29 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/string') ;
-import('lib/collection') ;
-import('lib/regex') ;
-import('lib/regex-defs') ;
+import('lib/string');
+import('lib/collection');
+import('lib/regex');
+import('lib/regex-defs');
 
 class uri
 	extends		object_public
 {
-	protected	$_literal ;
+	protected	$_literal;
 
 	public		function __construct(string $literal)
 	{
-		parent::__construct() ;
+		parent::__construct();
 
-		$this->literal = $literal ;
-		$this->parse() ;
+		$this->literal = $literal;
+		$this->parse();
 	}
 
 	public		function __tostring()
 	{
-		return $this->literal->__tostring() ;
+		return $this->literal->__tostring();
 	}
 }
 
@@ -64,14 +64,14 @@ class urn extends uri
   */
 class url extends uri
 {
-	const ERR_MALFORMED				= 'URL\'s not valid.' ;
+	const ERR_MALFORMED				= 'URL\'s not valid.';
 
-	const ERR_SCHEME_NO				= 'Scheme not found.' ;
-	const ERR_SCHEME_BAD			= 'Malformed scheme.' ;
-	const ERR_SCHEME_NOT_SUPPORTED	= 'Scheme is not supported.' ;
+	const ERR_SCHEME_NO				= 'Scheme not found.';
+	const ERR_SCHEME_BAD			= 'Malformed scheme.';
+	const ERR_SCHEME_NOT_SUPPORTED	= 'Scheme is not supported.';
 
-	protected		$_scheme ;
-	protected		$_locator ;
+	protected		$_scheme;
+	protected		$_locator;
 
 	/** \brief		This method must implement a way to reduce the
 	 *				processed literal to a canonical literal string. 
@@ -82,35 +82,35 @@ class url extends uri
 	public		function normalize()
 	{
 		if($this->scheme instanceof string)
-			$this->scheme->lowcase() ;
+			$this->scheme->lowcase();
 		else
-			return false ;
+			return false;
 
-		$this->sync_literal() ;
-		return true ;
+		$this->sync_literal();
+		return true;
 	}
 
 	public		function sync_literal()
 	{
-		$this->literal->reset() ;
-		$this->literal->glue($this->scheme, ':', $this->location) ;
+		$this->literal->reset();
+		$this->literal->glue($this->scheme, ':', $this->location);
 	}
 
 	protected	function parse()
 	{
-		$scheme_sep_pos = $this->literal->search(':') ;
+		$scheme_sep_pos = $this->literal->search(':');
 		if($scheme_sep_pos < 0)
-			throw new exception(self::ERR_SCHEME_NO) ;
+			throw new exception(self::ERR_SCHEME_NO);
 
-		$this->scheme = $this->literal->head($scheme_sep_pos - 1) ;
-		$this->locator = $this->literal->tail($scheme_sep_pos + 1) ;
+		$this->scheme = $this->literal->head($scheme_sep_pos - 1);
+		$this->locator = $this->literal->tail($scheme_sep_pos + 1);
 
-		$this->is_scheme_supported() ;
+		$this->is_scheme_supported();
 	}
 
 	protected function is_scheme_supported()
 	{
-		return true ;
+		return true;
 	}
 }
 

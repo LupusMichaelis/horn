@@ -25,11 +25,11 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 use \horn\lib as h;
 
-h\import('lib/collection') ;
-h\import('lib/decorator') ;
+h\import('lib/collection');
+h\import('lib/decorator');
 
 function make_configuration(/* ... */)
 {
@@ -63,7 +63,7 @@ class configuration
 		while($composed->has_next())
 		{
 			$composed = $composed->next;
-			$values->join($composed->payload) ;
+			$values->join($composed->payload);
 		}
 		parent::__construct();
 		$this->join($values);

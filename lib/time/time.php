@@ -25,29 +25,29 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
 
 class time
 	extends		object_public
 {
-	protected	$_second ;
-	protected	$_minute ;
-	protected	$_hour ;
+	protected	$_second;
+	protected	$_minute;
+	protected	$_hour;
 
 	public		function __construct($second = null, $minute = 0, $hour = 0)
 	{
 		if(is_null($second))
-			$second = time() ;
+			$second = time();
 
-		$this->second = $second ;
-		$this->minute = $minute ;
-		$this->hour = $hour ;
+		$this->second = $second;
+		$this->minute = $minute;
+		$this->hour = $hour;
 	}
 
 	protected	function _to_string()
 	{
-		return sprintf('%02d:%02d:%02d', $this->_hour, $this->_minute, $this->_second) ;
+		return sprintf('%02d:%02d:%02d', $this->_hour, $this->_minute, $this->_second);
 	}
 }
 

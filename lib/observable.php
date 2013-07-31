@@ -25,11 +25,11 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/object') ;
-import('lib/collection') ;
-import('lib/callback') ;
+import('lib/object');
+import('lib/collection');
+import('lib/callback');
 
 /** Observable interface.
  *
@@ -37,15 +37,15 @@ import('lib/callback') ;
 interface iObservable
 {
 	/** Notify listener that the $event happened.
-	function	notify($event) ;
+	function	notify($event);
 	 */
 
 	/** Register a listener callback.
 	 */
-	function	register(callback $callback, $event = null) ;
+	function	register(callback $callback, $event = null);
 
 	/** On destruction, listener must be notified.
-	function	__destruct() ;
+	function	__destruct();
 	 */
 }
 
@@ -60,13 +60,13 @@ class observable
 	 */
 	public		function __construct()
 	{
-		parent::__construct() ;
-		$this->callbacks = new collection ;
+		parent::__construct();
+		$this->callbacks = new collection;
 	}
 
 	protected	function _add_event($event)
 	{
-		$this->callbacks[$event] = new collection ;
+		$this->callbacks[$event] = new collection;
 	}
 
 	/** Register a listener callback.
@@ -75,11 +75,11 @@ class observable
 	{
 		if(is_null($event))
 			foreach($this->callbacks as $event => $callbacks)
-				$this->callbacks[$event][] = $callback ;
+				$this->callbacks[$event][] = $callback;
 		elseif(isset($this->_callbacks[$event]))
-			$this->callbacks[$event][] = $callback ;
+			$this->callbacks[$event][] = $callback;
 		else
-			throw new exception("Unhandled event '$event'") ;
+			throw new exception("Unhandled event '$event'");
 	}
 
 	/** Unregister a listener callback.
@@ -88,11 +88,11 @@ class observable
 	{
 		if(is_null($event))
 			foreach($this->callbacks as $event => $callbacks)
-				$this->callbacks[$event]->remove($callback) ;
+				$this->callbacks[$event]->remove($callback);
 		elseif(isset($this->_callbacks[$event]))
-			$this->callbacks[$event]->remove($callback) ;
+			$this->callbacks[$event]->remove($callback);
 		else
-			throw new exception("Unhandled event '$event'") ;
+			throw new exception("Unhandled event '$event'");
 	}
 
 	/** Notify listener that the $event happened.
@@ -103,12 +103,12 @@ class observable
 
 		if($this->callbacks[$event]->count())
 			foreach($this->callbacks[$event] as $callback)
-				$callback($event, $data) ;
+				$callback($event, $data);
 	}
 
 	/** Stack of callbacks.
 	 */
-	protected	$_callbacks ;
+	protected	$_callbacks;
 }
 
 

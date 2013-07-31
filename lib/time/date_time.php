@@ -25,20 +25,20 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/object') ;
-import('lib/time/date') ;
-import('lib/time/time') ;
+import('lib/object');
+import('lib/time/date');
+import('lib/time/time');
 
 function now()
 {
-	$aday = getdate() ;
-	$now = new date_time ;
-	$now->date = new date($aday['year'], $aday['mon'], $aday['mday']) ;
-	$now->time = new time($aday['hours'], $aday['minutes'], $aday['seconds']) ;
+	$aday = getdate();
+	$now = new date_time;
+	$now->date = new date($aday['year'], $aday['mon'], $aday['mday']);
+	$now->time = new time($aday['hours'], $aday['minutes'], $aday['seconds']);
 
-	return $now ;
+	return $now;
 }
 
 
@@ -47,43 +47,43 @@ class date_time
 {
 	public		function __construct()
 	{
-		$this->_date = new date ;
-		$this->_time = new time ;
+		$this->_date = new date;
+		$this->_time = new time;
 
-		parent::__construct() ;
+		parent::__construct();
 	}
 
 	static		function from_date(date $day)
 	{
-		$new = new self ;
-		$new->_date->assign($day) ;
+		$new = new self;
+		$new->_date->assign($day);
 
-		return $new ;
+		return $new;
 	}
 
 	static		function from_time(time $time)
 	{
-		$new = self ;
-		$new->time = $time ;
+		$new = self;
+		$new->time = $time;
 
-		return $new ;
+		return $new;
 	}
 
 	static		function from_date_time(date $day, time $time)
 	{
-		$new = self ;
-		$new->_date->copy($day) ;
-		$new->_time->copy($time) ;
+		$new = self;
+		$new->_date->copy($day);
+		$new->_time->copy($time);
 
-		return $new ;
+		return $new;
 	}
 
 	protected	function _to_string()
 	{
-		return sprintf('%s %s', $this->_date, $this->_time) ;
+		return sprintf('%s %s', $this->_date, $this->_time);
 	}
 
-	protected	$_date ;
-	protected	$_time ;
+	protected	$_date;
+	protected	$_time;
 }
 

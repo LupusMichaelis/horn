@@ -27,9 +27,9 @@
 
 /** \package	horn
  */
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/object') ;
+import('lib/object');
 
 /**
  */
@@ -40,8 +40,8 @@ class envelope
 	 */
 	public		function __construct(object_base $content)
 	{
-		parent::__construct() ;
-		$this->attach($content) ;
+		parent::__construct();
+		$this->attach($content);
 	}
 
 	/**
@@ -50,16 +50,16 @@ class envelope
 	public		function __call($method, $args)
 	{
 		if(method_exists($this->_content, $method))
-			call_user_method_array($method, $this->_content, $args) ;
+			call_user_method_array($method, $this->_content, $args);
 		else
-			$this->_throw_unknown_method() ;
+			$this->_throw_unknown_method();
 	}
 
 	/**
 	 */
 	public		function attach(object_base $content)
 	{
-		$this->_content = $content ;
+		$this->_content = $content;
 	}
 
 	/** 
@@ -67,10 +67,10 @@ class envelope
 	 */
 	protected	function _set($name, $value)
 	{
-		$this->_content->_set($name, $value) ;
+		$this->_content->_set($name, $value);
 	}
 
-	protected	$content ;
+	protected	$content;
 }
 
 

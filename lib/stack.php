@@ -25,10 +25,10 @@
  *  along with Horn Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/object') ;
-import('lib/collection') ;
+import('lib/object');
+import('lib/collection');
 
 class stack
 	extends collection
@@ -38,7 +38,7 @@ class stack
 	 */
 	public		function get_stack()
 	{
-		return array_values($this->_stack) ;
+		return array_values($this->_stack);
 	}
 
 	public		function offsetUnset($key)

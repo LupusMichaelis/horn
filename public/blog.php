@@ -11,7 +11,7 @@ ini_set('include_path', sprintf('%s:%s'
 			));
 
 require 'horn/lib/horn.php';
-h\import('apps/blog/controllers') ;
+h\import('apps/blog/controllers');
 
 h\import('lib/configuration');
 h\import('lib/controller');

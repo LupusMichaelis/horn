@@ -25,26 +25,26 @@
  *
  */
 
-namespace horn ;
+namespace horn;
 
 
-define('RE_0_199', '1?\d?\d') ;
-define('RE_200_255', '2(?:5[0-5]|[0-4]\d)') ;
-define('RE_0_255', sprintf('%s|%s', RE_0_199, RE_200_255)) ;
+define('RE_0_199', '1?\d?\d');
+define('RE_200_255', '2(?:5[0-5]|[0-4]\d)');
+define('RE_0_255', sprintf('%s|%s', RE_0_199, RE_200_255));
 
-define('RE_INET4', sprintf('(%1$s)\.(%1$s)\.(%1$s)\.(%1$s)', RE_0_255)) ;
+define('RE_INET4', sprintf('(%1$s)\.(%1$s)\.(%1$s)\.(%1$s)', RE_0_255));
 
-define('RE_INET4_S', sprintf('(?:%1$s)\.(?:%1$s)\.(?:%1$s)\.(?:%1$s)', RE_0_255)) ;
-// define('RE_INET6_S', '[\da-f]{1,4}(?:::[\da-f]{1,4}){7}') ;
+define('RE_INET4_S', sprintf('(?:%1$s)\.(?:%1$s)\.(?:%1$s)\.(?:%1$s)', RE_0_255));
+// define('RE_INET6_S', '[\da-f]{1,4}(?:::[\da-f]{1,4}){7}');
 
-define('RE_SCHEME',		'\w+') ;
-define('RE_USER',		'\w+') ;
-define('RE_PASS',		'\w+') ;
-define('RE_HOST',		'[\.\w]+') ;
-define('RE_PORT',		'\d{1,5}') ;
-define('RE_PATH',		'(?:/\w*)+') ;
+define('RE_SCHEME',		'\w+');
+define('RE_USER',		'\w+');
+define('RE_PASS',		'\w+');
+define('RE_HOST',		'[\.\w]+');
+define('RE_PORT',		'\d{1,5}');
+define('RE_PATH',		'(?:/\w*)+');
 define('RE_SEARCH',		'\?[\w&=]*') ; //< \bug to improve
-define('RE_ID',			'#[\w]*') ;
+define('RE_ID',			'#[\w]*');
 define('RE_URL', sprintf
 		( '(?<scheme>%s)'.'://'
 		. '(?:(?<user>%s)(?::(?<password>%s))?@)?'
@@ -61,7 +61,7 @@ define('RE_URL', sprintf
 		, RE_ID
 		, RE_SEARCH
 		)
-	) ;
+	);
 define('RE_URL_U', sprintf
 		( '(%s)'.'://'
 		. '(?:(%s):(%s)@)?'
@@ -76,6 +76,6 @@ define('RE_URL_U', sprintf
 		, RE_PATH
 		, RE_SEARCH
 		)
-	) ;
+	);
 
 ?>

@@ -25,11 +25,11 @@
  *
  */
 
-namespace horn\lib\component ;
+namespace horn\lib\component;
 use \horn\lib as h;
 
-h\import('lib/component') ;
-h\import('lib/mustache') ;
+h\import('lib/component');
+h\import('lib/mustache');
 
 class template
 	extends base

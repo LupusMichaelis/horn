@@ -25,80 +25,80 @@
  *
  */
 
-namespace horn\lib ;
+namespace horn\lib;
 
-import('lib/object') ;
+import('lib/object');
 
 class registry
 	extends		object_public
 	implements	\ArrayAccess
 {
-	protected	$_tree = array(0 => null) ;
-	protected	$_current ;
+	protected	$_tree = array(0 => null);
+	protected	$_current;
 
 	static
 	public		function load($array)
 	{
-		$registry = new self ;
-		$registry->_tree = $array ;
-		$registry->cd('/') ;
+		$registry = new self;
+		$registry->_tree = $array;
+		$registry->cd('/');
 
-		return $registry ;
+		return $registry;
 	}
 
 	public		function __construct()
 	{
-		$ref = & $this->_tree ;
-		$this->_current = (object) array('ref' => &$ref) ;
+		$ref = & $this->_tree;
+		$this->_current = (object) array('ref' => &$ref);
 
-		parent::__construct() ;
+		parent::__construct();
 	}
 
 	public		function cd($path)
 	{
-		$current = & $this->_seek_node($path) ;
-		unset($this->_current->ref) ;
-		$this->_current->ref = & $current ;
-		return $this ;
+		$current = & $this->_seek_node($path);
+		unset($this->_current->ref);
+		$this->_current->ref = & $current;
+		return $this;
 	}
 
 	public		function offsetExists($path)
 	{
 		try
 		{
-			$node = & $this->_seek_node($path) ;
-			return is_array($node) ;
+			$node = & $this->_seek_node($path);
+			return is_array($node);
 		}
 		catch(exception $e)
 		{
-			return false ;
+			return false;
 		}
 	}
 
 	public		function offsetGet($path)
 	{
-		$node = & $this->_seek_node($path) ;
-		return isset($node[0]) ? $node[0] : null ;
+		$node = & $this->_seek_node($path);
+		return isset($node[0]) ? $node[0] : null;
 	}
 
 	public		function offsetUnset($path)
 	{
-		$node = & $this->_seek_node($path) ;
-		$node = null ;
+		$node = & $this->_seek_node($path);
+		$node = null;
 	}
 
 	public		function offsetSet($path, $value)
 	{
-		$keys = $this->_explode_path($path) ;
+		$keys = $this->_explode_path($path);
 
 		// If it is absolute path
 		if(strpos($path, '/') === 0)
 		{
-			$node = & $this->_tree ;
-			array_shift($keys) ;
+			$node = & $this->_tree;
+			array_shift($keys);
 		}
 		else
-			$node = & $this->_current->ref ;
+			$node = & $this->_current->ref;
 
 		// go in tree as deeper as we can
 		while(is_string($key = array_shift($keys)))
@@ -106,11 +106,11 @@ class registry
 			if(!empty($key) && isset($node[$key]) && is_array($node[$key]))
 			{
 				// reference swaping
-				unset($n) ;		$n = & $node[$key] ;
-				unset($node) ;	$node = & $n ;
+				unset($n) ;		$n = & $node[$key];
+				unset($node) ;	$node = & $n;
 			}
 			else
-				break ;
+				break;
 		}
 
 		// create branch if it doesn't exist
@@ -118,34 +118,34 @@ class registry
 		{
 			if(!empty($key))
 			{
-				$node[$key] = array(0 => null) ;
+				$node[$key] = array(0 => null);
 				// reference swaping
-				unset($n) ;		$n = & $node[$key] ;
-				unset($node) ;	$node = & $n ;
+				unset($n) ;		$n = & $node[$key];
+				unset($node) ;	$node = & $n;
 			}
 		}
-		while(is_string($key = array_shift($keys))) ;
+		while(is_string($key = array_shift($keys)));
 
-		$node[0] = $value ;
+		$node[0] = $value;
 	}
 
 	public		function childs($path = '')
 	{
-		$node = & $this->_seek_node($path) ;
-		return array_filter(array_keys($node), 'is_string') ;
+		$node = & $this->_seek_node($path);
+		return array_filter(array_keys($node), 'is_string');
 	}
 
 	protected	function & _seek_node($path)
 	{
-		$keys = $this->_explode_path($path) ;
+		$keys = $this->_explode_path($path);
 
 		if(strpos($path, '/') === 0)
 		{
-			$node = & $this->_tree ;
-			array_shift($keys) ;
+			$node = & $this->_tree;
+			array_shift($keys);
 		}
 		else
-			$node = & $this->_current->ref ;
+			$node = & $this->_current->ref;
 
 		while(is_string($key = array_shift($keys)))
 		{
@@ -153,24 +153,24 @@ class registry
 				if(isset($node[$key]) && is_array($node[$key]))
 				{
 					// reference swaping
-					unset($n) ;		$n = & $node[$key] ;
-					unset($node) ;	$node = & $n ;
+					unset($n) ;		$n = & $node[$key];
+					unset($node) ;	$node = & $n;
 				}
 				else
-					$this->_throw_format('Couldn\'t path to (%s).', $path) ;
+					$this->_throw_format('Couldn\'t path to (%s).', $path);
 		}
 
-		return $node ;
+		return $node;
 	}
 
 	protected	function _explode_path($path)
 	{
-		$keys = explode('/', $path) ;
+		$keys = explode('/', $path);
 
 		if(count($keys) < 1)
-			$this->_throw_format('Invalid path "%s".', $path) ;
+			$this->_throw_format('Invalid path "%s".', $path);
 
-		return $keys ;
+		return $keys;
 	}
 }
 

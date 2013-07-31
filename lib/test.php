@@ -32,10 +32,10 @@
 /** \package horn\lib\tests
  */
 
-namespace horn\lib\test ;
+namespace horn\lib\test;
 
-use horn\lib as h ;
+use horn\lib as h;
 
-h\import('lib/test/suite') ;
-h\import('lib/test/context') ;
+h\import('lib/test/suite');
+h\import('lib/test/context');
 

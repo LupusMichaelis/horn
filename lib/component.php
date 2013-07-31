@@ -25,11 +25,11 @@
  *
  */
 
-namespace horn\lib\component ;
+namespace horn\lib\component;
 use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/collection') ;
+h\import('lib/object');
+h\import('lib/collection');
 h\import('lib/configuration');
 h\import('lib/decorator');
 

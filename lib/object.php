@@ -30,10 +30,10 @@
  *
  */
 
-namespace horn\lib ;
-use horn\lib as h ;
+namespace horn\lib;
+use horn\lib as h;
 
-h\import('lib/exception') ;
+h\import('lib/exception');
 
 /** Ensure homogenic access to properties.
  *
@@ -101,14 +101,14 @@ class object_base
 	public		function __clone() 
 	{ 
 		if(method_exists($this, '_clone'))
-			$new = $this->_clone() ;
+			$new = $this->_clone();
 		else
 		{
-			$new = new static ;
-			$new->assign($this) ;
+			$new = new static;
+			$new->assign($this);
 		}
 
-		return $new ;
+		return $new;
 	}
 
 	/** Getter on the $name attribute.
@@ -118,12 +118,12 @@ class object_base
 	final
 	public		function & __get($name) 
 	{ 
-#		var_dump(__FUNCTION__, $name, $value) ;
+#		var_dump(__FUNCTION__, $name, $value);
 		$method = "_get_$name" ; 
 		if(method_exists($this, $method))
-			return $this->$method() ;
+			return $this->$method();
 		else
-			return $this->_get($name) ;
+			return $this->_get($name);
 	} 
 
 	/** Setter on the $name attribute.
@@ -134,12 +134,12 @@ class object_base
 	final
 	public		function & __set($name, $value) 
 	{ 
-#		var_dump(__FUNCTION__, $name, $value) ;
+#		var_dump(__FUNCTION__, $name, $value);
 		$method = "_set_$name" ; 
 		if(method_exists($this, $method))
-			$this->$method($value) ;
+			$this->$method($value);
 		else
-			$this->_set($name, $value) ;
+			$this->_set($name, $value);
 
 		return $this->__get($name) ; 
 	} 
@@ -152,11 +152,11 @@ class object_base
 	{ 
 		$method = "_unset_$name" ; 
 		if(method_exists($this, $method))
-			$this->$method() ;
+			$this->$method();
 		else
-			$this->_unset($name) ;
+			$this->_unset($name);
 
-		return null ;
+		return null;
 	}
 
 	/** Check if $name attribute is set.
@@ -170,7 +170,7 @@ class object_base
 		return method_exists($this, $method)
 			? $this->$method()
 			: $this->_isset($name)
-			;
+;
 	}
 
 	/** For a lot of types, it is not a good idea to cast in a string. Take care when you
@@ -180,16 +180,16 @@ class object_base
 	public		function __tostring()
 	{
 		if(!method_exists($this, '_to_string'))
-			trigger_error(sprintf('No %s::_to_string method provided', get_class($this)), E_USER_ERROR) ;
+			trigger_error(sprintf('No %s::_to_string method provided', get_class($this)), E_USER_ERROR);
 
 		try {
-			$s = $this->_to_string() ;
+			$s = $this->_to_string();
 		} catch(\exception $e) {
 			/// @todo better format
-			die(var_export($e, true)) ;
+			die(var_export($e, true));
 		}
 
-		return (string) $s ;
+		return (string) $s;
 	}
 
 	/**	Assign the $object_source to $this with inheritance care. The behaviour can be custom, just override protected
@@ -201,19 +201,19 @@ class object_base
 	public		function assign(object_base $object_source = null)
 	{
 		if(is_null($object_source))
-			$this->reset() ;
+			$this->reset();
 		elseif($this->is_same($object_source))
-			/* optimization : we won't to assign object in it-self. */ ;
+			/* optimization : we won't to assign object in it-self. */;
 		elseif($object_source instanceof static)
-			$this->_assign_object($object_source) ;
+			$this->_assign_object($object_source);
 		elseif(is_a($object_source, get_class($this)))
-			$this->_assign_descendant($object_source) ;
+			$this->_assign_descendant($object_source);
 		elseif(is_a($this, get_class($object_source)))
-			$this->_assign_ancestor($object_source) ;
+			$this->_assign_ancestor($object_source);
 		else
-			$this->_throw_cant_assign_object($object_source) ;
+			$this->_throw_cant_assign_object($object_source);
 
-		return $this ;
+		return $this;
 	}
 
 	/** Returns true if the compared object is strictly equal to $this.
@@ -222,7 +222,7 @@ class object_base
 	 */
 	public		function is_same(object_base $compared)
 	{
-		return $this === $compared ;
+		return $this === $compared;
 	}
 
 	/**
@@ -231,25 +231,25 @@ class object_base
 	 */
 	public		function is_equal(object_base $compared)
 	{
-		return $this->is_same($compared) || $this == $compared ;
+		return $this->is_same($compared) || $this == $compared;
 	}
 
 	final
 	public		function get_attributes_default_values()
 	{
-		return get_class_vars(get_class($this)) ;
+		return get_class_vars(get_class($this));
 	}
 
 	final
 	public		function get_attributes_class()
 	{
-		return array_keys(get_class_vars(get_class($this))) ;
+		return array_keys(get_class_vars(get_class($this)));
 	}
 
 	final
 	public		function get_attributes_object()
 	{
-		return array_keys(get_object_vars($this)) ;
+		return array_keys(get_object_vars($this));
 	}
 
 	/** \todo
@@ -266,9 +266,9 @@ class object_base
 	public		function reset()
 	{
 		foreach($this->get_attributes_default_values() as $name => $default_value)
-			$this->__set($name, $default_value) ;
+			$this->__set($name, $default_value);
 
-		return $this ;
+		return $this;
 	}
 
 	/** Determines actual attribute name and returns it. Private and protected attributes
@@ -281,13 +281,13 @@ class object_base
 	final
 	protected   function _actual_name($name) 
 	{ 
-		$attrs = $this->get_attributes_object() ;
-		$actual_name = in_array($name, $attrs) ? $name : "_$name" ;
+		$attrs = $this->get_attributes_object();
+		$actual_name = in_array($name, $attrs) ? $name : "_$name";
  
 		if(!in_array($actual_name, $this->get_attributes_object()))
-			$this->_throw_attribute_missing($name) ;
+			$this->_throw_attribute_missing($name);
 
-		return $actual_name ;
+		return $actual_name;
 	} 
 
 	/** Default behaviour on setting an attribute.
@@ -298,13 +298,13 @@ class object_base
 		$actual_name = $this->_actual_name($name) ; 
 
 		if($this->$actual_name instanceof self)
-			$this->$actual_name->assign($value) ;
+			$this->$actual_name->assign($value);
 		if(!is_null($this->$actual_name) && is_object($value))
-			$this->$actual_name = clone $value ;
+			$this->$actual_name = clone $value;
 		else
-			$this->$actual_name = $value ;
+			$this->$actual_name = $value;
 
-		return $this->$actual_name ;
+		return $this->$actual_name;
 	}
 
 	/** Return a reference of the attribute.
@@ -315,7 +315,7 @@ class object_base
 	protected	function & _get($name)
 	{
 		$actual_name = $this->_actual_name($name) ; 
-		return $this->$actual_name ;
+		return $this->$actual_name;
 	}
 
 	/** Default method for checking if an attribute is set.
@@ -325,7 +325,7 @@ class object_base
 	{
 		try { $actual_name = $this->_actual_name($name) ; }
 		catch(exception $e) { return false ; }
-		return isset($this->$actual_name) ;
+		return isset($this->$actual_name);
 	}
 
 	/** Default method to unset a property.
@@ -334,8 +334,8 @@ class object_base
 	protected	function _unset($name) 
 	{
 		$actual_name = $this->_actual_name($name) ; 
-		$this->$actual_name = null ;
-#		unset($this->$actual_name) ;
+		$this->$actual_name = null;
+#		unset($this->$actual_name);
 	}
 
 	/** Generic copier for object_base
@@ -343,8 +343,8 @@ class object_base
 	final
 	protected	function _assign_object(object_base $object_source)
 	{
-		$attrs = $this->get_attributes_object() ;
-		$this->_assign_attributes_from($attrs, $object_source) ;
+		$attrs = $this->get_attributes_object();
+		$this->_assign_attributes_from($attrs, $object_source);
 	}
 
 	/** Copy attributes listed in $attrs.
@@ -354,8 +354,8 @@ class object_base
 	{
 		foreach($attrs as $attr_name)
 		{
-			$apparent_name = $this->_actual_name($attr_name) ;
-			$this->__set($attr_name, $object_source->$apparent_name) ;
+			$apparent_name = $this->_actual_name($attr_name);
+			$this->__set($attr_name, $object_source->$apparent_name);
 		}
 	}
 
@@ -366,11 +366,11 @@ class object_base
 	protected	function _assign_descendant(object_base $object_source)
 	{
 		if(! $object_source instanceof static)
-			$this->_throw_not_child($object_source) ;
+			$this->_throw_not_child($object_source);
 
-		$this->reset() ;
-		$attrs = $this->get_attributes_class($this) ;
-		$this->_assign_attributes_from($attrs, $object_source) ;
+		$this->reset();
+		$attrs = $this->get_attributes_class($this);
+		$this->_assign_attributes_from($attrs, $object_source);
 	}
 
 	/** Generic ancestor copier 
@@ -378,9 +378,9 @@ class object_base
 	final
 	protected	function _assign_ancestor(object_base $object_source)
 	{
-		$this->reset() ;
-		$attrs = $object_source->get_attributes_object() ;
-		$this->_assign_attributes_from($attrs, $object_source) ;
+		$this->reset();
+		$attrs = $object_source->get_attributes_object();
+		$this->_assign_attributes_from($attrs, $object_source);
 	}
 
 	/** Return a assign of value attribute instead of a reference on it
@@ -392,7 +392,7 @@ class object_base
 	{
 		return is_object($this->$actual_name)
 			? clone $this->$actual_name
-			: $this->$actual_name ;
+			: $this->$actual_name;
 	}
 
 	/** \todo
@@ -400,11 +400,11 @@ class object_base
 	protected	function _check_type($name, $value)
 	{
 		if(!in_array($name, static::$_attrs_type))
-			return ;
+			return;
 
-		$good_type = false ;
+		$good_type = false;
 		if(isset(static::$_attrs_type[$name]))
-			$type = strtolower(static::$_attrs_type[$name]) ;
+			$type = strtolower(static::$_attrs_type[$name]);
 
 		if(isset($type))
 		{
@@ -414,37 +414,37 @@ class object_base
 				{
 					case 'int' :
 					case 'integer' :
-						$good_type = is_integer($value) ;
-						break ;
+						$good_type = is_integer($value);
+						break;
 					case 'float' :
-						$good_type = is_float($value) ;
-						break ;
+						$good_type = is_float($value);
+						break;
 					case 'string' :
-						$good_type = is_string($value) ;
-						break ;
+						$good_type = is_string($value);
+						break;
 					case 'boolean' :
-						$good_type = is_bool($value) ;
-						break ;
+						$good_type = is_bool($value);
+						break;
 					case 'array' :
-						$good_type = is_array($value) ;
-						break ;
+						$good_type = is_array($value);
+						break;
 					default:
-						throw new exception("Unkown scalar type '$type'.") ;
+						throw new exception("Unkown scalar type '$type'.");
 				}
 			}
 			elseif(is_object($value))
-				$good_type = class_exists($type) && $value instanceof $type ;
-#				$good_type = class_exists($type) && is_a($value, $type) ;
+				$good_type = class_exists($type) && $value instanceof $type;
+#				$good_type = class_exists($type) && is_a($value, $type);
 			elseif(is_resource($value))
-				$good_type = $type == 'resource' ;
+				$good_type = $type == 'resource';
 			else
-				throw new exception("Unexpected type '$type'") ;
+				throw new exception("Unexpected type '$type'");
 		}
 
 		if(!$good_type)
-			throw new exception("Attribute '$name' has not the requierd type.") ;
+			throw new exception("Attribute '$name' has not the requierd type.");
 
-		return $good_type ;
+		return $good_type;
 	}
 	 */
 
@@ -497,7 +497,7 @@ class object_base
 	 */
 	protected	function _throw_ex($exception_class, $msg)
 	{
-		throw new $exception_class($msg, dump($this)) ;
+		throw new $exception_class($msg, dump($this));
 	}
 
 	/** \throw	exception
@@ -506,8 +506,8 @@ class object_base
 	{
 		$args = func_get_args();
 		array_shift($args);
-		$msg = call_user_func_array('sprintf', $args) ;
-		$this->_throw_ex($exception_class, $msg) ;
+		$msg = call_user_func_array('sprintf', $args);
+		$this->_throw_ex($exception_class, $msg);
 	}
 
 	/** \throw	exception
@@ -524,7 +524,7 @@ class object_base
 		$this->_throw_format('Supplied object of class \'%s\' can\'t be copied in this class \'%s\'.'
 				, get_class($object_source)
 				, get_class($this)
-				) ;
+				);
 	}
 
 	/** \throw exception
@@ -532,28 +532,28 @@ class object_base
 	protected	function _throw_cant_set_attribute($object_source, $attr_name)
 	{
 		$this->_throw_format('Supplied object of class \'%s\' can\'t be assign to attribute \'%s\'.'
-			 , get_class($object_source), $attr_name) ;
+			 , get_class($object_source), $attr_name);
 	}
 
 	/** \throw exception
 	 */
 	protected	function _throw_unexpected()
 	{
-		$this->_throw('Unexpected happend.') ;
+		$this->_throw('Unexpected happend.');
 	}
 
 	/** \throw exception
 	 */
 	protected	function _throw_readonly_attribute($name)
 	{
-		$this->_throw("Attribute '$name' is readonly.") ;
+		$this->_throw("Attribute '$name' is readonly.");
 	}
 
 	/** \throw exception
 	 */
 	protected	function _throw_missing_method($name)
 	{
-		$this->_throw("Instance method '$name' is missing.") ;
+		$this->_throw("Instance method '$name' is missing.");
 	}
 }  
  
@@ -597,9 +597,9 @@ class object_singleton
 	public		function get()
 	{
 		if(is_null(static::$instance))
-			static::$instance = new self ;
+			static::$instance = new self;
 
-		return static::$instance ;
+		return static::$instance;
 	}
 }
 

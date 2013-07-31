@@ -24,41 +24,41 @@
  *  along with Horn Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace horn\lib\sql ;
-use \horn\lib as h ;
+namespace horn\lib\sql;
+use \horn\lib as h;
 
-h\import('lib/object') ;
-h\import('lib/collection') ;
+h\import('lib/object');
+h\import('lib/collection');
 
-h\import('lib/sql/select') ;
+h\import('lib/sql/select');
 
 class forge
 	extends h\object_public
 {
 	public		function __construct(\mysqli $dbcon)
 	{
-		parent::__construct() ;
-		$this->_handler = $dbcon ;
+		parent::__construct();
+		$this->_handler = $dbcon;
 
 		if($this->_handler->connect_errno)
-			$this->_throw($this->_handler->connect_error) ;
+			$this->_throw($this->_handler->connect_error);
 	}
 
 	public		function select(/* $fields = array() */)
 	{
-		$fields = func_get_args() ;
+		$fields = func_get_args();
 		$fields = ! func_num_args()
 			? h\collection()
-			: h\collection($fields) ;
-		return new select($fields) ;
+			: h\collection($fields);
+		return new select($fields);
 	}
 
 
 	public		function expression($content)
 	{
-		return new expression($content) ;
+		return new expression($content);
 	}
 
-	private		$_handler ;
+	private		$_handler;
 }
 

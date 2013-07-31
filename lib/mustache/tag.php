@@ -28,7 +28,7 @@
 namespace horn\lib\mustache\tag;
 use \horn\lib as h;
 
-h\import('lib/object') ;
+h\import('lib/object');
 
 abstract
 class base

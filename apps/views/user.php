@@ -25,237 +25,237 @@
  *
  */
 
-namespace horn\apps\user ;
-use \horn\lib as h ;
+namespace horn\apps\user;
+use \horn\lib as h;
 
-h\import('lib/collection') ;
-h\import('lib/string') ;
+h\import('lib/collection');
+h\import('lib/string');
 
-h\import('lib/render/html') ;
-h\import('lib/render/rss') ;
+h\import('lib/render/html');
+h\import('lib/render/rss');
 
 class account_html_renderer
 	extends h\object_public
 {
-	protected	$_canvas ;
+	protected	$_canvas;
 
 	public		function __construct(\domelement $canvas)
 	{
-		$this->_canvas = $canvas ;
-		parent::__construct() ;
+		$this->_canvas = $canvas;
+		parent::__construct();
 	}
 
 	public		function entry(account $account, $mode)
 	{
 		if($mode == 'show')
-			return $this->entry_show($account) ;
+			return $this->entry_show($account);
 		elseif($mode == 'edit')
-			return $this->entry_edit($account) ;
+			return $this->entry_edit($account);
 		elseif($mode == 'delete')
-			return $this->entry_delete($account) ;
+			return $this->entry_delete($account);
 
-		$this->_throw_format('Unknown mode \'%s\'', $mode) ;
+		$this->_throw_format('Unknown mode \'%s\'', $mode);
 	}
 
 	private		function form_node($action, $method)
 	{
-		$od = $this->canvas->ownerDocument ;
+		$od = $this->canvas->ownerDocument;
 
-		$form = $od->createElement('form') ;
-		$form->setAttribute('action', $action) ;
-		$form->setAttribute('method', $method) ;
-		$form->setAttribute('accept-charset', 'utf-8') ;
-		//$form->setAttribute('enctype', 'multipart/form-data') ;
-		$form->appendChild($od->createElement('div')) ;
+		$form = $od->createElement('form');
+		$form->setAttribute('action', $action);
+		$form->setAttribute('method', $method);
+		$form->setAttribute('accept-charset', 'utf-8');
+		//$form->setAttribute('enctype', 'multipart/form-data');
+		$form->appendChild($od->createElement('div'));
 
-		return $form ;
+		return $form;
 	}
 
 	private		function form_account_node(account $account, $action, $method)
 	{
-		$od = $this->canvas->ownerDocument ;
-		$form = $this->form_node($this->link($account, array($action => null)), $method) ;
-		$div = $form->firstChild ;
+		$od = $this->canvas->ownerDocument;
+		$form = $this->form_node($this->link($account, array($action => null)), $method);
+		$div = $form->firstChild;
 
-		$input = $div->appendChild($od->createElement('input')) ;
-		$input->setAttribute('type', 'submit') ;
+		$input = $div->appendChild($od->createElement('input'));
+		$input->setAttribute('type', 'submit');
 
-		$label = $div->appendChild($od->createElement('label', 'Title')) ;
-		$input = $label->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $account->name) ;
-		$input->setAttribute('name', 'account.name') ;
+		$label = $div->appendChild($od->createElement('label', 'Title'));
+		$input = $label->appendChild($od->createElement('input'));
+		$input->setAttribute('value', $account->name);
+		$input->setAttribute('name', 'account.name');
 
-		$label = $div->appendChild($od->createElement('label', 'Email')) ;
-		$input = $label->appendChild($od->createElement('input')) ;
-		$input->setAttribute('value', $account->email) ;
-		$input->setAttribute('name', 'account.email') ;
+		$label = $div->appendChild($od->createElement('label', 'Email'));
+		$input = $label->appendChild($od->createElement('input'));
+		$input->setAttribute('value', $account->email);
+		$input->setAttribute('name', 'account.email');
 
-		return $form ;
+		return $form;
 	}
 
 	private		function entry_add(account $account)
 	{
-		$canvas = $this->canvas ;
-		$od = $canvas->ownerDocument ;
+		$canvas = $this->canvas;
+		$od = $canvas->ownerDocument;
 
-		$form = $canvas->appendChild($this->form_account_node($account, 'add', h\http\request::POST)) ;
+		$form = $canvas->appendChild($this->form_account_node($account, 'add', h\http\request::POST));
 
-		return $form ;
+		return $form;
 	}
 
 	private		function entry_edit(account $account)
 	{
-		$canvas = $this->canvas ;
-		$od = $canvas->ownerDocument ;
+		$canvas = $this->canvas;
+		$od = $canvas->ownerDocument;
 
 		$form = $canvas->appendChild($this->form_account_node
-				($account, 'edit', h\http\request::POST)) ;
-		$input = $form->firstChild->appendChild($od->createElement('input')) ;
-		$input->setAttribute('type', 'hidden') ;
-		$input->setAttribute('value', $account->name) ;
-		$input->setAttribute('name', 'account.key') ;
+				($account, 'edit', h\http\request::POST));
+		$input = $form->firstChild->appendChild($od->createElement('input'));
+		$input->setAttribute('type', 'hidden');
+		$input->setAttribute('value', $account->name);
+		$input->setAttribute('name', 'account.key');
 
-		return $form ;
+		return $form;
 	}
 
 	private		function entry_delete(account $account)
 	{
-		$canvas = $this->canvas ;
-		$od = $canvas->ownerDocument ;
+		$canvas = $this->canvas;
+		$od = $canvas->ownerDocument;
 
-		$canvas->appendChild($od->createElement('div', 'Please confirm removing.')) ;
+		$canvas->appendChild($od->createElement('div', 'Please confirm removing.'));
 
 		$form = $canvas->appendChild($this->form_node
 				( $this->link($account, array('delete' => null))
-				, h\http\request::POST)) ;
-		$div = $form->firstChild ;
+				, h\http\request::POST));
+		$div = $form->firstChild;
 
-		$input = $div->appendChild($od->createElement('input')) ;
-		$input->setAttribute('type', 'hidden') ;
-		$input->setAttribute('value', $account->name) ;
-		$input->setAttribute('name', 'account.key') ;
+		$input = $div->appendChild($od->createElement('input'));
+		$input->setAttribute('type', 'hidden');
+		$input->setAttribute('value', $account->name);
+		$input->setAttribute('name', 'account.key');
 
-		$input = $div->appendChild($od->createElement('input')) ;
-		$input->setAttribute('type', 'submit') ;
-		$input->setAttribute('value', 'Delete') ;
+		$input = $div->appendChild($od->createElement('input'));
+		$input->setAttribute('type', 'submit');
+		$input->setAttribute('value', 'Delete');
 
-		return $div ;
+		return $div;
 	}
 
 	private		function entry_show(account $account)
 	{
-		$canvas = $this->canvas ;
-		$od = $canvas->ownerDocument ;
+		$canvas = $this->canvas;
+		$od = $canvas->ownerDocument;
 
-		$div = $canvas->appendChild($od->createElement('div')) ;
+		$div = $canvas->appendChild($od->createElement('div'));
 
 		$div->appendChild($od->createElement('h2'))
-			->appendChild($od->createTextNode($account->name)) ;
-		$meta = $div->appendChild($od->createElement('p')) ;
+			->appendChild($od->createTextNode($account->name));
+		$meta = $div->appendChild($od->createElement('p'));
 		$meta->appendChild($od->createElement('span'
-					, $account->created->format(h\date::FMT_YYYY_MM_DD))) ;
+					, $account->created->format(h\date::FMT_YYYY_MM_DD)));
 		$meta->appendChild($od->createElement('span'
-					, $account->modified->format(h\date::FMT_YYYY_MM_DD))) ;
-		$meta->appendChild($this->action_node($account, 'edit')) ;
-		$meta->appendChild($this->action_node($account, 'delete')) ;
-		$div->appendChild($od->createElement('p', $account->email)) ;
+					, $account->modified->format(h\date::FMT_YYYY_MM_DD)));
+		$meta->appendChild($this->action_node($account, 'edit'));
+		$meta->appendChild($this->action_node($account, 'delete'));
+		$div->appendChild($od->createElement('p', $account->email));
 
-		return $div ;
+		return $div;
 	}
 
 	public		function itemise(accounts $accounts, $mode)
 	{
 		if($mode->is_equal(h\string('add')))
-			$this->entry_add(new account) ;
+			$this->entry_add(new account);
 
-		$canvas = $this->canvas ;
+		$canvas = $this->canvas;
 
-		$od = $canvas->ownerDocument ;
-		$ul = $canvas->appendChild($od->createElement('ul')) ;
-		$li = $ul->appendChild($od->createElement('li')) ;
-		$a = $li->appendChild($od->createElement('a', 'Add')) ;
-		$a->setAttribute('href', '?add') ;
+		$od = $canvas->ownerDocument;
+		$ul = $canvas->appendChild($od->createElement('ul'));
+		$li = $ul->appendChild($od->createElement('li'));
+		$a = $li->appendChild($od->createElement('a', 'Add'));
+		$a->setAttribute('href', '?add');
 
-		$ul = $canvas->appendChild($od->createElement('ul')) ;
+		$ul = $canvas->appendChild($od->createElement('ul'));
 		foreach($accounts as $account)
 		{
-			$li = $ul->appendChild($od->createElement('li')) ;
-			$a = $li->appendChild($od->createElement('a', $account->name)) ;
-			$a->setAttribute('href', $this->link($account)) ;
+			$li = $ul->appendChild($od->createElement('li'));
+			$a = $li->appendChild($od->createElement('a', $account->name));
+			$a->setAttribute('href', $this->link($account));
 
-			$li->appendChild($od->createEntityReference('nbsp')) ;
-			$a = $li->appendChild($this->action_node($account, 'edit')) ;
+			$li->appendChild($od->createEntityReference('nbsp'));
+			$a = $li->appendChild($this->action_node($account, 'edit'));
 
-			$li->appendChild($od->createEntityReference('nbsp')) ;
-			$a = $li->appendChild($this->action_node($account, 'delete')) ;
+			$li->appendChild($od->createEntityReference('nbsp'));
+			$a = $li->appendChild($this->action_node($account, 'delete'));
 		}
 
-		return $ul ;
+		return $ul;
 	}
 
 	private		function action_node(account $account, $action)
 	{
-		$od = $this->canvas->ownerDocument ;
-		$a = $od->createElement('a', $action) ;
+		$od = $this->canvas->ownerDocument;
+		$a = $od->createElement('a', $action);
 		$a->setAttribute('href', $this->link($account, array($action => null)));
 
-		return $a ;
+		return $a;
 	}
 
 	public		function summary(account $account)
 	{
-		$canvas = $this->canvas ;
+		$canvas = $this->canvas;
 
-		$od = $canvas->ownerDocument ;
-		$div = $canvas->appendChild($od->createElement('div')) ;
-		$a = $div->appendChild($od->createElement('a', $account->name)) ;
+		$od = $canvas->ownerDocument;
+		$div = $canvas->appendChild($od->createElement('div'));
+		$a = $div->appendChild($od->createElement('a', $account->name));
 		$a->setAttribute('href', $this->link($account));
 
-		return $div ;
+		return $div;
 	}
 
 	public		function link(account $account, $params = null)
 	{
-		$link_renderer = new account_link_renderer ;
-		return $link_renderer->link($account, $params) ;
+		$link_renderer = new account_link_renderer;
+		return $link_renderer->link($account, $params);
 	}
 }
 
 class account_rss_renderer
 	extends h\object_public
 {
-	protected	$_canvas ;
+	protected	$_canvas;
 
 	public		function __construct(\domelement $canvas)
 	{
-		$this->_canvas = $canvas ;
-		parent::__construct() ;
+		$this->_canvas = $canvas;
+		parent::__construct();
 	}
 
 	public		function itemise(accounts $accounts, $mode)
 	{
-		$this->canvas->appendChild($this->node($accounts[0])) ;
+		$this->canvas->appendChild($this->node($accounts[0]));
 	}
 
 	private		function node(account $account)
 	{
-		$linker = new account_link_renderer ;
+		$linker = new account_link_renderer;
 
-		$od = $this->_canvas->ownerDocument ;
-		$i = $od->createElement('item') ;
-		$i->setAttribute('rdf:about', $linker-> link($account)) ;
+		$od = $this->_canvas->ownerDocument;
+		$i = $od->createElement('item');
+		$i->setAttribute('rdf:about', $linker-> link($account));
 		$l = array
 			( 'name' => $account->name
 			, 'link' => $linker->link($account)
 			, 'email' => $account->email
-			) ;
+			);
 		foreach($l as $t => $c)
 		{
-			$e = $od->createElement($t, $c) ;
-			$i->appendChild($e) ;
+			$e = $od->createElement($t, $c);
+			$i->appendChild($e);
 		}
 
-		return $i ;
+		return $i;
 	}
 }
 
@@ -265,28 +265,28 @@ class account_link_renderer
 	/*
 	public		function __construct(h\router $router)
 	{
-		$this->_canvas = $canvas ;
-		parent::__construct() ;
+		$this->_canvas = $canvas;
+		parent::__construct();
 	}
 	*/
 
 	public		function link(account $account, $params = null)
 	{
-		$searchpart = '' ;
+		$searchpart = '';
 		if(!\is_null($params))
 		{
-			$searchpart = array() ;
+			$searchpart = array();
 			foreach($params as $name => $value)
 			{
-				$param = \urlencode($name) ;
+				$param = \urlencode($name);
 				if(!\is_null($value))
-					$param .= '='.\urlencode($value) ;
-				$searchpart[] = $param ;
+					$param .= '='.\urlencode($value);
+				$searchpart[] = $param;
 			}
-			$searchpart = '?'.implode('&', $searchpart) ;
+			$searchpart = '?'.implode('&', $searchpart);
 		}
 
-		return 'http://horn.localhost'.'/fakeroot/accounts/'.\urlencode($account->name).$searchpart ;
+		return 'http://horn.localhost'.'/fakeroot/accounts/'.\urlencode($account->name).$searchpart;
 	}
 }
 

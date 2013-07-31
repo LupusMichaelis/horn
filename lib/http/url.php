@@ -25,11 +25,11 @@
  *
  */
 
-namespace horn\lib\http ;
+namespace horn\lib\http;
 
-use horn\lib as h ;
+use horn\lib as h;
 
-h\import('lib/inet/url') ;
+h\import('lib/inet/url');
 
 /**
  *	\code
@@ -41,13 +41,13 @@ class url
 {
 	public		function __construct(\horn\lib\string $literal)
 	{
-		parent::__construct($literal) ;
-		$this->port = 80 ;
+		parent::__construct($literal);
+		$this->port = 80;
 	}
 
 	protected	function is_scheme_supported()
 	{
-		return in_array($this->scheme->to_lower(), array('http', 'https')) ;
+		return in_array($this->scheme->to_lower(), array('http', 'https'));
 	}
 
 	public		function normalize()
@@ -55,46 +55,46 @@ class url
 		if($this->host instanceof host)
 		{
 			if(!$this->host->normalize())
-				return false ;
+				return false;
 		}
 		else
-			return false ;
+			return false;
 
 		if(!parent::normalize())
-			return false ;
+			return false;
 
-		return true ;
+		return true;
 	}
 
 	public		function sync_literal()
 	{
-		$this->location->reset() ;
-		$this->location->append('//') ;
+		$this->location->reset();
+		$this->location->append('//');
 
 		if($this->username instanceof \horn\lib\string)
 		{
-			$this->location->append($this->username) ;
+			$this->location->append($this->username);
 			if($this->password instanceof \horn\lib\string)
-				$this->location->append_list(':', $this->password) ;
+				$this->location->append_list(':', $this->password);
 
-			$this->location->append('@') ;
+			$this->location->append('@');
 		}
 
 		if($this->hostname instanceof host)
-			$this->location->append($this->hostname->as_string()) ;
+			$this->location->append($this->hostname->as_string());
 		else
-			throw new exception(self::ERR_NO_HOST) ;
+			throw new exception(self::ERR_NO_HOST);
 
 		if(is_integer($this->port))
-			$this->location->append_list(':', $this->port) ;
+			$this->location->append_list(':', $this->port);
 
 		if($this->path instanceof path)
-			$this->location->append($this->path->as_string()) ;
+			$this->location->append($this->path->as_string());
 
 		if($this->search instanceof \horn\lib\string)
-			$this->location->append_list('?', $this->search) ;
+			$this->location->append_list('?', $this->search);
 
-		parent::sync_literal() ;
+		parent::sync_literal();
 	}
 
 }

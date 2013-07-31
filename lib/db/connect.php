@@ -25,52 +25,52 @@
  *
  */
 
-namespace horn\lib\db ;
-use horn\lib as h ;
+namespace horn\lib\db;
+use horn\lib as h;
 
-h\import('lib/object') ;
+h\import('lib/object');
 
-const MYSQL = 'mysql' ;
-const COMPOSITE = 'composite' ;
-const MEMCACHE = 'memcache' ;
+const MYSQL = 'mysql';
+const COMPOSITE = 'composite';
+const MEMCACHE = 'memcache';
 
 function open($specification)
 {
-	$factory = new database_factory($specification) ;
-	$con = $factory->create() ;
+	$factory = new database_factory($specification);
+	$con = $factory->create();
 
-	$con->open() ;
-	return $con ;
+	$con->open();
+	return $con;
 }
 
 class database_factory
 	extends h\object_public
 {
-	protected	$_specification ;
+	protected	$_specification;
 
 	public		function __construct($specification)
 	{
-		$this->_specification = $specification ;
-		parent::__construct() ;
+		$this->_specification = $specification;
+		parent::__construct();
 	}
 
 	public		function create()
 	{
-		$db = $this->build() ;
-		return $db ;
+		$db = $this->build();
+		return $db;
 	}
 
 	private		function build()
 	{
-		$type = $this->specification['type'] ;
+		$type = $this->specification['type'];
 		if($type === COMPOSITE)
-			$db = $this->build_composite($this->specification) ;
+			$db = $this->build_composite($this->specification);
 		else if($type === MYSQL)
-			$db = new database_mysql($this->specification) ;
+			$db = new database_mysql($this->specification);
 		else
-			$this->_throw_format('Unknown database type \'%s\'', $type) ;
+			$this->_throw_format('Unknown database type \'%s\'', $type);
 
-		return $db ;
+		return $db;
 	}
 }
 
@@ -78,19 +78,19 @@ abstract
 class database
 	extends h\object_public
 {
-	protected	$_specification ;
+	protected	$_specification;
 
 	public		function __construct($specification)
 	{
-		$this->_specification = $specification ;
-		parent::__construct() ;
+		$this->_specification = $specification;
+		parent::__construct();
 	}
 
 	abstract
-	public		function open() ;
+	public		function open();
 
 	abstract
-	public		function close() ;
+	public		function close();
 }
 
 
@@ -98,8 +98,8 @@ class database
 class database_mysql
 	extends database
 {
-	private		$_con ;
-	protected	$_charset ;
+	private		$_con;
+	protected	$_charset;
 
 	public		function open()
 	{
@@ -111,13 +111,13 @@ class database_mysql
 			, $this->specification['user']
 			, $this->specification['password']
 			, $this->specification['base']
-			) ;
+			);
 
 		if($this->_con->connect_errno)
-			$this->_throw($this->_con->connect_error) ;
+			$this->_throw($this->_con->connect_error);
 
 		if(array_key_exists('charset', $this->specification))
-			$this->charset = $this->specification['charset'] ;
+			$this->charset = $this->specification['charset'];
 	}
 
 	protected	function &_get_affected_rows()
@@ -134,73 +134,73 @@ class database_mysql
 
 	protected	function _throw_query_error()
 	{
-		$this->_throw($this->_con->error) ;
+		$this->_throw($this->_con->error);
 	}
 
 	protected	function _set_charset($charset)
 	{
 		/// XXX check charset
-		$this->_charset = $charset ;
-		$this->_con->set_charset($charset) ;
+		$this->_charset = $charset;
+		$this->_con->set_charset($charset);
 	}
 
 	protected	function &_get_charset()
 	{
 		if(is_null($this->_charset))
-			$this->_charset = $this->_con->get_charset() ;
+			$this->_charset = $this->_con->get_charset();
 
-		return $this->_charset ;
+		return $this->_charset;
 	}
 
 	public		function close()
 	{
-		$this->_con->close() ;
-		$this->_con = null ;
+		$this->_con->close();
+		$this->_con = null;
 	}
 
 	public		function query(h\string $sql)
 	{
-		$result = $this->_con->query($sql) ;
+		$result = $this->_con->query($sql);
 		if($result === false)
-			$this->_throw_query_error() ;
+			$this->_throw_query_error();
 
 		if(is_array($result))
 		{
-			$return = h\collection() ;
+			$return = h\collection();
 
 			while($row = $result->fetch_assoc())
-				$return->push($row) ;
+				$return->push($row);
 		}
 		else
-			$return = $result ;
+			$return = $result;
 
-		return $return ;
+		return $return;
 	}
 
 	public		function escape(h\string $sql, $is_nullable=false)
 	{
 		if(h\string('null')->is_equal($sql))
 			if(false === $is_nullable)
-				$this->_throw('Value is not nullable') ;
+				$this->_throw('Value is not nullable');
 			else
 				$escaped = h\string('null');
 		else
-			$escaped = h\string::format('\'%s\'', $this->_con->real_escape_string($sql->scalar)) ;
+			$escaped = h\string::format('\'%s\'', $this->_con->real_escape_string($sql->scalar));
 
-		return $escaped ;
+		return $escaped;
 	}
 
 	public		function escape_json(h\string $sql, $is_nullable=false)
 	{
 		if(h\string('null')->is_equal($sql))
 			if(false === $is_nullable)
-				$this->_throw('Value is not nullable') ;
+				$this->_throw('Value is not nullable');
 			else
 				$escaped = h\string('null');
 		else
-			$escaped = h\string::format('\'%s\'', $this->_con->real_escape_string(json_encode($sql->scalar))) ;
+			$escaped = h\string::format('\'%s\'', $this->_con->real_escape_string(json_encode($sql->scalar)));
 
-		return $escaped ;
+		return $escaped;
 	}
 }
 
