@@ -52,6 +52,10 @@
         </div>
 <?php else: ?>
         <div>
+		<ul>
+		  <li><a href='?edit'>Edit</a></li>
+		  <li><a href='?delete'>Delete</a></li>
+		</ul>
 <?php echo $this->r($c->params['resource']
         , $c->params['action']
         , $c->params['type']
