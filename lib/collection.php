@@ -320,7 +320,7 @@ class collection
 		if(!$this->offsetExists($key))
 			$this->_throw_offset_does_not_exists($key);
 
-		return $this->ref_stack()[$key];
+		return $this->ref_stack()[$this->filter_key($key)];
 	}
 
 	public		function offsetSet($key, $value)
