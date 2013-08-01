@@ -47,7 +47,7 @@ class decorator
 		if($this->has_next())
 			return $this->_next;
 
-		$this->_throw('There is next no more');
+		throw $this->_exception('There is next no more');
 	}
 
 	public		function has_next()

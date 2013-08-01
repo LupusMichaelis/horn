@@ -70,7 +70,7 @@ class suite
 	protected	function add_test($callback, $messages = array(), $expected_exception = array())
 	{
 		if(!h\is_collection($messages))
-			$this->_throw('variable \'messages\' is not a collection.');
+			throw $this->_exception('variable \'messages\' is not a collection.');
 
 		if(empty($messages[0]))		$messages[0] = 'Test case';
 		if(empty($messages['true']))	$messages['true'] = 'Ok';

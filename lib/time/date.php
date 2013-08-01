@@ -150,7 +150,7 @@ class date
 	public		function is_equal(object_base $right)
 	{
 		if(! $right instanceof date)
-			$this->_throw_not_date_object();
+			throw $this->_exception_not_date_object();
 
 		return $this->day == $right->day
 			&& $this->month == $right->month
@@ -332,7 +332,7 @@ class week
 		}
 
 		if(!is_integer($offset) || $offset < 0 || $offset > 6)
-			$this->_throw('Unknown day');
+			throw $this->_exception('Unknown day');
 
 #		$date = date::new_from_format("{$this->year}-W{$this->week} $offset");
 

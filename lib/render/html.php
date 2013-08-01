@@ -42,10 +42,10 @@ class page_html
 	public		function render($template, $resource)
 	{
 		if(is_null($resource['type']))
-			$this->_throw('Type not set for resource');
+			throw $this->_exception('Type not set for resource');
 
 		if(!isset($this->_helpers[$resource['type']]))
-			$this->_throw_format('No resource for \'%s\'.', $resource['type']);
+			throw $this->_exception_format('No resource for \'%s\'.', $resource['type']);
 
 		$renderer = $this->_helpers[$resource['type']];
 		$h = new $renderer($this->target);

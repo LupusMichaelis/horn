@@ -67,15 +67,15 @@ class callback
 	protected	function _set_native($native)
 	{
 		if(!is_callable($native))
-			$this->_throw_bad_callback($native);
+			throw $this->_exception_bad_callback($native);
 
 		$this->_native = $native;
 	}
 
-	protected	function _throw_bad_callback($native)
+	protected	function _exception_bad_callback($native)
 	{
 		$desc = dump($native);
-		$this->_throw_format('Bad callback \'%s\' supplied.', $desc);
+		return $this->_exception_format('Bad callback \'%s\' supplied.', $desc);
 	}
 
 	/**

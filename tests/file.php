@@ -31,9 +31,9 @@ class test_unit_file
 		try
 		{
 			$this->_test_virtual($this->instance);
-			$this->_exception_not_thrown($expected_exception);
+			$this->_not_caught_exception($expected_exception);
 		}
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
+		catch(\exception $e) { $this->_caught_exception($e, $expected_exception) ; }
 	}
 
 	protected	function _test_virtual(object_base $o)
@@ -45,9 +45,9 @@ class test_unit_file
 		try
 		{
 			$o->name = 'toto.txt';
-			$this->_exception_not_thrown($expected_exception);
+			$this->_not_caught_exception($expected_exception);
 		}
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
+		catch(\exception $e) { $this->_caught_exception($e, $expected_exception) ; }
 
 		$this->_end();
 	}

@@ -80,7 +80,7 @@ class url
 	{
 		$scheme_sep_pos = $this->literal->search(':');
 		if($scheme_sep_pos < 0)
-			$this->_throw(self::ERR_SCHEME_NO);
+			throw $this->_exception(self::ERR_SCHEME_NO);
 
 		$this->scheme = $this->literal->head($scheme_sep_pos - 1);
 		$this->locator = $this->literal->tail($scheme_sep_pos + 1);
@@ -135,7 +135,7 @@ class url_inet extends url
 			$this->host = host::new_inet6($this->literal->slice
 				($pieces['host'][0], $pieces['host'][1]));
 		else
-			$this->_throw(self::ERR_NO_HOST);
+			throw $this->_exception(self::ERR_NO_HOST);
 
 		if(!is_null($pieces['port']))
 			$this->port = $this->literal->slice

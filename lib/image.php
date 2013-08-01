@@ -55,7 +55,7 @@ class pen
 	protected	function _set_rgb($rgb)
 	{
 		if(!is_integer($rgb))
-			$this->_throw_attribute_type_mismatch($rgb, 'integer');
+			throw $this->_exception_attribute_type_mismatch($rgb, 'integer');
 
 		$this->_rgb = $rgb;
 	}
@@ -93,7 +93,7 @@ class pen_factory
 	/*
 	protected	function _offset_set($offset, $value)
 	{
-		$this->_throw_readonly_collection();
+		throw $this->_exception_readonly_collection();
 	}
 	*/
 
@@ -137,7 +137,7 @@ class image
 	public		function draw_point(point $point, pen $pen)
 	{
 		$raw = $this->raw;
-		$this->_throw_todo();
+		throw $this->_exception_todo();
 	}
 
 	public		function draw_line(line $line, pen $pen)
@@ -157,12 +157,12 @@ class image
 	public		function draw_box(box $box, pen $pen)
 	{
 		$raw = $this->raw;
-		$this->_throw_todo();
+		throw $this->_exception_todo();
 	}
 
 	protected	function _set_raw()
 	{
-		$this->_throw_readonly_attribute();
+		throw $this->_exception_readonly_attribute();
 	}
 
 	protected	function &_get_raw()
@@ -188,7 +188,7 @@ class image
 	protected	function _check_raw()
 	{
 		if(!$this->_raw)
-			$this->_throw('Image creation failed \'% s\'.');
+			throw $this->_exception('Image creation failed \'% s\'.');
 	}
 
 	protected	function _set_background($color)

@@ -47,12 +47,12 @@ class envelope
 	/**
 	 */
 	final
-	public		function __call($method, $args)
+	public		function _call($method, $args)
 	{
 		if(method_exists($this->_content, $method))
 			call_user_method_array($method, $this->_content, $args);
 		else
-			$this->_throw_unknown_method();
+			throw $this->_exception_unknown_method();
 	}
 
 	/**

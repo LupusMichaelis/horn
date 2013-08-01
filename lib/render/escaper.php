@@ -59,7 +59,7 @@ class html_escaper
 		$result = call_user_func_array('htmlentities', $args);
 		// If htmlentities encounter an invalid character, it returns an empty string
 		if('' !== $args[0] && '' === $result)
-			$this->_throw('Encoding issue while escaping an HTML string');
+			throw $this->_exception('Encoding issue while escaping an HTML string');
 
 		return $result;
 	}

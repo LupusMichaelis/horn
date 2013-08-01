@@ -54,7 +54,7 @@ class story_html_renderer
 		elseif($mode == 'delete')
 			return $this->entry_delete($story);
 
-		$this->_throw_format('Unknown mode \'%s\'', $mode);
+		throw $this->_exception_format('Unknown mode \'%s\'', $mode);
 	}
 
 	private		function form_node($action, $method)

@@ -68,7 +68,7 @@ class database_factory
 		else if($type === MYSQL)
 			$db = new database_mysql($this->specification);
 		else
-			$this->_throw_format('Unknown database type \'%s\'', $type);
+			throw $this->_exception_format('Unknown database type \'%s\'', $type);
 
 		return $db;
 	}
@@ -104,7 +104,7 @@ class database_mysql
 	public		function open()
 	{
 		if(null !== $this->_con)
-			$this->_throw('Database already connected');
+			throw $this->_exception('Database already connected');
 
 		$this->_con = new \mysqli
 			( $this->specification['host']
@@ -114,7 +114,7 @@ class database_mysql
 			);
 
 		if($this->_con->connect_errno)
-			$this->_throw($this->_con->connect_error);
+			throw $this->_exception($this->_con->connect_error);
 
 		if(array_key_exists('charset', $this->specification))
 			$this->charset = $this->specification['charset'];
@@ -132,9 +132,9 @@ class database_mysql
 		return $insert_id;
 	}
 
-	protected	function _throw_query_error()
+	protected	function _exception_query_error()
 	{
-		$this->_throw($this->_con->error);
+		return $this->_exception($this->_con->error);
 	}
 
 	protected	function _set_charset($charset)
@@ -162,7 +162,7 @@ class database_mysql
 	{
 		$result = $this->_con->query($sql);
 		if($result === false)
-			$this->_throw_query_error();
+			throw $this->_exception_query_error();
 
 		if(is_array($result))
 		{
@@ -181,7 +181,7 @@ class database_mysql
 	{
 		if(h\string('null')->is_equal($sql))
 			if(false === $is_nullable)
-				$this->_throw('Value is not nullable');
+				throw $this->_exception('Value is not nullable');
 			else
 				$escaped = h\string('null');
 		else
@@ -194,7 +194,7 @@ class database_mysql
 	{
 		if(h\string('null')->is_equal($sql))
 			if(false === $is_nullable)
-				$this->_throw('Value is not nullable');
+				throw $this->_exception('Value is not nullable');
 			else
 				$escaped = h\string('null');
 		else

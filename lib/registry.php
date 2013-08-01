@@ -157,7 +157,7 @@ class registry
 					unset($node) ;	$node = & $n;
 				}
 				else
-					$this->_throw_format('Couldn\'t path to (%s).', $path);
+					throw $this->_exception_format('Couldn\'t path to (%s).', $path);
 		}
 
 		return $node;
@@ -168,7 +168,7 @@ class registry
 		$keys = explode('/', $path);
 
 		if(count($keys) < 1)
-			$this->_throw_format('Invalid path "%s".', $path);
+			throw $this->_exception_format('Invalid path "%s".', $path);
 
 		return $keys;
 	}

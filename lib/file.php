@@ -33,6 +33,7 @@
  */
 namespace horn\lib;
 
+import('lib/object');
 import('lib/filesystem');
 
 /** \todo	Files have to know about filesystem issue. So, when a file is contained in
@@ -90,7 +91,7 @@ class a_file
 	public		function open()
 	{
 		if(is_null($this->_name))
-			$this->_throw_anonymous();
+			throw $this->_exception_anonymous();
 		$this->_open();
 
 		return $this;
@@ -99,7 +100,7 @@ class a_file
 	public		function write()
 	{
 		if(is_null($this->_name))
-			$this->_throw_anonymous();
+			throw $this->_exception_anonymous();
 		$this->_write();
 
 		return $this;
@@ -150,7 +151,7 @@ class a_file
 		if(copy($copied->_name, $filename))
 			$new = static::create();
 		else
-			$copied->_throw_cant_copy($filename);
+			throw $copied->_exception_cant_copy($filename);
 
 		return $new;
 	}
@@ -170,9 +171,9 @@ class a_file
 		$this->open();
 	}
 
-	protected	function _throw_file_not_exists()
+	protected	function _exception_file_not_exists()
 	{
-		$this->_throw('File \'%s\' doesn\'t exist', $this->_name);
+		return $this->_exception('File \'%s\' doesn\'t exist', $this->_name);
 	}
 
 	protected	$_is_loaded = null;
@@ -449,29 +450,26 @@ class file_odt
 
 	protected	function _load_zip()
 	{
-		file_exists($this->_name)
-			or $this->_throw_file_not_exists();
-
 		$stats = stat($this->_name);
 		if($stats === false)
-			$this->_throw_file_not_exists();
+			throw $this->_exception_file_not_exists();
 
 		if($stats['size'] > self::SIZE_LIMIT)
-			$this->_throw_too_big($this->_name, $stats['size']);
+			throw $this->_exception_too_big($this->_name, $stats['size']);
 
-		$this->_archive->open($this->_name, ZIPARCHIVE::CREATE)
-			or $this->_throw_open_zip($this->_name);
+		if(!$this->_archive->open($this->_name, ZIPARCHIVE::CREATE))
+			throw $this->_exception_open_zip($this->_name);
 	}
 
 	protected	function _load_content()
 	{
 		$stats = $this->_archive->statname(self::CONTENT_FILENAME);
 		if($stats['size'] > self::SIZE_LIMIT)
-			$this->_throw_too_big($this->_name, $stats['size']);
+			throw $this->_exception_too_big($this->_name, $stats['size']);
 
 		$content = & $this->_archive->getfromname(self::CONTENT_FILENAME);
 		if($content === false)
-			$this->_throw('Can\'t extract \'%s\' file from \'%s\' (%d).'
+			throw $this->_exception('Can\'t extract \'%s\' file from \'%s\' (%d).'
 					, self::CONTENT_FILENAME
 					, $this->_name
 					, $content
@@ -481,21 +479,13 @@ class file_odt
 		@ /* No DTD, so mute error */ $this->_content->validate();
 	}
 
-	protected	function _throw($fmt)
+	protected	function _exception_too_big($filename, $size, $limit = self::SIZE_LIMIT)
 	{
-		$args = & func_get_args();
-		$error = & call_user_func_array('sprintf', $args);
-
-		throw new exception($error);
-	}
-
-	protected	function _throw_too_big($filename, $size, $limit = self::SIZE_LIMIT)
-	{
-		$this->_throw('File \'%s\' too big (%d). Exceed (%d)'
+		return $this->_exception('File \'%s\' too big (%d). Exceed (%d)'
 				, $filename, $size, self::SIZE_LIMIT);
 	}
 
-	protected	function _throw_open_zip($filename, $code = null)
+	protected	function _exception_open_zip($filename, $code = null)
 	{
 		$errors = array
 			( ZIPARCHIVE::ER_EXISTS => 'File exists yet.'
@@ -509,7 +499,7 @@ class file_odt
 			, ZIPARCHIVE::ER_SEEK => '?'
 			);
 
-		$this->_throw('File \'%s\' too big (%d). Exceed (%d)'
+		return $this->_exception('File \'%s\' too big (%d). Exceed (%d)'
 				, $filename, $code, self::SIZE_LIMIT);
 	}
 
@@ -518,8 +508,6 @@ class file_odt
 }
 
 file_factory::register('file_odt');
-<?php endif;
-
 file_factory::register('horn\file_raw');
 file_factory::register('horn\file_text');
 

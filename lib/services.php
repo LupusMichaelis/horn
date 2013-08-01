@@ -60,7 +60,7 @@ class service_provider
 	public		function get($key)
 	{
 		if(!isset($this->_configuration[$key]))
-			$this->_throw_format('Unknown service \'%s\'', $key);
+			throw $this->_exception_format('Unknown service \'%s\'', $key);
 
 		if(!isset($this->_cons[$key]) || is_null($this->_cons[$key]))
 		{
@@ -68,7 +68,7 @@ class service_provider
 			switch($cfg['type'])
 			{
 				default:
-					$this->_throw_format('Unknown type \'%s\' for service \'%s\'', $cfg['type'], $key);
+					throw $this->_exception_format('Unknown type \'%s\' for service \'%s\'', $cfg['type'], $key);
 				case 'mysql':
 				case 'maria':
 					$con = h\db\open($cfg);

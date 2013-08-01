@@ -96,22 +96,22 @@ class graph
 
 	protected	function _set_max_x($value)
 	{
-		$this->_throw_readonly_attribute('max_x');
+		throw $this->_exception_readonly_attribute('max_x');
 	}
 
 	protected	function _set_min_x($value)
 	{
-		$this->_throw_readonly_attribute('max_x');
+		throw $this->_exception_readonly_attribute('max_x');
 	}
 
 	protected	function _set_max_y($value)
 	{
-		$this->_throw_readonly_attribute('max_y');
+		throw $this->_exception_readonly_attribute('max_y');
 	}
 
 	protected	function _set_min_y($value)
 	{
-		$this->_throw_readonly_attribute('max_y');
+		throw $this->_exception_readonly_attribute('max_y');
 	}
 
 }

@@ -84,7 +84,7 @@ class string
 			$copied = (string) $copied;
 
 		if(!is_null($charset) && !is_string($charset))
-			$this->_throw('charset');
+			throw $this->_exception('charset');
 
 		$this->scalar = $copied;
 		$this->charset = $charset;
@@ -99,7 +99,7 @@ class string
 	{
 		$this->_charset = mb_detect_encoding($this->_scalar);
 		if(false === $this->_charset)
-			$this->_throw('Charset detection failed');
+			throw $this->_exception('Charset detection failed');
 	}
 
 	/** Factory method to forge string from a format string
@@ -171,7 +171,7 @@ class string
 	public		function head($offset)
 	{
 		if($offset > $this->length())
-			$this->_throw_format(self::ERR_OVERRUN, null, $offset, $this->length());
+			throw $this->_exception_format(self::ERR_OVERRUN, null, $offset, $this->length());
 
 		return new static(substr($this->_scalar, 0, $offset+1));
 	}
@@ -185,7 +185,7 @@ class string
 	public		function tail($offset)
 	{
 		if($offset > $this->length()-1)
-			$this->_throw_format(self::ERR_OVERRUN, $offset, null, $this->length());
+			throw $this->_exception_format(self::ERR_OVERRUN, $offset, null, $this->length());
 
 		return new static(substr($this->_scalar, $offset));
 	}
@@ -208,10 +208,10 @@ class string
 	{
 		$len = strlen($this->_scalar);
 		if($begin > $end)
-			$this->_throw_format(self::ERR_INVERT, $begin, $end);
+			throw $this->_exception_format(self::ERR_INVERT, $begin, $end);
 
 		if($begin > $len or $end > $len)
-			$this->_throw_format(self::ERR_OVERRUN, $begin, $end, $len);
+			throw $this->_exception_format(self::ERR_OVERRUN, $begin, $end, $len);
 
 		return new static(substr($this->_scalar, $begin, $end - $begin));
 	}
@@ -348,7 +348,7 @@ class string
 			$this->_scalar = $begin . $end;
 		}
 		else 
-			$this->_throw_unexpected();
+			throw $this->_exception_unexpected();
 
 		return null;
 	}

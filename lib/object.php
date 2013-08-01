@@ -79,7 +79,7 @@ h\import('lib/exception');
  *	void _set_parent(string $name, mixed $value) 
  *	void _get_parent(string $name)
  *
- *	If the attribute is readonly, consider to use _throw_readonly_attribute.
+ *	If the attribute is readonly, consider to use _exception_readonly_attribute.
  *
  *	\todo	readonly attribute generic approach (!= const)
  *	\todo	by-value vs by-ref semantic, find an acceptable way
@@ -211,7 +211,7 @@ class object_base
 		elseif(is_a($this, get_class($object_source)))
 			$this->_assign_ancestor($object_source);
 		else
-			$this->_throw_cant_assign_object($object_source);
+			throw $this->_exception_cant_assign_object($object_source);
 
 		return $this;
 	}
@@ -285,7 +285,7 @@ class object_base
 		$actual_name = in_array($name, $attrs) ? $name : "_$name";
  
 		if(!in_array($actual_name, $this->get_attributes_object()))
-			$this->_throw_attribute_missing($name);
+			throw $this->_exception_attribute_missing($name);
 
 		return $actual_name;
 	} 
@@ -366,7 +366,7 @@ class object_base
 	protected	function _assign_descendant(object_base $object_source)
 	{
 		if(! $object_source instanceof static)
-			$this->_throw_not_child($object_source);
+			throw $this->_exception_not_child($object_source);
 
 		$this->reset();
 		$attrs = $this->get_attributes_class($this);
@@ -448,11 +448,13 @@ class object_base
 	}
 	 */
 
+	/*
+	*/
 	public		function __call($method_name, $arguments)
 	{
 		if(method_exists($this, $method_name))
 			// This is an attempt to access the method from an unallowed scope
-			$this->_throw_format('Function \'%s\' is protected or private in \'%s\'.'
+			throw $this->_exception_format('Function \'%s\' is protected or private in \'%s\'.'
 					, $method_name, get_class($this));
 
 		$result = null;
@@ -465,12 +467,12 @@ class object_base
 		if($is_managed)
 			return $result;
 
-		$this->_throw_format('Function \'%s\'::\'%s\' can\'t be handled', get_class($this), $method_name);
+		throw $this->_exception_format('Function \'%s\'::\'%s\' can\'t be handled', get_class($this), $method_name);
 	}
 
-	protected	function _call_throw($method_name, $arguments, &/*out*/$result)
+	protected	function _call_exception($method_name, $arguments, &/*out*/$result)
 	{
-		$pos = strpos($method_name, '_throw');
+		$pos = strpos($method_name, '_exception');
 		if(0 !== $pos)
 			return false;
 
@@ -484,6 +486,7 @@ class object_base
 		$arguments = array_merge(array($this->get_exception_class()), $arguments);
 
 		$result = call_user_func_array($callback, $arguments);
+		throw $result;
 
 		return true;
 	}
@@ -495,33 +498,33 @@ class object_base
 
 	/** \throw	exception
 	 */
-	protected	function _throw_ex($exception_class, $msg)
+	protected	function _exception_ex($exception_class, $msg)
 	{
-		throw new $exception_class($msg, dump($this));
+		return new $exception_class($msg, dump($this));
 	}
 
 	/** \throw	exception
 	 */
-	protected	function _throw_format_ex($exception_class, $fmt)
+	protected	function _exception_format_ex($exception_class, $fmt)
 	{
 		$args = func_get_args();
 		array_shift($args);
 		$msg = call_user_func_array('sprintf', $args);
-		$this->_throw_ex($exception_class, $msg);
+		return $this->_exception_ex($exception_class, $msg);
 	}
 
 	/** \throw	exception
 	 */
-	protected	function _throw_attribute_missing($name)
+	protected	function _exception_attribute_missing($name)
 	{
-		$this->_throw_format('Attribute \'%s\' doesn\'t exist in \'%s\'.', $name, get_class($this)) ; 
+		return $this->_exception_format('Attribute \'%s\' doesn\'t exist in \'%s\'.', $name, get_class($this)) ; 
 	}
 
 	/** \throw exception
 	 */
-	protected	function _throw_cant_assign_object($object_source)
+	protected	function _exception_cant_assign_object($object_source)
 	{
-		$this->_throw_format('Supplied object of class \'%s\' can\'t be copied in this class \'%s\'.'
+		return $this->_exception_format('Supplied object of class \'%s\' can\'t be copied in this class \'%s\'.'
 				, get_class($object_source)
 				, get_class($this)
 				);
@@ -529,31 +532,31 @@ class object_base
 
 	/** \throw exception
 	 */
-	protected	function _throw_cant_set_attribute($object_source, $attr_name)
+	protected	function _exception_cant_set_attribute($object_source, $attr_name)
 	{
-		$this->_throw_format('Supplied object of class \'%s\' can\'t be assign to attribute \'%s\'.'
+		return $this->_exception_format('Supplied object of class \'%s\' can\'t be assign to attribute \'%s\'.'
 			 , get_class($object_source), $attr_name);
 	}
 
 	/** \throw exception
 	 */
-	protected	function _throw_unexpected()
+	protected	function _exception_unexpected()
 	{
-		$this->_throw('Unexpected happend.');
+		return $this->_exception('Unexpected happend.');
 	}
 
 	/** \throw exception
 	 */
-	protected	function _throw_readonly_attribute($name)
+	protected	function _exception_readonly_attribute($name)
 	{
-		$this->_throw("Attribute '$name' is readonly.");
+		return $this->_exception("Attribute '$name' is readonly.");
 	}
 
 	/** \throw exception
 	 */
-	protected	function _throw_missing_method($name)
+	protected	function _exception_missing_method($name)
 	{
-		$this->_throw("Instance method '$name' is missing.");
+		return $this->_exception("Instance method '$name' is missing.");
 	}
 }  
  

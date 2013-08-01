@@ -41,7 +41,7 @@ class forge
 		$this->_handler = $dbcon;
 
 		if($this->_handler->connect_errno)
-			$this->_throw($this->_handler->connect_error);
+			throw $this->_exception($this->_handler->connect_error);
 	}
 
 	public		function select(/* $fields = array() */)

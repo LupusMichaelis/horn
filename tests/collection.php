@@ -70,9 +70,9 @@ class test_suite_collection
 		try
 		{
 			$o[10] = 'toto';
-			$this->_exception_not_thrown($expected_exception);
+			$this->_not_caught_exception($expected_exception);
 		}
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
+		catch(\exception $e) { $this->_caught_exception($e, $expected_exception) ; }
 		$this->_end();
 		
 		$this->_test_equal($o->count(), 2);
@@ -80,9 +80,9 @@ class test_suite_collection
 		$messages = array('Add an element referenced by a key to a h\collection.');
 		try {
 			$o['key'] = 'toto';
-			$this->_exception_not_thrown($expected_exception);
+			$this->_not_caught_exception($expected_exception);
 		}
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
+		catch(\exception $e) { $this->_caught_exception($e, $expected_exception) ; }
 		$this->_end();
 		
 		$this->_test_equal($o->count(), 3);
@@ -91,9 +91,9 @@ class test_suite_collection
 		try
 		{
 			$o->push('toto');
-			$this->_exception_not_thrown($expected_exception);
+			$this->_not_caught_exception($expected_exception);
 		}
-		catch(\exception $e) { $this->_exception_thrown($e, $expected_exception) ; }
+		catch(\exception $e) { $this->_caught_exception($e, $expected_exception) ; }
 		$this->_end();
 		
 		$this->_test_equal($o->count(), 4);

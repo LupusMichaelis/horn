@@ -318,7 +318,7 @@ class collection
 	public		function &offsetGet($key)
 	{
 		if(!$this->offsetExists($key))
-			$this->_throw_offset_does_not_exists($key);
+			throw $this->_exception_offset_does_not_exists($key);
 
 		return $this->ref_stack()[$this->filter_key($key)];
 	}
@@ -364,9 +364,9 @@ class collection
 					$this[$k] = clone $v;
 #				$this[$k] = $v;
 				else
-					$this->_throw('Don\'t know how to copy current value');
+					throw $this->_exception('Don\'t know how to copy current value');
 		elseif(!is_null($rhs))
-			$this->_throw('Bad type.');
+			throw $this->_exception('Bad type.');
 
 		return $this;
 	}
@@ -374,7 +374,7 @@ class collection
 	protected	function _get_stack()
 	{
 		// \warning	use $this->get_stack() to get a copy
-		$this->_throw_readonly_attribute('stack');
+		throw $this->_exception_readonly_attribute('stack');
 	}
 
 	protected	function set_stack(& $stack)
@@ -387,9 +387,9 @@ class collection
 		return $this->_stack;
 	}
 
-	protected	function _throw_offset_does_not_exists($key)
+	protected	function _exception_offset_does_not_exists($key)
 	{
-		$this->_throw_format('Key \'%s\' doesn\'t exist', $key);
+		return $this->_exception_format('Key \'%s\' doesn\'t exist', $key);
 	}
 
 	/** array	Actual data that is accessed through collection
