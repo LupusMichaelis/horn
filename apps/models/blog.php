@@ -83,6 +83,13 @@ class source
 		$this->source->query($sql);
 	}
 
+	public		function delete_by_title(h\string $title)
+	{
+		$sql = h\string::format('delete from stories where caption=%s'
+				, $this->source->escape($title));
+		$this->source->query($sql);
+	}
+
 	public		function get_all()
 	{
 		$rows = $this->source->query(h\string('select * from stories'));

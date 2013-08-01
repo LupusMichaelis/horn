@@ -78,8 +78,8 @@ class story_resource
 	public		function of_http_request_post_data()
 	{
 		$post = $this->ctrl->get_post_data();
-		$title = $post[h\string('story_title')];
-		$story = $this->ctrl->get_model()->get_by_title(h\string($title));
+		$title = h\string($post['story_title']);
+		$story = $this->ctrl->get_model()->get_by_title($title);
 		return $story;
 	}
 
@@ -101,15 +101,20 @@ class story_resource
 
 	public		function delete($story)
 	{
-		$post = $this->ctrl->get_post_data();
-		$title = $post->get(h\string('story_title'));
-		return $this->ctrl->model->delete_by_title(h\string($title));
+		$title = $this->ctrl->get_segments()['title'];
+		$title = h\string($title);
+		return $this->ctrl->get_model()->delete_by_title($title);
 	}
 
 	public		function uri_of($story)
 	{
-		$uri = sprintf('/stories/%s', rawurlencode($story->title));
+		$uri = h\string::format('/stories/%s', rawurlencode($story->title));
 		return $uri;
+	}
+
+	public		function uri_of_parent()
+	{
+		return h\string('/stories');
 	}
 }
 

@@ -180,6 +180,7 @@ class resource
 	abstract public function update_from_http_request_post_data($story);
 	abstract public function delete($story);
 	abstract public function uri_of($story);
+	abstract public function uri_of_parent();
 }
 
 abstract
