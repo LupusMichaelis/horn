@@ -237,19 +237,31 @@ class object_base
 	final
 	public		function get_attributes_default_values()
 	{
-		return get_class_vars(get_class($this));
+		$r = $this->_reflection_of_class_();
+		$defaults = $r->getDefaultProperties();
+		return $defaults;
 	}
 
 	final
 	public		function get_attributes_class()
 	{
-		return array_keys(get_class_vars(get_class($this)));
+		return $this->_reflection_of_class_()->getProperties
+				(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
 	}
 
 	final
 	public		function get_attributes_object()
 	{
-		return array_keys(get_object_vars($this));
+		$attributes = array();
+		$properties = $this->_reflection_of_object_()->getProperties
+				(\ReflectionProperty::IS_PUBLIC
+				 | \ReflectionProperty::IS_PROTECTED
+				 & ~\ReflectionProperty::IS_STATIC
+				 );
+		foreach($properties as $property)
+			$attributes[] = $property->name;
+
+		return $attributes;
 	}
 
 	/** \todo
@@ -557,6 +569,25 @@ class object_base
 	{
 		return $this->_exception("Instance method '$name' is missing.");
 	}
+
+	private		function _reflection_of_object_()
+	{
+		if(is_null($this->__reflection_object__))
+			$this->__reflection_object__ = new \ReflectionClass($this);
+
+		return $this->__reflection_object__;
+	}
+
+	private		function _reflection_of_class_()
+	{
+		if(is_null($this->__reflection_class__))
+			$this->__reflection_class__ = new \ReflectionClass(get_class($this));
+
+		return $this->__reflection_class__;
+	}
+
+	private		$__reflection_object__;
+	private		$__reflection_class__;
 }  
  
 /** Generic object class with public constructor.
