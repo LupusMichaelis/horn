@@ -76,7 +76,18 @@ class http_controllers
 			return false;
 		}
 
-		$result = $ctrl->{"do_$http_method"}();
+		try
+		{
+			$result = $ctrl->{"do_$http_method"}();
+		}
+		catch(h\http\error $e)
+		{
+			$error = get_class($e);
+			$error = substr($error, 1 + strrpos($error, '\\'));
+			h\http\response_methods::$error($ctx->out);
+			$result = array(false, null, array($e->getMessage()));
+		}
+
 		$ctx->error_handling['status'] = $result[0];
 		isset($result[1]) && $ctx->results->join($result[1]);
 		isset($result[2]) && $ctx->error_handling['messages']->join($result[2]);
