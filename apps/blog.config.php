@@ -79,6 +79,8 @@ return array
 		( '/'		=> '\horn\apps\blog\portal_controller'
 		, '/stories/(?<title>\w+)'
 					=> '\horn\apps\blog\story_controller'
+		, '/stories'
+					=> '\horn\apps\blog\stories_controller'
 		, '/users/(?<name>\w+)'
 					=> '\horn\apps\user\user_controller'
 		, null		=> '\horn\apps\blog\legacy_controller'

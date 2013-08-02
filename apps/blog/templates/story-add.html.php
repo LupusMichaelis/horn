@@ -5,11 +5,11 @@
             <table>
               <tr>
                 <td>Title:</td>
-                <td><input name='story.title' value='<?php echo $e->a($c['story']->title) ?>'></td>
+                <td><input name='story.title' value='<?php echo $e->a($c->title) ?>'></td>
               </tr>
               <tr>
                 <td>Description:</td>
-                <td><input name='story.description' value='<?php echo $e->a($c['story']->description) ?>'></td>
+                <td><input name='story.description' value='<?php echo $e->a($c->description) ?>'></td>
               </tr>
             </table>
           </form>

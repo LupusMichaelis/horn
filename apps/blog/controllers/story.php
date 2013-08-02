@@ -61,21 +61,30 @@ class stories_controller
 class story_resource
 	extends h\resource
 {
-	public		$name = 'story';
-	public		$class = '\horn\apps\blog\story';// story::class;
+	const		name = 'story';
+	const		target_class = '\horn\apps\blog\story';// story::class;
 
 	const		not_found = '';
 	const		conflict = 'Story already exists';
 
-	public		function of_http_request_uri()
+	public		function __construct(h\crud_controller $ctrl)
+	{
+		parent::__construct($ctrl, h\string(self::name), h\string(self::target_class));
+	}
+
+	public		function made_of_http_request_uri()
 	{
 		$title = $this->ctrl->get_segments()['title'];
 		$title = h\string($title);
 		$story = $this->ctrl->get_model()->get_by_title($title);
+
+		if(!$this->is_managed($story))
+			throw $this->_exception_ex('\horn\lib\http\not_found', static::not_found);
+
 		return $story;
 	}
 
-	public		function of_http_request_post_data()
+	public		function made_of_http_request_post_data()
 	{
 		$post = $this->ctrl->get_post_data();
 		$title = h\string($post['story_title']);
@@ -85,7 +94,7 @@ class story_resource
 
 	public		function create_from_http_request_post_data()
 	{
-		$story = new story;
+		$story = $this->create_bare();
 		$this->update_from_http_request_post_data($story);
 		return $story;
 	}
@@ -118,4 +127,86 @@ class story_resource
 	}
 }
 
-	// $stories = $this->model->get_all();
+class stories_resource
+	extends h\resource
+{
+	const		name = 'stories';
+	const		target_class = '\horn\apps\blog\stories';// story::class;
+
+	const		not_found = '';
+	const		conflict = 'Story already exists';
+
+	public		function __construct(h\crud_controller $ctrl)
+	{
+		parent::__construct($ctrl, h\string(self::name), h\string(self::target_class));
+	}
+
+	public		function create_bare(/*$howmany*/)
+	{
+		$howmany = (int)func_get_arg(0);
+		$bare = parent::create_bare();
+		while($howmany--)
+			$bare->push(new story);
+		return $bare;
+	}
+
+	public		function made_of_http_request_uri()
+	{
+		$stories = $this->ctrl->get_model()->get_all();
+		if(! $this->is_managed($stories))
+			throw $this->_exception_ex('\horn\lib\http\not_found', static::not_found);
+
+		return $stories;
+	}
+
+	public		function made_of_http_request_post_data()
+	{
+		$post = $this->ctrl->get_post_data();
+		$stories = $this->create_bare(count($post['story_title']));
+		for($idx = 0; $idx < $stories->count(); ++$idx)
+		{
+			$title = h\string($post['story_title'][$idx]);
+			$stories[$idx]->assign($this->ctrl->get_model()->get_by_title($title));
+		}
+		return $stories;
+	}
+
+	public		function create_from_http_request_post_data()
+	{
+		$post = $this->ctrl->get_post_data();
+		$stories = $this->create_bare(count($post['story_title']));
+
+		for($idx = 0; $idx < $stories->count(); ++$idx)
+		{
+			$stories[$idx]->title = h\string($post['story_title'][$idx]);
+			$stories[$idx]->description = h\string($post['story_description'][$idx]);
+			$stories[$idx]->modified = h\today();
+			$this->ctrl->get_model()->insert($stories[$idx]);
+		}
+
+		return $stories;
+	}
+
+	public		function update_from_http_request_post_data($story)
+	{
+		throw $this->_exception('Unsupported operation');
+		return null;
+	}
+
+	public		function delete($story)
+	{
+		throw $this->_exception('Unsupported operation');
+		return null;
+	}
+
+	public		function uri_of($story)
+	{
+		$uri = h\string::format('/stories/%s', rawurlencode($story->title));
+		return $uri;
+	}
+
+	public		function uri_of_parent()
+	{
+		return h\string('/');
+	}
+}

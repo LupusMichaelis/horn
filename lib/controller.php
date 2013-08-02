@@ -32,6 +32,8 @@ h\import('lib/object');
 h\import('lib/collection');
 h\import('lib/string');
 h\import('lib/model');
+h\import('lib/http/error');
+h\import('lib/http/url');
 
 ////////////////////////////////////////////////////////////////////////////////
 interface http_get
@@ -101,64 +103,35 @@ class controller
 		return $this->context->in->body->post;
 	}
 
-	public		function ok()
+	private		function location($uri)
 	{
-		$this->status(200, 'OK');
-	}
-
-	public		function no_content()
-	{
-		$this->status(204, 'Not found');
-	}
-
-	public		function forbidden()
-	{
-		$this->status(403, 'Forbidden');
-	}
-
-	public		function not_found()
-	{
-		$this->status(404, 'Not found');
-	}
-
-	public		function http_conflict()
-	{
-		$this->status(409, 'Conflict');
+		$to = new h\http\url(h\string::format
+				( '%s://%s%s'
+				, 'http'//$this->context->in->scheme
+				, 'blog.localhost'//$this->context->in->host
+				, $uri
+				));
+		h\http\response_methods::location($this->context->out, $to);
 	}
 
 	public		function redirect_to_created($to)
 	{
-		$this->status(201, 'Created');
+		h\http\response_methods::status($this->context->out, 201, 'Created');
 		$this->location($to);
-	}
-
-	public		function location($uri)
-	{
-		$this->context->out->head['Location'] = sprintf
-			( '%s://%s%s'
-			, 'http' // $this->context->in->scheme
-			, $this->context->in->head['host']
-			, $uri
-			);
 	}
 
 	public		function redirect_to($to)
 	{
-		$this->status(301, 'Moved Permanently');
+		h\http\response_methods::status($this->context->out, 301, 'Moved Permanently');
 		$this->location($to);
 	}
 
 	public		function redirect_to_updated($to)
 	{
-		$this->ok();
+		h\http\response_methods::ok($this->context->out);
 		$this->location($to);
 	}
 
-	public		function status($code, $message)
-	{
-		$this->context->out->status = sprintf('%s %s %s'
-				, $this->context->in->version, $code, $message);
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -168,18 +141,44 @@ class resource
 {
 	protected	$_ctrl;
 
-	public		function __construct(h\crud_controller $ctrl)
+	protected	$_class;
+	protected	$_name;
+
+	public		function __construct(h\crud_controller $ctrl
+			, h\string $name, h\string $class)
 	{
 		$this->_ctrl = $ctrl;
+		$this->_class = $class;
+		$this->_name = $name;
 		parent::__construct();
 	}
 
-	abstract public function of_http_request_uri();
-	abstract public function of_http_request_post_data();
+	public		function delete_from_http_request_uri()
+	{
+		$thing = $this->made_of_http_request_uri();
+		$this->delete($thing);
+		return $thing;
+	}
+
+	public		function is_managed($managed)
+	{
+		$class = (string) $this->class;
+		return $managed instanceof $class;
+	}
+
+	public		function create_bare()
+	{
+		$class = (string) $this->class;
+		$bare = new $class;
+		return $bare;
+	}
+
+	abstract public function made_of_http_request_uri();
+	abstract public function made_of_http_request_post_data();
 	abstract public function create_from_http_request_post_data();
 	abstract public function update_from_http_request_post_data($story);
-	abstract public function delete($story);
-	abstract public function uri_of($story);
+
+	abstract public function uri_of($managed);
 	abstract public function uri_of_parent();
 }
 
@@ -197,7 +196,7 @@ class crud_controller
 		$this->_action = h\string('read');
 		parent::__construct($context);
 
-		foreach(array('edit', 'delete') as $action)
+		foreach(array('edit', 'delete', 'add') as $action)
 			if($this->get_search_part()->has_key($action))
 			{
 				$this->action = h\string($action);
@@ -219,6 +218,8 @@ class crud_controller
 			return $this->do_update();
 		elseif($this->delete_verb->is_equal($this->action))
 			return $this->do_delete();
+
+		throw $this->_exception_format('Unknown action \'%s\'', $this->action);
 	}
 
 	// XXX This should be configured or set in context
@@ -248,11 +249,10 @@ class crud_controller
 
 	public		function do_create()
 	{
-		$name = $this->resource->name;
-		$class = $this->resource->class;
-		$$name = $this->resource->of_http_request_post_data();
+		$name = (string)$this->resource->name;
+		$$name = $this->resource->made_of_http_request_post_data();
 
-		if($$name instanceof $class)
+		if($$name instanceof $this->resource->class)
 		{
 			$this->http_conflict();
 			return array(false, null, array($this->resource->conflict));
@@ -266,24 +266,20 @@ class crud_controller
 
 	public		function do_read()
 	{
-		$name = $this->resource->name;
-		$class = $this->resource->class;
-		$$name = $this->resource->of_http_request_uri();
+		$name = (string)$this->resource->name;
 
-		if(! $$name instanceof $class)
-		{
-			$this->not_found();
-			return array(false, null, array($this->resource->not_found));
-		}
+		if($this->create_verb->is_equal($this->action))
+			$$name = $this->resource->create_bare(1);
+		else
+			$$name = $this->resource->made_of_http_request_uri();
 
 		return array(true, compact($name));
 	}
 
 	public		function do_update()
 	{
-		$name = $this->resource->name;
-		$class = $this->resource->class;
-		$$name = $this->resource->of_http_request_uri();
+		$name = (string)$this->resource->name;
+		$$name = $this->resource->made_of_http_request_uri();
 
 		$copy = clone $$name;
 		$this->resource->update_from_http_request_post_data($copy);
@@ -299,11 +295,10 @@ class crud_controller
 
 	public		function do_delete()
 	{
-		$name = $this->resource->name;
-		$class = $this->resource->class;
-		$$name = $this->resource->of_http_request_uri();
+		$name = (string)$this->resource->name;
+		$$name = $this->resource->made_of_http_request_uri();
 
-		$this->resource->delete($$name);
+		$this->resource->delete_from_http_request_uri();
 
 		$uri = $this->resource->uri_of_parent();
 		$this->redirect_to($uri);

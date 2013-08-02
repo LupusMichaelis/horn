@@ -1,9 +1,9 @@
 <?php
 /** HTML Page template
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2011, Lupus Michaelis
+ *  \copyright	2013, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -31,7 +31,12 @@
   </head>
   <body>
 
-  <div></div>
+  <div>
+    <ul>
+      <li><a href='/stories'>Stories</a></li>
+      <li><a href='/users'>Users</a></li>
+    </ul>
+  </div>
 
 <?php foreach($c->doc->scripts as $resource): ?>
     <script type='<?php echo $e->a($resource['type']) ?>'
@@ -46,22 +51,24 @@
           />
 <?php endforeach ?>
     <div>
+      <ul>
+        <li><a href='?add'>Add</a></li>
+      </ul>
 <?php if(0 < count($c->errors)): ?>
         <div class='error'>
           <h2><?php echo $e->t($c->errors[0]);?></h2>
         </div>
 <?php else: ?>
         <div>
-		<ul>
-		  <li><a href='?edit'>Edit</a></li>
-		  <li><a href='?delete'>Delete</a></li>
-		</ul>
-<?php echo $this->r($c->params['resource']
-        , $c->params['action']
-        , $c->params['type']
-        , $c->results['story']); ?>
-        </div>
+<?php if($c->results->has_key($c->params['resource'])): ?>
+<?php    echo $this->r($c->params['resource']
+            , $c->params['action']
+            , $c->params['type']
+            , array($c->params['resource'] => $c->results[$c->params['resource']])) ?>
+<?php else: ?>
+        <p>No story.</p>
 <?php endif ?>
+        </div>
     </div>
   </body>
 </html>
