@@ -486,7 +486,6 @@ class object_base
 		$arguments = array_merge(array($this->get_exception_class()), $arguments);
 
 		$result = call_user_func_array($callback, $arguments);
-		throw $result;
 
 		return true;
 	}
