@@ -60,7 +60,7 @@ class routing
 				$route = $route_pattern;
 				foreach($matches as $key => $value)
 					if(is_string($key))
-						$segments[$key] = $value;
+						$segments[$key] = \rawurldecode($value);
 				break;
 			}
 		}
