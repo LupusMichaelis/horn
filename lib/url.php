@@ -1,9 +1,9 @@
 <?php 
 /** 
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2009, Lupus Michaelis
+ *  \copyright	2009, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -26,18 +26,19 @@
  */
 
 namespace horn\lib;
+use \horn\lib as h;
 
-import('lib/string');
-import('lib/collection');
-import('lib/regex');
-import('lib/regex-defs');
+h\import('lib/string');
+h\import('lib/collection');
+h\import('lib/regex');
+h\import('lib/regex-defs');
 
 class uri
-	extends		object_public
+	extends		h\object_public
 {
 	protected	$_literal;
 
-	public		function __construct(string $literal)
+	public		function __construct(h\string $literal)
 	{
 		parent::__construct();
 
@@ -45,7 +46,7 @@ class uri
 		$this->parse();
 	}
 
-	public		function __tostring()
+	public		function _to_string()
 	{
 		return $this->literal->__tostring();
 	}

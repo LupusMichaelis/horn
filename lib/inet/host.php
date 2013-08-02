@@ -26,14 +26,15 @@
  */
 
 namespace horn\lib\inet;
+use \horn\lib as h;
 
-import('lib/object');
-import('lib/inet/url');
-import('lib/regex');
-import('lib/regex-defs');
+h\import('lib/object');
+h\import('lib/inet/url');
+h\import('lib/regex');
+h\import('lib/regex-defs');
 
 abstract class inet
-	extends		\horn\lib\object_protected
+	extends		h\object_protected
 {
 	protected	$_literal;
 	protected	$_raw;
@@ -43,7 +44,7 @@ abstract class inet
 	const		ERR_UNKNOWN_VERSION = "Unknown IP version [%d].";
 	const		ERR_BAD_IP = "Bad address IP [%s].";
 
-	protected	function __construct(string_ex $literal)
+	protected	function __construct(h\string $literal)
 	{
 		parent::__construct();
 
@@ -52,7 +53,7 @@ abstract class inet
 		$this->parse();
 	}
 
-	static		function new_(string_ex $literal, $version=inet_4::VERSION)
+	static		function new_(h\string $literal, $version=inet_4::VERSION)
 	{
 		if($version == inet_4::VERSION)
 			$inet = new inet_4($literal);
@@ -72,7 +73,7 @@ abstract class inet
 	abstract
 		protected	function parse();
 	abstract
-		public	function __tostring();
+		public	function _to_string();
 }
 
 class inet_4
@@ -83,7 +84,7 @@ class inet_4
 	const		CLASS_B = 0xb;
 	const		CLASS_C = 0xc;
 
-	public		function __tostring()
+	public		function _to_string()
 	{
 		return (string) $this->literal;
 	}
@@ -106,7 +107,7 @@ class inet_4
 		$exp_200_255	= "(?:2(?:5[0-5]|[0-4]\d))";
 		$exp_0_255		= sprintf("(?:%s|%s)", $exp_0_199, $exp_200_255);
 
-		$re = new regex(string_ex::format($exp_ip, $exp_0_255));
+		$re = new regex(h\string::format($exp_ip, $exp_0_255));
 		*/
 
 		$re = new regex(RE_INET4);
@@ -155,7 +156,7 @@ class inet_6 extends inet
 /**
  */
 class host
-	extends		\horn\lib\object_public
+	extends		h\object_public
 {
 	const		ERR_IP_BAD	= 'Host IP address\'s not valid.';
 
@@ -165,18 +166,18 @@ class host
 	protected	$_reverse;
 	/** \bug PHP don't handle unsigned integer /!\ */
 
-	public		function __construct(string_ex $literal)
+	public		function __construct(string $literal)
 	{
 		parent::__construct();
 
-		$this->_name = new string_ex;
+		$this->_name = new h\string;
 
 		/** \todo RE_INET6_S
-		$re = new regex(string_ex::format
+		$re = new regex(h\string::format
 				("(?<inet4>%s)|(?<inet6>%s)|(?<host>%s)"
 				, RE_INET4_S, RE_INET6_S, RE_HOST));
 		*/
-		$re = new regex(string_ex::format
+		$re = new regex(h\string::format
 				("(?<inet4>%s)|(?<host>%s)"
 				, RE_INET4_S, RE_HOST));
 		if($re->match($literal))
@@ -193,9 +194,9 @@ class host
 			throw new exception(self::ERR_IP_BAD);
 	}
 
-	public		function __tostring()
+	public		function _to_string()
 	{
-		if($this->name instanceof string_ex)
+		if($this->name instanceof h\string)
 			$string = (string) $this->name;
 		elseif($this->ip instanceof inet)
 			$string = (string) $this->ip;
@@ -217,7 +218,7 @@ class host
 			$ret = gethostbyname($this->name);
 			if($ret != $this->name)
 			{
-				$ip = new string_ex($ret);
+				$ip = new h\string($ret);
 				$this->ip = inet::new_($ip, inet_4::VERSION);
 				return true;
 			}
@@ -235,7 +236,7 @@ class host
 			if($name == $this->ip)
 				return false;
 
-			$this->reverse = new host(new string_ex($name));
+			$this->reverse = new host(new h\string($name));
 
 			return true;
 		}

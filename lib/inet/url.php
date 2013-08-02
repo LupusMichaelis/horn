@@ -26,14 +26,14 @@
  */
 
 namespace horn\lib\inet;
-using \horn\lib as h;
+use \horn\lib as h;
 
-import('lib/url');
-import('lib/inet/host');
-import('lib/string');
-import('lib/collection');
-import('lib/regex');
-import('lib/regex-defs');
+h\import('lib/url');
+h\import('lib/inet/host');
+h\import('lib/string');
+h\import('lib/collection');
+h\import('lib/regex');
+h\import('lib/regex-defs');
 
 /** \brief URL describes in RFC 1738
   * \code
@@ -51,6 +51,8 @@ class url
 	const ERR_SCHEME_NOT_SUPPORTED	= 'Scheme is not supported.';
 
 	protected		$_scheme;
+	protected		$_host;
+	protected		$_port;
 	protected		$_locator;
 
 	/** \brief		This method must implement a way to reduce the
@@ -160,6 +162,7 @@ class url_inet extends url
 }
 
 class path
+	extends h\object_public
 {
 	protected	$_literal;
 	protected	$_nodes;
@@ -170,7 +173,7 @@ class path
 		$this->nodes = new collection;
 	}
 
-	public		function __tostring()
+	public		function _tostring()
 	{
 		return (string) $this->literal;
 	}
