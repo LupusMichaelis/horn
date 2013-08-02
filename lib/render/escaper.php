@@ -51,7 +51,7 @@ class html_escaper
 	{
 		$args = func_get_args();
 
-		$args[1] |= ENT_XML1;
+		$args[1] |= ENT_HTML401;
 		//
 		if('ASCII' === $args[2])
 			$args[2] = 'ISO-8859-15';
