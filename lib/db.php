@@ -29,4 +29,26 @@ namespace horn\lib\db;
 use horn\lib as h;
 
 h\import('lib/db/connect');
+h\import('lib/inet/url');
 
+class url_db
+	extends h\inet\url
+{
+	protected	$_space;
+	protected	$_table;
+
+    protected   function is_scheme_supported()
+    {
+        // TODO check mysql scheme
+        return true;
+    }
+
+	protected	function parse()
+	{
+		parent::parse();
+
+        // XXX ???
+		$this->space = new h\string($this->path);
+		$this->space = $this->space->tail(1);
+	}
+}

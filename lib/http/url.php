@@ -3,7 +3,7 @@
  *
  *  Project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2009, Lupus Michaelis
+ *  \copyright	2009, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -26,7 +26,6 @@
  */
 
 namespace horn\lib\http;
-
 use horn\lib as h;
 
 h\import('lib/inet/url');
@@ -37,9 +36,9 @@ h\import('lib/inet/url');
  *	\endcode
  */
 class url
-	extends		\horn\lib\inet\url
+	extends		h\inet\url
 {
-	public		function __construct(\horn\lib\string $literal)
+	public		function __construct(h\string $literal)
 	{
 		parent::__construct($literal);
 		$this->port = 80;

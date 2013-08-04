@@ -35,68 +35,9 @@ h\import('lib/collection');
 h\import('lib/regex');
 h\import('lib/regex-defs');
 
-/** \brief URL describes in RFC 1738
-  * \code
-  * <scheme> : <scheme-specific-part>
-  * <scheme> := [a-z.+-]+
-  * \endcode
-  *
-  */
+abstract
 class url
-	extends \horn\lib\uri
-{
-	const ERR_MALFORMED				= 'URL\'s not valid.';
-	const ERR_SCHEME_NO				= 'Scheme not found.';
-	const ERR_SCHEME_BAD			= 'Malformed scheme.';
-	const ERR_SCHEME_NOT_SUPPORTED	= 'Scheme is not supported.';
-
-	protected		$_scheme;
-	protected		$_host;
-	protected		$_port;
-	protected		$_locator;
-
-	/** \brief		This method must implement a way to reduce the
-	 *				processed literal to a canonical literal string. 
-	 *				For example, if the literal contain HTTP, it must be
-	 *				lowcased
-	 *  \return	boolean		Normalization passed good
-	 */
-	public		function normalize()
-	{
-		if($this->scheme instanceof \horn\lib\string)
-			$this->scheme->lowcase();
-		else
-			return false;
-
-		$this->sync_literal();
-		return true;
-	}
-
-	public		function sync_literal()
-	{
-		$this->literal->reset();
-		$this->literal->glue($this->scheme, ':', $this->location);
-	}
-
-	protected	function parse()
-	{
-		$scheme_sep_pos = $this->literal->search(':');
-		if($scheme_sep_pos < 0)
-			throw $this->_exception(self::ERR_SCHEME_NO);
-
-		$this->scheme = $this->literal->head($scheme_sep_pos - 1);
-		$this->locator = $this->literal->tail($scheme_sep_pos + 1);
-
-		$this->is_scheme_supported();
-	}
-
-	protected function is_scheme_supported()
-	{
-		return true;
-	}
-}
-
-class url_inet extends url
+	extends h\url
 {
 	const		ERR_LOCATOR_SLASH	= 'Trailing slash missing.';
 	const		ERR_NO_HOST			= 'Host missing.';
@@ -124,7 +65,7 @@ class url_inet extends url
 			($pieces['user'][0], $pieces['user'][1]);
 			if(!is_null($pieces['password']))
 				$this->password = $this->literal->slice
-				($pieces['password'][0], $pieces['password'][1]);
+					($pieces['password'][0], $pieces['password'][1]);
 		}
 
 		if(!is_null($pieces['host']))
@@ -148,8 +89,6 @@ class url_inet extends url
 			$this->path = new path($this->literal->slice
 				($pieces['path'][0], $pieces['path'][1]));
 
-#		var_dump($pieces['path'], $this->path);
-
 		if(!is_null($pieces['search']))
 			$this->search = $this->literal->slice
 				($pieces['search'][0], $pieces['search'][1]);
@@ -158,57 +97,74 @@ class url_inet extends url
 			$this->id = $this->literal->slice
 				($pieces['id'][0], $pieces['id'][1]);
 	}
-
 }
 
 class path
+	extends h\path
+{
+}
+
+class search_part
+	extends h\collection_mutltivalue
+{
+	static
+	public		function from_string(string $s)
+	{
+		$new = new static;
+
+		$parts = $s->explode('&');
+		foreach($parts as $part)
+		{
+			$pos = $part->search('=');
+			if($pos !== false)
+			{
+				$name = $part->head($pos);
+				$value = $part->tail($pos + 1);
+			}
+			else
+			{
+				$name = $part;
+				$value = null;
+			}
+
+			$pos = $name->search('[]');
+			if($pos !== false)
+				$name = $name->head(-2);
+
+			$new[$name] = urldecode($value);
+		}
+	}
+}
+
+class request_uri
 	extends h\object_public
 {
-	protected	$_literal;
-	protected	$_nodes;
+	protected	$_path;
+	protected	$_searchpart;
 
-	public		function __construct(\horn\lib\string $source)
+	public		function __construct(h\string $raw = null)
 	{
-		$this->literal = $source;
-		$this->nodes = new collection;
+		if($raw === null)
+			$raw = h\string('');
+
+		$qmark = $raw->search('?');
+		if($qmark > -1)
+		{
+			$this->_path = $raw->head($qmark - 1);
+			$this->_searchpart = $raw->tail($qmark);
+		}
+		else
+		{
+			$this->_path = $raw;
+			$this->_searchpart = h\string('');
+		}
+
+		parent::__construct();
 	}
 
-	public		function _tostring()
+	public		function _to_string()
 	{
-		return (string) $this->literal;
-	}
-
-	protected	function parse()
-	{
-		$re = new regex('^'.RE_PATH.'$');
-		$re->match($this->literal);
-
-		$this->nodes = $this->literal->explode('/');
-	}
-}
-
-/*
-class url_inet
-	extends url_file
-{
-}
-
-class url_db
-	extends url_file
-*/
-class url_db
-	extends url_inet
-{
-	protected	$_space;
-	protected	$_table;
-
-	protected	function parse()
-	{
-		parent::parse();
-
-		$this->space = new \horn\lib\string($this->path);
-		$this->space = $this->space->tail(1);
+		return $this->_path;
 	}
 }
-
 

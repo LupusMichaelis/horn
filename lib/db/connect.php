@@ -106,6 +106,7 @@ class database_mysql
 		if(null !== $this->_con)
 			throw $this->_exception('Database already connected');
 
+		@ /* XXX XXX XXX XXX */
 		$this->_con = new \mysqli
 			( $this->specification['host']
 			, $this->specification['user']

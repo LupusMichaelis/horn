@@ -2,9 +2,9 @@
 /**
  *	HTTP request handling
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2013, Lupus Michaelis
+ *  \copyright	2013, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -47,7 +47,7 @@ function create_native()
 	$native->head['cookie'] = h\collection::merge($_COOKIE);
 
 	$native->method = validate_http_method($_SERVER['REQUEST_METHOD']);
-	$native->uri = new uri(h\string($_SERVER['REQUEST_URI']));
+	$native->uri = new uri_request(h\string($_SERVER['REQUEST_URI']));
 	$native->version = h\string($_SERVER['SERVER_PROTOCOL']);
 
 	$native->body = new body;
