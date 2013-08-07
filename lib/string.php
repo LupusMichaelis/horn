@@ -26,6 +26,7 @@
  */
 
 namespace horn\lib;
+use \horn\lib as h;
 
 import('lib/object');
 import('lib/collection');
@@ -165,29 +166,87 @@ class string
 	/**	Factory method that gets caracters from 0 to $offset position from $this string.
 	 *	\warning	It is the position, not the size that is requested !
 	 *	\param		$offset	int		Position of the end of fetched string.
-	 *	\return		$this
+	 *	\return		string
 	 *	\throw		exception	On overrun.
 	 */
 	public		function head($offset)
 	{
+		$new = clone $this;
+		$new->betail($offset);
+		return $new;
+	}
+
+	private		function php_substr($offset, $length=null)
+	{
+		if(is_null($length))
+			$scalar = substr($this->_scalar, $offset);
+		else
+			$scalar = substr($this->_scalar, $offset, $length);
+
+		if(false === $scalar)
+			throw $this->_exception('Unexpected error');
+
+		return $scalar;
+	}
+
+	public		function cut($offset)
+	{
+		if($offset === strlen($this->_scalar))
+		{
+			$tail = new static('', $this->charset);
+			$head = clone $this;
+		}
+		else
+		{
+			$head = new static($this->php_substr(0, $offset), $this->charset);
+			$tail = new static($this->php_substr($offset), $this->charset);
+		}
+
+		return h\collection($head, $tail);
+	}
+
+	/** Remove part of the string before $offset
+	 *	\param		$offset	int		Position of the end of fetched string.
+	 *	\return		string		The head of the string
+	 *	\throw		exception	On overrun or bug
+	 */
+	public		function behead($offset)
+	{
 		if($offset > $this->length())
 			throw $this->_exception_format(self::ERR_OVERRUN, null, $offset, $this->length());
 
-		return new static(substr($this->_scalar, 0, $offset+1));
+		list($head, $tail) = $this->cut($offset);
+
+		$this->_scalar = $tail->_scalar;
+		return $head;
 	}
 
 	/**	Factory method that gets caracters from $offset to last position from $this string.
-	 *	\warning	It is the position, not the size that is requested !
 	 *	\param		$offset	int		Position of the start of fetched string.
-	 *	\return	$this
+	 *	\return		string
 	 *	\throw		exception	On overrun.
 	 */
 	public		function tail($offset)
 	{
-		if($offset > $this->length()-1)
+		$new = clone $this;
+		$new->behead($offset);
+		return $new;
+	}
+
+	/**	Cut off the tail of that string from $offset
+	 *	\param		$offset	int		Position of the first caracter removed
+	 *	\return		string			The tail of the string
+	 *	\throw		exception	On overrun.
+	 */
+	public		function betail($offset)
+	{
+		if($offset > $this->length())
 			throw $this->_exception_format(self::ERR_OVERRUN, $offset, null, $this->length());
 
-		return new static(substr($this->_scalar, $offset));
+		list($head, $tail) = $this->cut($offset);
+
+		$this->_scalar = $head->_scalar;
+		return $tail;
 	}
 
 	/** Factory method that creates a new string [$begin,$end[
@@ -210,7 +269,7 @@ class string
 		if($begin > $end)
 			throw $this->_exception_format(self::ERR_INVERT, $begin, $end);
 
-		if($begin > $len or $end > $len)
+		if($begin > $len || $end > $len)
 			throw $this->_exception_format(self::ERR_OVERRUN, $begin, $end, $len);
 
 		return new static(substr($this->_scalar, $begin, $end - $begin));

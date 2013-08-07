@@ -82,9 +82,113 @@ class test_suite_string
 		$messages = array('Tests slice.');
 		$callback = function ()
 			{
-				$s = h\string("This is some ham to slice");
+				$s = h\string('This is some ham to slice');
 				$h = $s->slice($s->search('ham'), $s->search('ham') + strlen('ham'));
 				return $h->is_equal(h\string('ham'));
+			};
+		$this->add_test($callback, $messages);
+	}
+
+	protected	function _test_head()
+	{
+		$messages = array('Tests head');
+		$callback = function ()
+			{
+				$s = h\string('HeadTail');
+				$h = $s->head(4);
+				return h\string('Head')->is_equal($h)
+					&& h\string('HeadTail')->is_equal($s);
+			};
+		$this->add_test($callback, $messages);
+	}
+
+	protected	function _test_behead()
+	{
+		$messages = array('Tests behead');
+		$callback = function ()
+			{
+				$s = h\string('HeadTail');
+				$h = $s->behead(4);
+				return h\string('Tail')->is_equal($s)
+					&& h\string('Head')->is_equal($h);
+			};
+		$this->add_test($callback, $messages);
+	}
+
+	protected	function _test_tail()
+	{
+		$messages = array('Tests tail');
+		$callback = function ()
+			{
+				$s = h\string('HeadTail');
+				$t = $s->tail(4);
+				return h\string('Tail')->is_equal($t)
+					&& h\string('HeadTail')->is_equal($s);
+			};
+		$this->add_test($callback, $messages);
+	}
+
+	protected	function _test_betail()
+	{
+		$messages = array('Tests betail');
+		$callback = function ()
+			{
+				$s = h\string('HeadTail');
+				$t = $s->betail(4);
+				return h\string('Tail')->is_equal($t)
+					&&  h\string('Head')->is_equal($s);
+			};
+		$this->add_test($callback, $messages);
+	}
+
+	protected	function _test_betail_origin()
+	{
+		$messages = array('Tests betail from 0');
+		$callback = function ()
+			{
+				$s = h\string('HeadTail');
+				$t = $s->betail(0);
+				return h\string('HeadTail')->is_equal($t)
+					&&  h\string('')->is_equal($s);
+			};
+		$this->add_test($callback, $messages);
+	}
+
+	protected	function _test_behead_origin()
+	{
+		$messages = array('Tests behead from 0');
+		$callback = function ()
+			{
+				$s = h\string('HeadTail');
+				$h = $s->behead(0);
+				return h\string('')->is_equal($h)
+					&&  h\string('HeadTail')->is_equal($s);
+			};
+		$this->add_test($callback, $messages);
+	}
+
+	protected	function _test_betail_end()
+	{
+		$messages = array('Tests betail from end');
+		$callback = function ()
+			{
+				$s = h\string('HeadTail');
+				$t = $s->betail($s->length());
+				return h\string('')->is_equal($t)
+					&&  h\string('HeadTail')->is_equal($s);
+			};
+		$this->add_test($callback, $messages);
+	}
+
+	protected	function _test_behead_end()
+	{
+		$messages = array('Tests behead from end');
+		$callback = function ()
+			{
+				$s = h\string('HeadTail');
+				$h = $s->behead($s->length());
+				return h\string('HeadTail')->is_equal($h)
+					&&  h\string('')->is_equal($s);
 			};
 		$this->add_test($callback, $messages);
 	}
