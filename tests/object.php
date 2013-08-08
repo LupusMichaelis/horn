@@ -53,7 +53,7 @@ class test_suite_object
 	public		function __construct($message = 'Object')
 	{
 		parent::__construct($message);
-		
+
 		$this->providers[] = function () { return new thing_public ; };
 		$this->providers[] = function () { return new thing_of ; };
 	}

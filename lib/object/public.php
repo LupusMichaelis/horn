@@ -1,10 +1,7 @@
 <?php
 /**
  *	Object coherent handling.
- *	\see object_base
- *
- *	object_public, object_protected and object_private are defined becasue you can't
- *	change the
+ *	\see object\base
  *
  *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -30,30 +27,16 @@
  *
  */
 
-namespace horn\lib;
+namespace horn\lib\object;
 use horn\lib as h;
 
-h\import('lib/exception');
-h\import('lib/object/base');
-h\import('lib/object/regular');
-h\import('lib/object/public');
-h\import('lib/object/protected');
-h\import('lib/object/wrapper');
-
-// XXX For compatibility sake
-
-class object_public extends h\object\public_
+/** Generic object class with public constructor.
+ */
+class public_
+	extends		regular
 {
-	public		function __construct()
-	{
-		parent::__construct();
-	}
+	/**
+	 */
+	public		function __construct() { }
 }
 
-class object_protected extends h\object\protected_
-{
-	protected		function __construct()
-	{
-		parent::__construct();
-	}
-}

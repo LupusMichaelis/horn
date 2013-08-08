@@ -1,10 +1,10 @@
 <?php
 /**
- *	Object coherent handling.
- *	\see object_base
+ *
+ *	\see object\base
  *
  *	object_public, object_protected and object_private are defined becasue you can't
- *	change the
+ *	change the constructor accessibility while inheriting
  *
  *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
@@ -30,30 +30,45 @@
  *
  */
 
-namespace horn\lib;
+namespace horn\lib\object;
 use horn\lib as h;
 
-h\import('lib/exception');
-h\import('lib/object/base');
-h\import('lib/object/regular');
-h\import('lib/object/public');
-h\import('lib/object/protected');
-h\import('lib/object/wrapper');
-
-// XXX For compatibility sake
-
-class object_public extends h\object\public_
+class regular
+	extends base
 {
-	public		function __construct()
+	final
+	protected	function _set($name, $value)
 	{
-		parent::__construct();
-	}
-}
+		$actual_name = $this->_actual_name($name);
 
-class object_protected extends h\object\protected_
-{
-	protected		function __construct()
-	{
-		parent::__construct();
+		if($this->$actual_name instanceof self)
+			$this->$actual_name->assign($value);
+		if(!is_null($this->$actual_name) && is_object($value))
+			$this->$actual_name = clone $value;
+		else
+			$this->$actual_name = $value;
 	}
+
+	final
+	protected	function & _get($name)
+	{
+		$actual_name = $this->_actual_name($name);
+		return $this->$actual_name;
+	}
+
+	final
+	protected	function _isset($name)
+	{
+		try { $actual_name = $this->_actual_name($name); }
+		catch(h\exception $e) { return false; }
+		return isset($this->$actual_name);
+	}
+
+	final
+	protected	function _unset($name)
+	{
+		$actual_name = $this->_actual_name($name);
+		$this->$actual_name = null;
+	}
+
 }
