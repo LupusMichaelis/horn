@@ -1,9 +1,9 @@
 <?php
 /** 
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2009, Lupus Michaelis
+ *  \copyright	2009, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -36,7 +36,6 @@ h\import('lib/regex-defs');
 abstract class inet
 	extends		h\object_protected
 {
-	protected	$_literal;
 	protected	$_raw;
 	protected	$_netmask;
 	protected	$_words;
@@ -44,20 +43,18 @@ abstract class inet
 	const		ERR_UNKNOWN_VERSION = "Unknown IP version [%d].";
 	const		ERR_BAD_IP = "Bad address IP [%s].";
 
-	protected	function __construct(h\string $literal)
+	protected	function __construct()
 	{
 		parent::__construct();
 
-		$this->_literal = $literal;
 		$this->_words = new collection;
-		$this->parse();
 	}
 
-	static		function new_(h\string $literal, $version=inet_4::VERSION)
+	static		function new_(h\string $literal, $version=inet_4::version)
 	{
-		if($version == inet_4::VERSION)
+		if($version == inet_4::version)
 			$inet = new inet_4($literal);
-		elseif($version == inet_6::VERSION)
+		elseif($version == inet_6::version)
 			$inet = new inet_6($literal);
 		else
 			throw new exception(sprintf(self::ERR_UNKNOWN_VERSION, $version));
@@ -69,35 +66,12 @@ abstract class inet
 	{
 		return (integer) $this->raw;
 	}
-
-	abstract
-		protected	function parse();
-	abstract
-		public	function _to_string();
 }
 
 class inet_4
 	extends inet
 {
-	const		VERSION = 4;
-	const		CLASS_A = 0xa;
-	const		CLASS_B = 0xb;
-	const		CLASS_C = 0xc;
-
-	public		function _to_string()
-	{
-		return (string) $this->literal;
-	}
-
-	public		function is_class($class)
-	{
-		return $this->class == $class;
-	}
-
-	public		function get_class()
-	{
-		return $this->class;
-	}
+	const		version = 4;
 
 	protected	function parse()
 	{
@@ -111,7 +85,6 @@ class inet_4
 		*/
 
 		$re = new regex(RE_INET4);
-#		die($re->pattern);
 		
 		if(!$re->match($this->literal))
 			throw new exception(sprintf(self::ERR_BAD_IP, $this->literal));
@@ -135,41 +108,46 @@ class inet_4
 			+ ($this->words[2] << 16)
 			+ ($this->words[3] << 24);
 		
-		if($this->raw >> 31 == 0)
-			$this->class = self::CLASS_A;
-		elseif(($this->raw >> 29) & ((1 << 2) + (1 << 1)))
-			$this->class = self::CLASS_C;
-		elseif(($this->raw >> 30) & (1 << 1))
-			$this->class = self::CLASS_B;
 	}
-
-	protected	$_class;
 }
+
+class host
+	extends h\object\public_
+{
+	protected	$_segments;
+	public		function __construct()
+	{
+		$this->_segments = h\collection();
+		parent::__construct();
+	}
+}
+
+if(false): ?>
 
 /*
 class inet_6 extends inet
 {
-	const		VERSION = 6;
+	const		version = 6;
 }
 */
 
-/**
- */
 class host
-	extends		h\object_public
 {
-	const		ERR_IP_BAD	= 'Host IP address\'s not valid.';
-
 	protected	$_name;
 	protected	$_ip;
 
 	protected	$_reverse;
 	/** \bug PHP don't handle unsigned integer /!\ */
 
-	public		function __construct(string $literal)
+	public		function __construct()
 	{
+		$this->_name = new h\uri\host;
+		$this->_ip = new h\inet\ip;
 		parent::__construct();
+	}
 
+
+	{
 		$this->_name = new h\string;
 
 		/** \todo RE_INET6_S
@@ -184,14 +162,14 @@ class host
 		{
 			$result = $re->get_pieces_by_match(0);
 			if(!is_null($r = $result['inet4']))
-				$this->_ip = inet::new_($literal->slice($r[0], $r[1]), inet_4::VERSION);
+				$this->_ip = inet::new_($literal->slice($r[0], $r[1]), inet_4::version);
 			elseif(!is_null($r = $result['inet6']))
-				$this->_ip = inet::new_($literal->slice($r[0], $r[1]), inet_6::VERSION);
+				$this->_ip = inet::new_($literal->slice($r[0], $r[1]), inet_6::version);
 			elseif(!is_null($r = $result['host']))
 				$this->_name = $literal->slice($r[0], $r[1]);
 		}
 		else
-			throw new exception(self::ERR_IP_BAD);
+			$this->exception('Host IP address\'s not valid.');
 	}
 
 	public		function _to_string()
@@ -219,7 +197,7 @@ class host
 			if($ret != $this->name)
 			{
 				$ip = new h\string($ret);
-				$this->ip = inet::new_($ip, inet_4::VERSION);
+				$this->ip = inet::new_($ip, inet_4::version);
 				return true;
 			}
 		}
@@ -257,5 +235,4 @@ class host
 	}
 
 }
-
-
+<?php endif /* false */ ;

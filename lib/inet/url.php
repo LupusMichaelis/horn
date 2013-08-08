@@ -1,9 +1,9 @@
 <?php 
 /** 
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2009, Lupus Michaelis
+ *  \copyright	2009, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -28,8 +28,8 @@
 namespace horn\lib\inet;
 use \horn\lib as h;
 
-h\import('lib/url');
-h\import('lib/inet/host');
+h\import('lib/uri');
+h\import('lib/uri/host');
 h\import('lib/string');
 h\import('lib/collection');
 h\import('lib/regex');
@@ -37,10 +37,61 @@ h\import('lib/regex-defs');
 
 abstract
 class url
-	extends h\url
+	extends h\uri_absolute
 {
-	const		ERR_LOCATOR_SLASH	= 'Trailing slash missing.';
-	const		ERR_NO_HOST			= 'Host missing.';
+	public		function __construct()
+	{
+		$this->_user		= h\string('');
+		$this->_password	= h\string('');
+		$this->_host		= new h\uri\host();
+		$this->_port		= 80;
+		$this->_path		= new path();
+		$this->_search		= new search_part();
+
+		parent::__construct();
+	}
+
+	protected	function &_get_scheme_specific_part()
+	{
+		$specific_part = h\string('//');
+
+		if(0 < $this->user->length())
+		{
+			$auth = h\string(\rawurlencode($this->user));
+			if(0 < $this->password->length())
+			{
+				$auth->append(':');
+				$auth->append(\rawurlencode($this->password));
+			}
+
+			$specific_part->append($auth);
+			$specific_part->append('@');
+		}
+
+		$specific_part->append(h\string($this->host));
+
+		if(80 !== $this->port && h\string('http')->is_equal($this->scheme)
+				|| 443 !== $this->port && h\string('https')->is_equal($this->scheme))
+		{
+			$specific_part->append(h\string(':'));
+			$specific_part->append(h\string($this->port));
+		}
+
+		$path = h\string($this->path);
+		if(0 < $path->length())
+			$specific_part->append($path);
+
+		$search_part = h\string($this->search);
+		if(0 < $search_part->length())
+			$specific_part->append($search_part);
+
+		return $specific_part;
+	}
+
+	protected	function _set_scheme_specific_part($_)
+	{
+		throw $this->_exception_read_only();
+	}
 
 	protected	$_user;
 	protected	$_password;
@@ -48,123 +99,20 @@ class url
 	protected	$_port;
 	protected	$_path;
 	protected	$_search;
-	protected	$_id;
-
-	// Maybe I had to document that ? :-D
-	protected	function parse()
-	{
-		parent::parse();
-
-		$re = new regex('^'.RE_URL.'$');
-		$re->match($this->literal);
-		$pieces = $re->get_pieces_by_match(0);
-
-		if(!is_null($pieces['user']))
-		{
-			$this->user = $this->literal->slice
-			($pieces['user'][0], $pieces['user'][1]);
-			if(!is_null($pieces['password']))
-				$this->password = $this->literal->slice
-					($pieces['password'][0], $pieces['password'][1]);
-		}
-
-		if(!is_null($pieces['host']))
-			$this->host = new host($this->literal->slice
-				($pieces['host'][0], $pieces['host'][1]));
-		elseif(!is_null($pieces['inet4']))
-			$this->host = host::new_inet4($this->literal->slice
-				($pieces['host'][0], $pieces['host'][1]));
-		elseif(!is_null($pieces['inet6']))
-			$this->host = host::new_inet6($this->literal->slice
-				($pieces['host'][0], $pieces['host'][1]));
-		else
-			throw $this->_exception(self::ERR_NO_HOST);
-
-		if(!is_null($pieces['port']))
-			$this->port = $this->literal->slice
-				($pieces['port'][0], $pieces['port'][1])
-				->as_integer();
-
-		if(!is_null($pieces['path']))
-			$this->path = new path($this->literal->slice
-				($pieces['path'][0], $pieces['path'][1]));
-
-		if(!is_null($pieces['search']))
-			$this->search = $this->literal->slice
-				($pieces['search'][0], $pieces['search'][1]);
-
-		if(!is_null($pieces['id']))
-			$this->id = $this->literal->slice
-				($pieces['id'][0], $pieces['id'][1]);
-	}
+	protected	$_fragment;
 }
 
 class path
-	extends h\path
+	extends h\uri\path
 {
 }
 
 class search_part
 	extends h\collection_mutltivalue
 {
-	static
-	public		function from_string(string $s)
-	{
-		$new = new static;
-
-		$parts = $s->explode('&');
-		foreach($parts as $part)
-		{
-			$pos = $part->search('=');
-			if($pos !== false)
-			{
-				$name = $part->head($pos);
-				$value = $part->tail($pos + 1);
-			}
-			else
-			{
-				$name = $part;
-				$value = null;
-			}
-
-			$pos = $name->search('[]');
-			if($pos !== false)
-				$name = $name->head(-2);
-
-			$new[$name] = urldecode($value);
-		}
-	}
-}
-
-class request_uri
-	extends h\object_public
-{
-	protected	$_path;
-	protected	$_searchpart;
-
-	public		function __construct(h\string $raw = null)
-	{
-		if($raw === null)
-			$raw = h\string('');
-
-		$qmark = $raw->search('?');
-		if($qmark > -1)
-		{
-			$this->_path = $raw->head($qmark - 1);
-			$this->_searchpart = $raw->tail($qmark);
-		}
-		else
-		{
-			$this->_path = $raw;
-			$this->_searchpart = h\string('');
-		}
-
-		parent::__construct();
-	}
-
 	public		function _to_string()
 	{
-		return $this->_path;
+		return '';
 	}
 }
 

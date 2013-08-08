@@ -26,7 +26,7 @@
  *
  */
 
-ini_set('include_path', $_SERVER['HOME'].'/php-libs/:.');
+ini_set('include_path', $_SERVER['HOME'].'/php-includes/:.');
 
 use horn\lib as h;
 use horn\lib\test as t;
@@ -49,6 +49,9 @@ $available_units = array
 #	, 'file'
 	, 'sql'
 	, 'mustache'
+	, 'url'
+	, 'url_factory'
+	, 'url_factory_http'
 	);
 
 // We throw some exception and catch them, to test behaviour. Xdebug will trace exception
@@ -77,7 +80,6 @@ foreach($units as $unit)
 	{
 		$unit_class = "\\tests\\test_suite_$unit";
 		$uc = new $unit_class;
-		# $uc();
 		$uc->run();
 		t\cli_renderer($uc);
 	}

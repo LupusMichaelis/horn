@@ -1,9 +1,9 @@
 <?php
 /**
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  \copyright	2009, Lupus Michaelis
+ *  \copyright	2013, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -24,7 +24,6 @@
  *  along with Horn Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace horn\lib\http;
 use horn\lib as h;
 
@@ -38,62 +37,55 @@ h\import('lib/inet/url');
 class url
 	extends		h\inet\url
 {
-	public		function __construct(h\string $literal)
+	public		function __construct()
 	{
-		parent::__construct($literal);
+		parent::__construct();
 		$this->port = 80;
 	}
 
-	protected	function is_scheme_supported()
+	static
+	public		function is_scheme_supported(h\string $scheme)
 	{
-		return in_array($this->scheme->to_lower(), array('http', 'https'));
+		return in_array($scheme->to_lower(), array('http', 'https'));
 	}
+}
 
-	public		function normalize()
+class uri_factory
+	extends h\uri\specific_factory
+{
+	public			$secured = false;
+
+	public function	do_feed(h\string $meat)
 	{
-		if($this->host instanceof host)
+		$uri = new url;
+		$uri->scheme = h\string($this->secured ? 'https' : 'http');
+
+		$slash = $meat->search('//');
+		if(0 !== $slash)
+			throw $this->_exception('Malformed HTTP URI: scheme specific part doesn\'t begin by \'//\'');
+
+		$meat->behead($slash + 2);
+
+		// XXX Must modify assignment in h\wrapper
+		$host = $this->master->factories['host']->do_feed($meat);
+		$uri->host->set_impl($host->get_impl());
+
+		if($meat->length() && h\string(':')->is_equal($meat[0]))
 		{
-			if(!$this->host->normalize())
-				return false;
+			$meat->behead(1); // Drop semicolon
+			$uri->port = $this->master->factories['port']->do_feed($meat);
 		}
 		else
-			return false;
+			$uri->port = $this->secured ? 443 : 80;
 
-		if(!parent::normalize())
-			return false;
-
-		return true;
-	}
-
-	public		function sync_literal()
-	{
-		$this->location->reset();
-		$this->location->append('//');
-
-		if($this->username instanceof \horn\lib\string)
-		{
-			$this->location->append($this->username);
-			if($this->password instanceof \horn\lib\string)
-				$this->location->append_list(':', $this->password);
-
-			$this->location->append('@');
-		}
-
-		if($this->hostname instanceof host)
-			$this->location->append($this->hostname->as_string());
+		if($meat->length() && h\string('/')->is_equal($meat[0]))
+			$uri->path = $this->master->factories['absolute_path']->do_feed($meat);
 		else
-			throw new exception(self::ERR_NO_HOST);
+			throw $this->_exception('Malformed HTTP URI: no absolute path');
 
-		if(is_integer($this->port))
-			$this->location->append_list(':', $this->port);
+		if($meat->length() && h\string('?')->is_equal($meat[0]))
+			$uri->search_part = $this->master->factories['search_part']->do_feed($meat);
 
-		if($this->path instanceof path)
-			$this->location->append($this->path->as_string());
-
-		if($this->search instanceof \horn\lib\string)
-			$this->location->append_list('?', $this->search);
-
-		parent::sync_literal();
+		return $uri;
 	}
-
 }
