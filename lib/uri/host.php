@@ -40,11 +40,6 @@ class host
 		return parent::is_supported($impl)
 			&& ($impl instanceof h\inet\ip || $impl instanceof h\inet\host);
 	}
-
-	protected	function _to_string()
-	{
-		return $this->_segments->implode('.');
-	}
 }
 
 class host_factory
@@ -76,7 +71,7 @@ class host_factory
 
 		$end = $literal->search(':');
 		if(-1 === $end) $end = $literal->search('/');
-		if(-1 === $end) $end = $literal->length() - 1;
+		if(-1 === $end) $end = $literal->length();
 
 		$hostname = $literal->behead($end);
 		$impl = new h\inet\host;

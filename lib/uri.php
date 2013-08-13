@@ -35,6 +35,10 @@ h\import('lib/regex-defs');
 
 h\import('lib/uri/factory');
 
+h\import('lib/uri/scheme');
+h\import('lib/uri/scheme_specific_part');
+h\import('lib/uri/port');
+
 /* Before you mess this, please read http://www.w3.org/TR/uri-clarification/
  */
 
@@ -44,13 +48,14 @@ class uri_absolute
 {
 	public		function __construct()
 	{
-		$this->_scheme = h\string('');
-		$this->_scheme_specific_part = h\string('');
+		$this->_scheme = new h\uri\scheme;
+		$this->_scheme_specific_part = new h\uri\scheme_specific_part;
 
 		parent::__construct();
 	}
 
-	abstract static protected function is_scheme_supported(h\string $scheme);
+	abstract
+	protected function is_scheme_supported(h\string $scheme);
 
 	protected	function _to_string()
 	{
@@ -60,7 +65,7 @@ class uri_absolute
 
 	protected	function _set_scheme(h\string $scheme)
 	{
-		if(!static::is_scheme_supported($scheme))
+		if(!$this->is_scheme_supported($scheme))
 			throw $this->_exception('Scheme is not supported');
 
 		$this->_scheme->assign($scheme);
@@ -68,22 +73,7 @@ class uri_absolute
 
 	protected	$_scheme;
 	protected	$_scheme_specific_part;
+	protected	$_search;
+	protected	$_fragment;
 }
 
-class path
-	extends h\object_public
-{
-	protected	$_nodes;
-
-	public		function __construct()
-	{
-		$this->nodes = new h\collection;
-	}
-
-	public		function _to_string()
-	{
-		$literal = h\string('/');
-		$literal->append($this->nodes->glue('/'));
-		return (string) $literal;
-	}
-}

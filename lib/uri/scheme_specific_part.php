@@ -25,7 +25,14 @@
  *
  */
 
-namespace horn\lib\inet;
+namespace horn\lib\uri;
 use \horn\lib as h;
+
+h\import('lib/string');
+
+class scheme_specific_part
+	extends h\string
+{
+}
 
 

@@ -120,6 +120,11 @@ class host
 		$this->_segments = h\collection();
 		parent::__construct();
 	}
+
+	public		function _to_string()
+	{
+		return $this->_segments->implode('.');
+	}
 }
 
 if(false): ?>

@@ -30,20 +30,64 @@ use \horn\lib as h;
 
 h\import('lib/object');
 h\import('lib/uri');
-//h\import('lib/filesystem');
 
 class path
-	extends		h\object\public_
+	extends		h\object\wrapper
 {
-	protected	$_segments;
+	protected	function is_supported(h\object\base $impl)
+	{
+		return parent::is_supported($impl)
+			&& ($impl instanceof h\uri\absolute_path
+					|| $impl instanceof h\uri\net_path
+					|| $impl instanceof h\uri\empty_path
+					);
+	}
+}
+
+class net_path
+	extends h\object\public_
+{
+	protected	$_authority;
+	protected	$_path;
+
 	public		function __construct()
 	{
-		$this->_segments = h\collection();
+		$this->_authority = new h\uri\authority;
+		$this->_path = new path; // abs, net
+		parent::__construct();
 	}
 
 	public		function _to_string()
 	{
-		return $this->segments->implode('/');
+		return h\string('//')
+			->append($this->authority->_to_string())
+			->append($this->path->_to_string());
+	}
+}
+
+class absolute_path
+	extends		h\object\public_
+{
+	protected	$_segments;
+
+	public		function __construct()
+	{
+		$this->_segments = new h\collection;
+		parent::__construct();
+	}
+
+	public		function _to_string()
+	{
+		return $this->_segments->implode('/')->prepend(h\string('/'));
+	}
+}
+
+class empty_path
+	extends		h\object\public_
+{
+	public		function _to_string()
+	{
+		return h\string('');
 	}
 }
 
@@ -54,11 +98,64 @@ class path_factory
 	{
 		$path = new path;
 
-		$end = $meat->search('?');
-		if(-1 === $end)	$end = $meat->length();
-		$path->segments = $meat->behead($end)->explode('/');
+		if(0 === $meat->search(h\string('//')))
+			$impl = $this->do_create_net_path($meat);
+		elseif(0 === $meat->search(h\string('/')))
+			$impl = $this->do_create_absolute_path($meat);
+		elseif(0 === $meat->search(h\string('.')))
+			$impl = $this->do_create_relative_path($meat);
+		else
+			throw $this->_exception('No path');
+
+		$path->set_impl($impl);
+
 
 		return $path;
+	}
+
+	public	function do_create_net_path(h\string $meat)
+	{
+		$impl = new net_path;
+
+		$slashes = $meat->behead(2);
+		if(!h\string('//')->is_equal($slashes))
+			throw $this->_exception('Not a net path');
+
+		$impl->authority->assign($this->master->factories['authority']->do_feed($meat));
+
+		if(0 === $meat->search(h\string('/')))
+			$impl->path = $this->do_feed($meat);
+		else
+			$impl->path->set_impl(new empty_path);
+
+		return $impl;
+	}
+
+	public	function do_create_absolute_path(h\string $meat)
+	{
+		$impl = new absolute_path;
+
+		$re = new h\regex(RE_PATH);
+		if(!$re->match($meat))
+			throw $this->_exception('???');
+
+		$path = $meat->behead($re->get_matches()[0][1]);
+		$impl->segments = $path->explode('/');
+
+		return $impl;
+	}
+
+	public	function do_create_relative_path(h\string $meat)
+	{
+		$impl = new relative_path;
+
+		$re = h\regex(RE_PATH);
+		if($re->match($meat))
+		{
+			$path = $re->get_result(0);
+		}
+
+		return $impl;
 	}
 }
 

@@ -4,19 +4,19 @@ namespace tests;
 use horn\lib as h;
 use horn\lib\test as t;
 
-h\import('lib/url');
+h\import('lib/uri');
 h\import('lib/test');
 
 class tested_uri
     extends h\uri_absolute
 {
-	static protected function is_scheme_supported(h\string $candidate)
+	protected function is_scheme_supported(h\string $candidate)
     {
         return h\string('a')->is_equal($candidate);
     }
 }
 
-class test_suite_url
+class test_suite_uri
 	extends t\suite_object
 {
 	public		function __construct($message = 'URL')
@@ -25,10 +25,10 @@ class test_suite_url
 
 		$this->providers[] = function()
 		{
-			$url = new tested_uri;
-			$url->scheme = h\string('a');
-			$url->scheme_specific_part = h\string('b');
-			return $url;
+			$uri = new tested_uri;
+			$uri->scheme = h\string('a');
+			$uri->scheme_specific_part = h\string('b');
+			return $uri;
 		};
 	}
 
@@ -41,7 +41,7 @@ class test_suite_url
 		$u = $this->target;
 		$callback = function () use ($u)
 		{
-			return $u->scheme->is_equal(h\string('a'))
+			return h\string($u->scheme)->is_equal(h\string('a'))
 				&& 'a:b' === (string) $u;
 		};
 		$this->add_test($callback, $messages, $expected_exception);
@@ -56,8 +56,8 @@ class test_suite_url
 		$u = $this->target;
 		$callback = function () use ($u)
 		{
-			$factory = new h\uri_factory;
-			$factory->create_from_string(h\string('toto:plop'));
+			$factory = new h\uri\factory;
+			$factory->create(h\string('toto:plop'));
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}

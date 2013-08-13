@@ -37,13 +37,15 @@ h\import('lib/inet/url');
 class url
 	extends		h\inet\url
 {
+	const		default_port = 80;
+	const		default_secured_port = 443;
+
 	public		function __construct()
 	{
 		parent::__construct();
-		$this->port = 80;
+		$this->port = static::default_port;
 	}
 
-	static
 	public		function is_scheme_supported(h\string $scheme)
 	{
 		return in_array($scheme->to_lower(), array('http', 'https'));
@@ -59,32 +61,10 @@ class uri_factory
 	{
 		$uri = new url;
 		$uri->scheme = h\string($this->secured ? 'https' : 'http');
-
-		$slash = $meat->search('//');
-		if(0 !== $slash)
-			throw $this->_exception('Malformed HTTP URI: scheme specific part doesn\'t begin by \'//\'');
-
-		$meat->behead($slash + 2);
-
-		// XXX Must modify assignment in h\wrapper
-		$host = $this->master->factories['host']->do_feed($meat);
-		$uri->host->set_impl($host->get_impl());
-
-		if($meat->length() && h\string(':')->is_equal($meat[0]))
-		{
-			$meat->behead(1); // Drop semicolon
-			$uri->port = $this->master->factories['port']->do_feed($meat);
-		}
-		else
-			$uri->port = $this->secured ? 443 : 80;
-
-		if($meat->length() && h\string('/')->is_equal($meat[0]))
-			$uri->path = $this->master->factories['absolute_path']->do_feed($meat);
-		else
-			throw $this->_exception('Malformed HTTP URI: no absolute path');
-
-		if($meat->length() && h\string('?')->is_equal($meat[0]))
-			$uri->search_part = $this->master->factories['search_part']->do_feed($meat);
+		$uri->hierarchical_part = $this->master->factories['hierarchical_part']->do_feed($meat);
+		// XXX check authority is present and throw an error if not
+		$uri->query = $this->master->factories['query']->do_feed($meat);
+		$uri->fragment = $this->master->factories['fragment']->do_feed($meat);
 
 		return $uri;
 	}

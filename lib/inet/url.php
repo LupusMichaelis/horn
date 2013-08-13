@@ -30,6 +30,8 @@ use \horn\lib as h;
 
 h\import('lib/uri');
 h\import('lib/uri/host');
+h\import('lib/uri/hierarchical_part');
+h\import('lib/uri/path');
 h\import('lib/string');
 h\import('lib/collection');
 h\import('lib/regex');
@@ -41,16 +43,30 @@ class url
 {
 	public		function __construct()
 	{
-		$this->_user		= h\string('');
-		$this->_password	= h\string('');
-		$this->_host		= new h\uri\host();
-		$this->_port		= 80;
-		$this->_path		= new path();
-		$this->_search		= new search_part();
+		$this->_hierarchical_part = new h\uri\hierarchical_part;
 
 		parent::__construct();
 	}
 
+	protected	$_port;
+	protected	$_hierarchical_part;
+}
+
+class path
+	extends h\uri\path
+{
+}
+
+class search_part
+	extends h\collection_mutltivalue
+{
+	public		function _to_string()
+	{
+		return '';
+	}
+}
+
+/*
 	protected	function &_get_scheme_specific_part()
 	{
 		$specific_part = h\string('//');
@@ -88,31 +104,4 @@ class url
 		return $specific_part;
 	}
 
-	protected	function _set_scheme_specific_part($_)
-	{
-		throw $this->_exception_read_only();
-	}
-
-	protected	$_user;
-	protected	$_password;
-	protected	$_host;
-	protected	$_port;
-	protected	$_path;
-	protected	$_search;
-	protected	$_fragment;
-}
-
-class path
-	extends h\uri\path
-{
-}
-
-class search_part
-	extends h\collection_mutltivalue
-{
-	public		function _to_string()
-	{
-		return '';
-	}
-}
-
+*/

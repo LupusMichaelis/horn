@@ -23,6 +23,10 @@ class test_suite_url_factory_http
 		$factory = new h\uri\factory;
 		$factory->do_register_factory(h\string('http')
 				, new h\http\uri_factory($factory));
+		$factory->do_register_factory(h\string('net_path')
+				, new h\uri\net_path_factory($factory));
+		$factory->do_register_factory(h\string('hierarchical_part')
+				, new h\uri\hierarchical_part_factory($factory));
 		$factory->do_register_factory(h\string('host')
 				, new h\uri\host_factory($factory));
 		$factory->do_register_factory(h\string('port')
@@ -48,7 +52,7 @@ class test_suite_url_factory_http
 
 		$callback = function () use ($literal, $factory)
 		{
-			$url = $factory->create_from_string($literal);
+			$url = $factory->create($literal);
 			return $url->scheme->is_equal(h\string('http'))
 				&& h\string($url)->is_equal($literal);
 		};

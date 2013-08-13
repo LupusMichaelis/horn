@@ -102,25 +102,30 @@ class factory
 		parent::__construct();
 	}
 
-	public		function create_from_string(h\string $literal)
+	public		function create(h\string $literal, h\uri $base = null)
 	{
 		// Try to find a scheme, meaning we have an absolutea. If not, we'll try to guess
 		// what's the URI related to.
 
 		$scheme_sep_pos = $literal->search(':');
-		if(0 > $scheme_sep_pos && $scheme_sep_pos > $literal->length())
-			$this->create_relative($literal);
+		if(-1 === $scheme_sep_pos)
+			return $this->create_relative($literal, $base);
 
 		$scheme = $literal->head($scheme_sep_pos);
 		$scheme_specific_part = $literal->tail($scheme_sep_pos + 1);
 		$scheme_regex = new h\regex(static::scheme);
 		if(!$scheme_regex->match($scheme))
-			$this->create_relative($literal);
+			return $this->create_relative($literal);
 
 		if($this->factories->has_key($scheme))
 			return $this->factories[$scheme]->do_feed($scheme_specific_part);
 
 		throw $this->_exception_format('Scheme \'%s\' not supported', $scheme);
+	}
+
+	public		function create_relative(h\string $literal, h\uri $base = null)
+	{
+		return $this->factories['hierarchical_part']->do_feed($literal);
 	}
 
 	public		function do_register_factory(h\string $entity, specific_factory $factory)

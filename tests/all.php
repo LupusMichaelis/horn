@@ -49,8 +49,9 @@ $available_units = array
 #	, 'file'
 	, 'sql'
 	, 'mustache'
-	, 'url'
-	, 'url_factory'
+	, 'path'
+	, 'uri'
+	, 'uri_factory'
 	, 'url_factory_http'
 	);
 

@@ -35,6 +35,14 @@ class port_factory
 {
 	public function	do_feed(h\string $meat)
 	{
+		if($meat->length() < 1)
+			return null;
+
+		if(h\string(':')->is_equal($meat[0]))
+			$meat->behead(1); // Drop semicolon
+		else
+			return null;
+
 		for($end_port = 0; \is_numeric((string) $meat[$end_port]); ++$end_port)
 			/* */;
 

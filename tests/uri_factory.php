@@ -11,7 +11,7 @@ h\import('lib/test');
 class tested_uri
     extends h\uri_absolute
 {
-	static protected function is_scheme_supported(h\string $candidate)
+	public		function is_scheme_supported(h\string $candidate)
     {
         return h\string('a')->is_equal($candidate);
     }
@@ -29,7 +29,7 @@ class tested_uri_factory
 	}
 }
 
-class test_suite_url_factory
+class test_suite_uri_factory
 	extends t\suite_object
 {
 	public		function __construct($message = 'URL Factory')
@@ -41,8 +41,8 @@ class test_suite_url_factory
 
 		$this->providers[] = function() use ($factory)
 		{
-			$url = $factory->create_from_string(h\string('a:b'));
-			return $url;
+			$uri = $factory->create(h\string('a:b'));
+			return $uri;
 		};
 	}
 
@@ -55,7 +55,7 @@ class test_suite_url_factory
 		$u = $this->target;
 		$callback = function () use ($u)
 		{
-			return h\string('a')->is_equal($u->scheme)
+			return h\string('a')->is_equal(h\string($u->scheme))
 				&& 'a:b' === (string) $u;
 		};
 		$this->add_test($callback, $messages, $expected_exception);
