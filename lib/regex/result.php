@@ -28,14 +28,19 @@
 namespace horn\lib\regex;
 use \horn\lib as h;
 
+h\import('lib/pair');
 
+# XXX Doesn't handle UTF8 correctly yet
 class result
 	extends h\object\public_
 {
 	protected	$_expression;
 	protected	$_subject;
 
-	private		$results;
+	private		$results;		/**< used to store preg_match_all results */
+
+	private		$captures;		/**< collection of iterators by capture index or name */
+	private		$records;		/**< collection of matching records */
 
 	public		function __construct(expression $expression, h\string $subject)
 	{
@@ -44,16 +49,20 @@ class result
 
 		parent::__construct();
 
+		$this->results = null;
+		$this->captures = null;
+		$this->records = null;
+
 		$this->do_execute();
 	}
 
-	public		function do_execute()
+	private		function do_execute()
 	{
 		$success = preg_match_all
 			( $this->expression->pattern
 			, $this->subject
 			, $this->results
-			, PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER);
+			, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 
 		if(false === $success)
 			throw $this->_exception_preg_failed();
@@ -61,7 +70,56 @@ class result
 
 	public		function is_match()
 	{
-		return (bool) !empty($this->results[0]);
+		return $this->has_captured(0);
+	}
+
+	public		function has_captured($index)
+	{
+		return isset($this->results[0][$index]);
+	}
+
+	public		function iterate_records()
+	{
+		if(is_null($this->records))
+		{
+			$this->records = h\collection();
+			foreach($this->results as $record)
+			{
+				$row = h\collection();
+				foreach($record as $index_name => $match)
+				{
+					$pair = new h\pair;
+					$pair->begin = $match[1];
+					$pair->end = $pair->begin + strlen($match[0]);
+
+					$row[$index_name] = $pair;
+				}
+
+				$this->records[] = $row;
+			}
+		}
+
+		return clone $this->records;
+	}
+
+	public		function iterate_matches()
+	{
+		return $this->iterate_captures_by_index(0);
+	}
+
+	public		function iterate_captures_by_index($index)
+	{
+		$capture = new h\collection;
+		if(!isset($this->results[0][$index]))
+			throw $this->_exception_format('Capture \'%s\' doesn\'t exist', $index);
+
+		$records = $this->iterate_records();
+		return $records->get_column($index);
+	}
+
+	public		function iterate_captures_by_name(h\string $name)
+	{
+		return $this->iterate_captures_by_index($name);
 	}
 
 	protected	function _exception_preg_failed()
@@ -84,54 +142,3 @@ class result
 		return $exception;
 	}
 }
-
-if(false): ?>
-	public		function get_result($offset)
-	{
-		$submatches = new h\collection;
-		if(isset($this->matches[$offset]))
-			foreach($this->matches[$offset] as $name => $match)
-			{
-				$begin = $match[1];
-				if($begin < 0)
-					$submatches[$name] = null;
-				else
-				{
-					$end = $begin + strlen($match[0]);
-					$submatches[$name] = new h\collection($begin, $end);
-				}
-			}
-
-		return $submatches;
-	}
-
-	public		function get_pieces_by_match($offset)
-	{
-		$pieces = new h\collection;
-
-		foreach($this->matches as $name => $result)
-		{
-			$pieces[$name] = null;
-
-			// no matches for this set, so proceding
-			if(!is_array($result))
-				continue;
-
-			if(!isset($result[$offset]))
-				continue;
-
-			$match = $result[$offset];
-			if(!is_array($match))
-				continue;
-
-			$begin = $match[1];
-			$end = $begin + strlen($match[0]);
-			if($begin > -1 and $end > -1)
-				$pieces[$name] = new h\collection($begin, $end);
-			else
-				$pieces[$name] = null;
-		}
-
-		return $pieces;
-	}
-<?php endif /* false */ ;
