@@ -1,9 +1,9 @@
 <?php
 /** collection class definition
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2009, Lupus Michaelis
+ *  \copyright	2009, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
