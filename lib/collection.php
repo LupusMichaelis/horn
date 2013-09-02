@@ -28,6 +28,7 @@ namespace horn\lib;
 
 import('lib/object');
 import('lib/string');
+import('lib/future');
 
 function is_collection($variable)
 {
@@ -260,12 +261,21 @@ class collection
 		return $this;
 	}
 
+	public		function get_column($key, $index_key=null)
+	{
+		$key = $this->filter_key($key);
+		is_null($index_key) or $index_key = $this->filter_key($index_key);
+		$column = \array_column($this->ref_stack(), $key, $index_key);
+		$column = static::merge($column);
+		return $column;
+	}
+
 	/** Check for existence of a key that reference an element of the collection.
 	 *	\return		bool	The key exists.
 	 */
 	public		function has_key($needle)
 	{
-		return array_key_exists($needle, $this->ref_stack());
+		return isset($this->ref_stack()[$this->filter_key($needle)]);
 	}
 
 	/** Import every element of an iterable.
