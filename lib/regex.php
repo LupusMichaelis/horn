@@ -1,9 +1,9 @@
 <?php
 /** 
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2009, Lupus Michaelis
+ *  \copyright	2013, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -26,102 +26,28 @@
  */
 
 namespace horn\lib;
+use \horn\lib as h;
 
 import('lib/string');
+import('lib/regex/expression');
+import('lib/regex/result');
 
-class regex
-	extends		object_public
+function regex($pattern)
 {
-	protected	$_pattern;
-	protected	$_delimiter;
-	protected	$_results;
-
-	protected	$_matches;
-
-	public		function __construct($pattern, $delimiter='`')
-	{
-		$this->delimiter = $delimiter;
-
-		// \todo check for delimiters in the pattern, and escape them
-
-		if($pattern instanceof string)
-			$this->pattern = clone $pattern;
-		if(is_null($pattern))
-			$this->pattern = new string;
-		else
-			$this->pattern = new string((string) $pattern);
-	}
-
-	public		function match(string $subject)
-	{
-		$pattern = sprintf("%1\$s%2\$s%1\$s", $this->delimiter, $this->pattern);
-		$result = preg_match_all
-			( $pattern
-			, $subject
-			, $this->_matches
-			, PREG_OFFSET_CAPTURE | PREG_PATTERN_ORDER) > 0;
-#		var_dump($this->matches);
-
-		return $result;
-	}
-
-	public		function get_matches()
-	{
-#		var_dump($this->matches);
-		return $this->get_result(0);
-	}
-
-	public		function get_result($offset)
-	{
-		$submatches = new collection;
-		if(array_key_exists($offset, $this->matches))
-			foreach($this->matches[$offset] as $name => $match)
-			{
-				$begin = $match[1];
-				if($begin < 0)
-					$submatches[$name] = null;
-				else
-				{
-					$end = $begin + strlen($match[0]);
-					$submatches[$name] = new collection($begin, $end);
-				}
-			}
-
-		return $submatches;
-	}
-
-	public		function get_pieces_by_match($offset)
-	{
-#		var_dump(__FUNCTION__, $offset) ; die('here');
-		$pieces = new collection;
-
-#		var_dump($this->matches);
-
-		foreach($this->matches as $name => $result)
-		{
-			$pieces[$name] = null;
-
-			// no matches for this set, so proceding
-			if(!is_array($result))
-				continue;
-
-			if(!array_key_exists($offset, $result))
-				continue;
-
-			$match = $result[$offset];
-			if(!is_array($match))
-				continue;
-
-			$begin = $match[1];
-			$end = $begin + strlen($match[0]);
-			if($begin > -1 and $end > -1)
-				$pieces[$name] = new collection($begin, $end);
-			else
-				$pieces[$name] = null;
-		}
-
-		return $pieces;
-	}
+	$pattern = h\string($pattern);
+	return new h\regex\expression($pattern);
 }
 
+function regex_match($pattern, $subject)
+{
+	$re = regex($pattern);
+	$haystack = h\string($haystack);
+	return $re->match($haystack);
+}
 
+function regex_find($pattern, $haystack)
+{
+	$re = regex($pattern);
+	$haystack = h\string($haystack);
+	return $re->find($haystack);
+}

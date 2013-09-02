@@ -51,15 +51,15 @@ define('RE_URL', sprintf
 		. '(?:(?<host>%s)|(?<inet4>%s)' /* .'|\\[(?<inet6>%s)]'. */ .')'
 		. '(?::(?<port>%s))?'
 		. '(?<path>%s)?'
-		. '(?<id>%s)?'
 		. '(?<search>%s)?'
+		. '(?<id>%s)?'
 		, RE_SCHEME
 		, RE_USER, RE_PASS
 		, RE_HOST, RE_INET4 //, RE_INET6
 		, RE_PORT
 		, RE_PATH
-		, RE_ID
 		, RE_SEARCH
+		, RE_ID
 		)
 	);
 define('RE_URL_U', sprintf

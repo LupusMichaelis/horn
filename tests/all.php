@@ -44,15 +44,20 @@ $available_units = array
 	, 'collection'
 	, 'stack'
 	, 'string'
+
 	, 'time'
 	, 'date'
+
 #	, 'file'
 	, 'sql'
 	, 'mustache'
+
 	, 'path'
 	, 'uri'
 	, 'uri_factory'
 	, 'url_factory_http'
+
+	, 'regex'
 	);
 
 // We throw some exception and catch them, to test behaviour. Xdebug will trace exception
