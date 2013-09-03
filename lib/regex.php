@@ -41,8 +41,8 @@ function regex($pattern)
 function regex_match($pattern, $subject)
 {
 	$re = regex($pattern);
-	$haystack = h\string($haystack);
-	return $re->match($haystack);
+	$subject = h\string($subject);
+	return $re->is_matching($subject);
 }
 
 function regex_find($pattern, $haystack)

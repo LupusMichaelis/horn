@@ -74,7 +74,7 @@ class expression
 
 	public		function is_matching(h\string $subject)
 	{
-		$this->do_execute($subject);
+		$result = $this->do_execute($subject);
 		return $result->is_match();
 	}
 

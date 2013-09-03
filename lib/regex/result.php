@@ -38,6 +38,7 @@ class result
 	protected	$_subject;
 
 	private		$results;		/**< used to store preg_match_all results */
+	private		$result_count;	/**< used to store preg_match_all match count */
 
 	private		$captures;		/**< collection of iterators by capture index or name */
 	private		$records;		/**< collection of matching records */
@@ -49,15 +50,16 @@ class result
 
 		parent::__construct();
 
-		$this->results = null;
-		$this->captures = null;
-		$this->records = null;
-
 		$this->do_execute();
 	}
 
 	private		function do_execute()
 	{
+		$this->results = null;
+		$this->result_count = 0;
+		$this->captures = null;
+		$this->records = null;
+
 		$success = preg_match_all
 			( $this->expression->pattern
 			, $this->subject
@@ -66,11 +68,13 @@ class result
 
 		if(false === $success)
 			throw $this->_exception_preg_failed();
+
+		$this->result_count = $success;
 	}
 
 	public		function is_match()
 	{
-		return $this->has_captured(0);
+		return $this->result_count > 0;
 	}
 
 	public		function has_captured($index)
@@ -80,26 +84,7 @@ class result
 
 	public		function iterate_records()
 	{
-		if(is_null($this->records))
-		{
-			$this->records = h\collection();
-			foreach($this->results as $record)
-			{
-				$row = h\collection();
-				foreach($record as $index_name => $match)
-				{
-					$pair = new h\pair;
-					$pair->begin = $match[1];
-					$pair->end = $pair->begin + strlen($match[0]);
-
-					$row[$index_name] = $pair;
-				}
-
-				$this->records[] = $row;
-			}
-		}
-
-		return clone $this->records;
+		return clone $this->ref_records();
 	}
 
 	public		function iterate_matches()
@@ -113,8 +98,7 @@ class result
 		if(!isset($this->results[0][$index]))
 			throw $this->_exception_format('Capture \'%s\' doesn\'t exist', $index);
 
-		$records = $this->iterate_records();
-		return $records->get_column($index);
+		return $this->ref_records()->get_column($index);
 	}
 
 	public		function iterate_captures_by_name(h\string $name)
@@ -140,5 +124,32 @@ class result
 		$exception = $this->_exception_format('PREG failed \'%s\'', $error);
 
 		return $exception;
+	}
+
+	private		function load_results()
+	{
+		$this->records = h\collection();
+		foreach($this->results as $record)
+		{
+			$row = h\collection();
+			foreach($record as $index_name => $match)
+			{
+				$pair = new h\pair;
+				$pair->begin = $match[1];
+				$pair->end = $pair->begin + strlen($match[0]);
+
+				$row[$index_name] = $pair;
+			}
+
+			$this->records[] = $row;
+		}
+	}
+
+	private		function ref_records()
+	{
+		if(is_null($this->records))
+			$this->load_results();
+
+		return $this->records;
 	}
 }
