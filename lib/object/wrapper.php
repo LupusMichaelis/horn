@@ -96,5 +96,12 @@ class wrapper
 	{
 		return $this->_exception('The implementation isn\'t set');
 	}
+
+	public		function _clone()
+	{
+		$clonee = new static;
+		$clonee->set_impl(clone $this->get_impl());
+		return $clonee;
+	}
 }
 

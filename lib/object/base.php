@@ -209,7 +209,7 @@ class base
 			$s = $this->_to_string();
 		} catch(\exception $e) {
 			/// @todo better format
-			die($e->getMessage());
+			die($e->xdebug_message or $this->getMessage());
 		}
 
 		return (string) $s;

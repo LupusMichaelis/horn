@@ -41,6 +41,7 @@ define('DEBUG', true);
 $available_units = array
 	( 'test'
 	, 'object'
+	, 'wrapper'
 	, 'collection'
 	, 'stack'
 	, 'string'
