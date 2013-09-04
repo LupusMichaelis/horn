@@ -38,6 +38,13 @@ function regex($pattern)
 	return new h\regex\expression($pattern);
 }
 
+function regex_execute($pattern, $subject)
+{
+	$re = regex($pattern);
+	$subject = h\string($subject);
+	return $re->do_execute($subject);
+}
+
 function regex_match($pattern, $subject)
 {
 	$re = regex($pattern);
