@@ -34,6 +34,12 @@ h\import('lib/component');
 class http_controllers
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+		@$ctx->results = null;
+		@$ctx->error_handling = null;
+	}
+
 	protected		function do_before(context $ctx)
 	{
 		$ctx->results = h\collection();

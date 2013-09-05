@@ -34,6 +34,13 @@ h\import('lib/mustache');
 class template
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+		@$ctx->template = null;
+		@$ctx->template_name = null;
+		@$ctx->template_action = null;
+	}
+
 	protected		function do_before(context $ctx)
 	{
 		$ctx->template = new $this->configuration['template']['engine']($this->configuration['template']);

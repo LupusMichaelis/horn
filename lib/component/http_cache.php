@@ -34,6 +34,11 @@ h\import('lib/component');
 class http_cache
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+		@$ctx->out = null;
+	}
+
 	protected		function do_before(context $ctx)
 	{
 		$ctx->out->head['Cache-Control'] = 'no-cache';

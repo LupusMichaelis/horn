@@ -31,31 +31,50 @@ use \horn\lib as h;
 
 h\import('lib/component');
 h\import('lib/http');
+h\import('lib/uri');
 
 class http
 	extends base
 {
-	protected		function do_before(context $ctx)
+	public		function do_touch(context $ctx)
 	{
+		@$ctx->in = null;
+		@$ctx->out = null;
+	}
+
+	protected	function do_before(context $ctx)
+	{
+		$factory = new h\uri\factory;
+		$factory->do_register_factory(h\string('http')
+				, new h\http\uri_factory($factory));
+		$factory->do_register_factory(h\string('host')
+				, new h\uri\host_factory($factory));
+		$factory->do_register_factory(h\string('port')
+				, new h\uri\port_factory($factory));
+		$factory->do_register_factory(h\string('relative_path')
+				, new h\uri\path_factory($factory));
+		$factory->do_register_factory(h\string('absolute_path')
+				, new h\uri\path_factory($factory));
+
 		// create http_request, http_responce
-		$ctx->in = h\http\create_native();
+		$ctx->in = h\http\create_native($factory);
 		$ctx->out = new h\http\response;
 
 		return true;
 	}
 
-	protected		function do_after(context $ctx)
+	protected	function do_after(context $ctx)
 	{
 		$this->do_render($ctx);
 	}
 
-	private			function do_render(context $ctx)
+	private		function do_render(context $ctx)
 	{
 		$this->do_render_head($ctx);
 		$this->do_render_body($ctx);
 	}
 
-	private			function do_render_head(context $ctx)
+	private		function do_render_head(context $ctx)
 	{
 		header($ctx->out->status);
 		foreach($ctx->out->head as $name => $value)
@@ -63,7 +82,7 @@ class http
 			header(sprintf('%s: %s', $name, $value));
 	}
 
-	private			function do_render_body(context $ctx)
+	private		function do_render_body(context $ctx)
 	{
 		print $ctx->out->body->content;
 	}

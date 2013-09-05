@@ -33,6 +33,11 @@ h\import('lib/component');
 class logging
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+		@$ctx->logger = null;
+	}
+
 	protected	function do_before(context $ctx)
 	{
 		$ctx->logger = h\collection();

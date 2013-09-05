@@ -33,6 +33,10 @@ h\import('lib/component');
 class error
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+	}
+
 	protected	function do_before(context $ctx)
 	{
 		$ctx->error_handling = h\c(array('status' => true, 'messages' => h\collection()));

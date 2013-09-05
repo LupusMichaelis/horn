@@ -43,6 +43,7 @@ function build(h\configuration $configuration, context $ctx)
 		h\import('lib/component/'.$layer);
 		$component_class = "\\horn\\lib\\component\\$layer";
 		$component = new $component_class($configuration, $component);
+		$component->do_touch($ctx);
 	}
 
 	return $component;
@@ -70,11 +71,19 @@ class base
 			return; // The component failed, thus we shan't continue in inconsistant state
 
 		if($this->has_next())
+		{
+			//var_dump(get_class($this->next));
 			$this->next->do_process($ctx);
+		}
 		$this->do_after($ctx);
 
 		return $ctx;
 	}
+
+	/** Used to prepare context for use
+	 */
+	abstract
+	public		function do_touch(context $ctx);
 
 	abstract
 	protected	function do_before(context $ctx);

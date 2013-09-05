@@ -35,6 +35,11 @@ h\import('lib/string');
 class content_type
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+		@$ctx->out = null;
+	}
+
 	protected	function do_before(context $ctx)
 	{
 		$this->do_deduce_content_type($ctx);

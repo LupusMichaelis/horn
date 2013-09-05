@@ -35,6 +35,14 @@ class http_cors
 	extends base
 {
 	private		$http_verbs = array('POST', 'GET', 'DELETE', 'PUT');
+
+	public		function do_touch(context $ctx)
+	{
+		@$ctx->in = null;
+		@$ctx->out = null;
+		@$ctx->error_handling = null;
+	}
+
 	protected	function do_before(context $ctx)
 	{
 		$this->do_populate_head($ctx);

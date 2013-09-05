@@ -33,6 +33,10 @@ h\import('lib/component');
 class debug
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+	}
+
 	protected	function do_before(context $ctx)
 	{
 		ob_start();

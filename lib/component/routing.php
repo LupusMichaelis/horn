@@ -34,6 +34,13 @@ h\import('lib/component');
 class routing
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+		@$ctx->in = null;
+		@$ctx->route = null;
+		@$ctx->segments = null;
+	}
+
 	protected		function do_before(context $ctx)
 	{
 		return $this->do_routing($ctx);
@@ -45,7 +52,7 @@ class routing
 
 	private			function do_routing(context $ctx)
 	{
-		$path = $ctx->in->uri->path;
+		$path = $ctx->in->uri;
 
 		$routes = $this->configuration['routes'];
 		$ctrl = null;
@@ -53,14 +60,17 @@ class routing
 		$segments = \horn\lib\collection();
 		foreach($routes as $route_pattern => $route_ctrl)
 		{
-			$pattern = sprintf('@^%s$@', strtr($route_pattern, '@', '\@'));
-			if(1 === preg_match($pattern, $path, $matches))
+			$results = h\regex_execute("^$route_pattern$", $path);
+			if($results->is_match())
 			{
 				$ctrl = $route_ctrl;
 				$route = $route_pattern;
-				foreach($matches as $key => $value)
+
+				$match = $results->iterate_records()[0];
+
+				foreach($match as $key => $pair)
 					if(is_string($key))
-						$segments[$key] = \rawurldecode($value);
+						$segments[$key] = \rawurldecode($path->slice($pair->begin, $pair->end));
 				break;
 			}
 		}

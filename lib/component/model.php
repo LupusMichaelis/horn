@@ -14,6 +14,12 @@ h\import('lib/component');
 class model
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+		@$ctx->services = null;
+		@$ctx->model = null;
+	}
+
 	protected		function do_before(context $ctx)
 	{
 		$model_class = $this->configuration['model'];

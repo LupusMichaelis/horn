@@ -34,6 +34,11 @@ h\import('lib/component');
 class services
 	extends base
 {
+	public		function do_touch(context $ctx)
+	{
+		@$ctx->services = null;
+	}
+
 	protected		function do_before(context $ctx)
 	{
 		$ctx->services = h\get_service_provider($this->configuration);
