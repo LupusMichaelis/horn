@@ -396,7 +396,6 @@ class string
 		return new static($converted, $charset);
 	}
 
-
 	// arrayaccess ///////////////////////////////////////////////////////
 	public		function offsetUnset($offset)
 	{
