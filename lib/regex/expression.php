@@ -28,12 +28,16 @@
 namespace horn\lib\regex;
 use \horn\lib as h;
 
+h\import('lib/object');
+h\import('lib/regex/escaper');
+
 class expression
 	extends		h\object\public_
 {
 	const		default_delemeter = '`';
 	protected	$_pattern;
 	protected	$_delimiter;
+	private		$escaper;
 
 	public		function __construct(h\string $pattern, h\string $delimiter = null)
 	{
@@ -44,7 +48,8 @@ class expression
 
 		parent::__construct();
 
-		$this->pattern = $pattern;
+		$this->_pattern = $pattern;
+		$this->escaper = new escaper(h\string($pattern->charset));
 	}
 	
 	protected	function _clone()
@@ -61,13 +66,13 @@ class expression
 
 	protected	function _set_pattern(h\string $pattern)
 	{
-		$pattern->escape($this->delimiter);
+		$pattern = $this->escaper->do_escape($pattern, $this->delimiter);
 		$this->_pattern->assign($pattern);
 	}
 
 	protected	function _set_delimiter(h\string $delimiter)
 	{
-		$this->_pattern->unescape($this->delimiter);
+		$pattern = $this->escaper->do_unescape($pattern, $this->delimiter);
 		$this->delimiter = $delimiter;
 		$this->_set_pattern($this->_pattern);
 	}

@@ -29,7 +29,8 @@ namespace horn\lib\escaper;
 use \horn\lib as h;
 
 h\import('lib/object');
-
+h\import('lib/collection');
+h\import('lib/string');
 
 abstract
 class base
@@ -46,3 +47,42 @@ class base
 
 }
 
+class generic
+	extends base
+{
+	protected	$_map;
+
+	public		function __construct(h\string $charset)
+	{
+		$this->_map = h\collection();
+		parent::__construct($charset);
+	}
+
+	public		function &_set_map(h\collection $pairs)
+	{
+		if($pairs->keys()->unique()->count() !== $pairs->values->count())
+			throw $this->_exception_invalid_map();
+
+		$this->_map = $pairs;
+	}
+
+	public		function do_escape(h\string $subject)
+	{
+		$escaped = strtr($subject, $this->_map);
+
+		if(false === $escaped)
+			throw $this->_exception_invalid_map();
+
+		$escaped = h\string($escaped);
+		return $escaped;
+	}
+
+	public		function do_unescape(h\string $subject)
+	{
+	}
+
+	protected	function _exception_invalid_map()
+	{
+		return $this->_exception('Invalid translation map provided');
+	}
+}
