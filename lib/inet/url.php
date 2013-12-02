@@ -39,7 +39,7 @@ h\import('lib/regex-defs');
 
 abstract
 class url
-	extends h\uri_absolute
+	extends h\uri\absolute
 {
 	public		function __construct()
 	{

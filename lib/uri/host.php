@@ -40,6 +40,11 @@ class host
 		return parent::is_supported($impl)
 			&& ($impl instanceof h\inet\ip || $impl instanceof h\inet\host);
 	}
+
+	public		function _to_string()
+	{
+		return $this->_call('_to_string', array());
+	}
 }
 
 class host_factory

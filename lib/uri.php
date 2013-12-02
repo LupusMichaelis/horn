@@ -25,6 +25,11 @@
  *
  */
 
+/* Before you mess URI, please read http://www.w3.org/TR/uri-clarification/
+   http://www.ietf.org/rfc/rfc3986.txt
+ */
+
+
 namespace horn\lib;
 use \horn\lib as h;
 
@@ -35,45 +40,9 @@ h\import('lib/regex-defs');
 
 h\import('lib/uri/factory');
 
+h\import('lib/uri/absolute');
 h\import('lib/uri/scheme');
 h\import('lib/uri/scheme_specific_part');
 h\import('lib/uri/port');
-
-/* Before you mess this, please read http://www.w3.org/TR/uri-clarification/
- */
-
-abstract
-class uri_absolute
-	extends		h\object_public
-{
-	public		function __construct()
-	{
-		$this->_scheme = new h\uri\scheme;
-		$this->_scheme_specific_part = new h\uri\scheme_specific_part;
-
-		parent::__construct();
-	}
-
-	abstract
-	protected function is_scheme_supported(h\string $scheme);
-
-	protected	function _to_string()
-	{
-		$literal = h\string::format('%s:%s', $this->scheme, $this->scheme_specific_part);
-		return (string) $literal;
-	}
-
-	protected	function _set_scheme(h\string $scheme)
-	{
-		if(!$this->is_scheme_supported($scheme))
-			throw $this->_exception('Scheme is not supported');
-
-		$this->_scheme->assign($scheme);
-	}
-
-	protected	$_scheme;
-	protected	$_scheme_specific_part;
-	protected	$_search;
-	protected	$_fragment;
-}
+h\import('lib/uri/query');
 

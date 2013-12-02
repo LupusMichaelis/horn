@@ -28,19 +28,21 @@
 namespace horn\lib\uri;
 use \horn\lib as h;
 
-h\import('lib/string');
+h\import('lib/collection');
+h\import('lib/uri');
 
-class scheme
-	extends h\string
-{
-}
 
-class scheme_factory
-	extends specific_factory
+class query
+	extends h\collection
 {
-	public		function do_feed(h\string $meat)
+	public function _to_string()
 	{
+		$collection = h\collection();
+
+		foreach($this as $name => $value)
+			$collection[] = rawurlencode($name) . '=' . rawurlencode($value);
+
+		return $collection->implode('&');
 	}
 }
-
 

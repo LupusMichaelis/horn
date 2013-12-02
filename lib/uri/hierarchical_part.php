@@ -44,7 +44,6 @@ class authority
 		$this->_user		= h\string('');
 		$this->_password	= h\string('');
 		$this->_host		= new h\uri\host;
-		$this->_port		= 80;
 		parent::__construct();
 	}
 
@@ -76,15 +75,45 @@ class hierarchical_part
 {
 	public		function __construct()
 	{
+		$this->_authority = new authority;
 		$this->_path = new path;
+		$this->_query = new query;
 	}
 
 	public		function _to_string()
 	{
-		return $this->_path->_to_string();
+		$s = $this->_path->_to_string();
+		if($this->_query->count())
+			$s->append(h\string('?'))->append($this->_query->_to_string());
+
+		return $s;
 	}
 
+	protected	function _set_path($path)
+	{
+		if($path instanceof h\path)
+			$this->_path->assign($path);
+		elseif($path instanceof h\collection)
+			$this->_path->segments = $path;
+		else
+			throw $this->_exception('XXX');
+
+	}
+
+	protected	function &_get_authority()
+	{
+		$authority = $this->_path->authority;
+		return $authority;
+	}
+
+	protected	function _set_authority($value)
+	{
+		$this->_path->authority = $value;
+	}
+
+	protected	$_authority;
 	protected	$_path;
+	protected	$_query;
 }
 
 /**

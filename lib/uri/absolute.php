@@ -24,49 +24,43 @@
  *  along with Horn Framework.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace horn\lib\http;
-use horn\lib as h;
 
-h\import('lib/inet/url');
-h\import('lib/uri/path');
+namespace horn\lib\uri;
+use \horn\lib as h;
 
-/**
- *	\code
- *	(https|http)://<user>:<pass>@<host>:<port>/<path>?<searchpart>
- *	\endcode
- */
-class url
-	extends		h\inet\url
+h\import('lib/object');
+
+abstract
+class absolute
+	extends		h\object_public
 {
-	const		default_port = 80;
-	const		default_secured_port = 443;
-
 	public		function __construct()
 	{
+		$this->_scheme = new h\uri\scheme;
+		$this->_scheme_specific_part = new h\uri\scheme_specific_part;
+
 		parent::__construct();
-		$this->port = static::default_port;
 	}
 
-	public		function is_scheme_supported(h\string $scheme)
+	abstract
+	protected function is_scheme_supported(h\string $scheme);
+
+	protected	function _to_string()
 	{
-		return in_array($scheme->to_lower(), array('http', 'https'));
+		$literal = h\string::format('%s:%s', $this->scheme, $this->scheme_specific_part);
+		return (string) $literal;
 	}
-}
 
-class uri_factory
-	extends h\uri\specific_factory
-{
-	public			$secured = false;
-
-	public function	do_feed(h\string $meat)
+	protected	function _set_scheme(h\string $scheme)
 	{
-		$uri = new url;
-		$uri->scheme = h\string($this->secured ? 'https' : 'http');
-		$uri->hierarchical_part = $this->master->factories['hierarchical_part']->do_feed($meat);
-		// XXX check authority is present and throw an error if not
-		$uri->query = $this->master->factories['query']->do_feed($meat);
-		$uri->fragment = $this->master->factories['fragment']->do_feed($meat);
+		if(!$this->is_scheme_supported($scheme))
+			throw $this->_exception('Scheme is not supported');
 
-		return $uri;
+		$this->_scheme->assign($scheme);
 	}
+
+	protected	$_scheme;
+	protected	$_scheme_specific_part;
+	protected	$_search;
+	protected	$_fragment;
 }

@@ -40,8 +40,24 @@ class path
 			&& ($impl instanceof h\uri\absolute_path
 					|| $impl instanceof h\uri\net_path
 					|| $impl instanceof h\uri\empty_path
+					|| $impl instanceof h\uri\hierarchical_part
 					);
 	}
+
+	public		function _to_string()
+	{
+		return $this->_call('_to_string', array());
+	}
+
+	/*
+	protected	function _set_segments(h\collection $segments)
+	{
+		if(!$this->has_impl())
+			$this->set_impl(new absolute_path);
+
+		$this->get_impl()->_set_segments($segments);
+	}
+	*/
 }
 
 class net_path
@@ -135,11 +151,13 @@ class path_factory
 	{
 		$impl = new absolute_path;
 
-		$re = new h\regex(RE_PATH);
-		if(!$re->match($meat))
-			throw $this->_exception('???');
+		$re_result = h\regex_execute(RE_PATH, $meat);
+		if(!$re_result->is_match())
+			throw $this->_exception('The provided string doesn\'t match an absolute path');
 
-		$path = $meat->behead($re->get_matches()[0][1]);
+		$match_boundaries = $re_result->iterate_matches()[0];
+
+		$path = $meat->behead($match_boundaries->end);
 		$impl->segments = $path->explode('/');
 
 		return $impl;
