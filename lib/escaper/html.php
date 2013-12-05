@@ -25,31 +25,55 @@
  *
  */
 
-
 namespace horn\lib\escaper\html;
 use \horn\lib as h;
 
 h\import('lib/object');
+h\import('lib/escaper');
 
+abstract
 class base
-	extends h\escaper
+	extends h\escaper\base
 {
 	/** \see http://php.net/manual/en/function.htmlentities.php */
-	private		function php_htmlentities(/* ... */)
+	protected	function php_htmlentities(/* ... */)
 	{
 		$args = func_get_args();
+		$this->filter_args($args);
+		$result = call_user_func_array('htmlentities', $args);
+		// If htmlentities encounter an invalid character, it returns an empty string
+		$this->check_return($args, $result);
 
+		return $result;
+	}
+
+	/** \see http://www.php.net/manual/en/function.html-entity-decode.php */
+	protected	function php_html_entity_decode(/* ... */)
+	{
+		$args = func_get_args();
+		$this->filter_args($args);
+		$result = call_user_func_array('html_entity_decode', $args);
+	}
+
+	protected	function filter_args(& /* io */ $args)
+	{
 		$args[1] |= ENT_HTML401;
 		//
 		if('ASCII' === $args[2])
 			$args[2] = 'ISO-8859-15';
+	}
 
-		$result = call_user_func_array('htmlentities', $args);
-		// If htmlentities encounter an invalid character, it returns an empty string
+	protected	function check_return(& /* i */ $args, & /* i */ $result)
+	{
 		if('' !== $args[0] && '' === $result)
 			throw $this->_exception('Encoding issue while escaping an HTML string');
+	}
 
-		return $result;
+	protected	function copy_and_convert(h\string $from)
+	{
+		return $from->charset != $this->charset
+			? $from->to_converted($this->charset)
+			: clone $from;
 	}
 }
 
@@ -66,7 +90,10 @@ class text
 
 	public		function do_unescape(h\string $text)
 	{
-		throw $this->_exception_not_implemented(__CLASS__, __FUNCTION__);
+		$result = $this->copy_and_convert($text);
+		$result->scalar = $this->php_html_entity_decode($result->scalar, ENT_NOQUOTES, $result->charset);
+
+		return $result;
 	}
 }
 
@@ -82,7 +109,10 @@ class attribute
 
 	public		function do_unescape(h\string $text)
 	{
-		throw $this->_exception_not_implemented(__CLASS__, __FUNCTION__);
+		$result = $this->copy_and_convert($text);
+		$result->scalar = $this->php_html_entity_decode($result->scalar, ENT_QUOTES, $result->charset);
+
+		return $result;
 	}
 }
 

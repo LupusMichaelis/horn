@@ -61,6 +61,7 @@ class json
 }
 
 h\import('lib/render/escaper');
+h\import('lib/render/html');
 h\import('lib/render/strategy');
 
 class html
@@ -77,12 +78,23 @@ class html
 	{
 		//$this->configuration['template']['path'];
 		$this->_strategy = new php_include_strategy;
-		$this->strategy->escaper = new h\render\html_escaper(h\string('UTF-8'));
+		$this->strategy->escaper = new h\render\html_escaper_helper(h\string('UTF-8'));
 		$this->strategy->path = $this->configuration['template']['path'];
 	}
 
 	public		function do_render(h\component\context $context)
 	{
+		if(is_null($context->results))
+		{
+			$result_type = null;
+			$result_value = null;
+		}
+		else
+		{
+			$result_type = $context->results->key();
+			$result_value = $context->results;
+		}
+
 		$view_context = (object) array
 			( 'errors' => $context->error_handling['messages']
 			, 'doc' => (object) array
@@ -90,9 +102,9 @@ class html
 				, 'styles' => $this->configuration['styles']
 				, 'title' => $this->configuration['title']
 				)
-			, 'results' => $context->results
+			, 'results' => $result_value
 			, 'params' => array
-				( 'resource' => $context->results->key()
+				( 'resource' => $result_type
 				, 'action' => $context->template_action
 				, 'type' => 'html'
 				)

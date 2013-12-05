@@ -1,9 +1,9 @@
 <?php
 /** Rendering strategy
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2013, Lupus Michaelis
+ *  \copyright	2013, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -30,15 +30,19 @@ use \horn\lib as h;
 
 h\import('lib/object');
 
-class html_escaper
+class html_escaper_helper
 	extends h\object_public
 {
+	private		$escapers = array();
 	protected	$_charset;
 
 	public		function __construct(h\string $charset)
 	{
 		$this->_charset = clone $charset;
 		parent::__construct();
+
+		$this->escapers['text'] = new h\escaper\html\text($this->_charset);
+		$this->escapers['attribute'] = new h\escaper\html\attribute($this->_charset);
 	}
 
 	private		function copy_and_convert(h\string $text)
@@ -46,46 +50,12 @@ class html_escaper
 		return $text->to_converted($this->charset);
 	}
 
-	/** \see http://php.net/manual/en/function.htmlentities.php */
-	private		function php_htmlentities(/* ... */)
-	{
-		$args = func_get_args();
-
-		$args[1] |= ENT_HTML401;
-		//
-		if('ASCII' === $args[2])
-			$args[2] = 'ISO-8859-15';
-
-		$result = call_user_func_array('htmlentities', $args);
-		// If htmlentities encounter an invalid character, it returns an empty string
-		if('' !== $args[0] && '' === $result)
-			throw $this->_exception('Encoding issue while escaping an HTML string');
-
-		return $result;
-	}
-
-	public		function do_escape_text(h\string $text)
-	{
-		$result = $this->copy_and_convert($text);
-		$result->scalar = $this->php_htmlentities($result->scalar, ENT_NOQUOTES, $result->charset);
-
-		return $result;
-	}
-
-	public		function do_escape_attribute(h\string $text)
-	{
-		$result = $this->copy_and_convert($text);
-		$result->scalar = $this->php_htmlentities($result->scalar, ENT_QUOTES, $result->charset);
-		return $result;
-	}
-
-	// Helpers ////////////////////////////////
 	public		function t($text)
 	{
 		if(! $text instanceof h\string)
 			$text = h\string($text);
 
-		return $this->do_escape_text($text);
+		return $this->escapers['text']->do_escape($text);
 	}
 
 	public		function a($text)
@@ -93,7 +63,7 @@ class html_escaper
 		if(! $text instanceof h\string)
 			$text = h\string($text);
 
-		return $this->do_escape_attribute($text);
+		return $this->escapers['attribute']->do_escape($text);
 	}
 }
 
