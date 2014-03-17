@@ -59,6 +59,7 @@ $available_units = array
 	, 'url_factory_http'
 
 	, 'regex'
+	, 'escaper'
 	);
 
 // We throw some exception and catch them, to test behaviour. Xdebug will trace exception

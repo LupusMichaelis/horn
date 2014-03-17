@@ -12,16 +12,14 @@ class test_escaper
 {
 	public		function do_escape(h\string $text)
 	{
-		$copy = $text->scalar;
-		$copy = strtr($copy, array('\\' => '\\\\'));
-		return h\string($copy);
+		$text = strtr($text, array('\\' => '\\\\'));
+		return h\string($text);
 	}
 
 	public		function do_unescape(h\string $text)
 	{
-		$copy = $text->scalar;
-		$copy = strtr($copy, array('\\\\' => '\\'));
-		return h\string($copy);
+		$text = strtr($text, array('\\\\' => '\\'));
+		return h\string($text);
 	}
 }
 

@@ -31,6 +31,7 @@ use \horn\lib as h;
 h\import('lib/object');
 h\import('lib/mustache/tag');
 h\import('lib/mustache/processor');
+h\import('lib/escaper/html');
 
 interface escaper
 {
@@ -40,7 +41,7 @@ interface escaper
 // XXX
 h\import('lib/render');
 class html_escaper
-	extends h\render\html_escaper
+	extends h\render\html_escaper_helper
 	implements escaper
 {
 	public		function do_escape($any)
