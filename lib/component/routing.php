@@ -52,12 +52,12 @@ class routing
 
 	private			function do_routing(context $ctx)
 	{
-		$path = $ctx->in->uri;
+		$path = $ctx->in->uri->path->_to_string();
 
 		$routes = $this->configuration['routes'];
 		$ctrl = null;
 		$matches = array();
-		$segments = \horn\lib\collection();
+		$segments = h\collection();
 		foreach($routes as $route_pattern => $route_ctrl)
 		{
 			$results = h\regex_execute("^$route_pattern$", $path);
@@ -79,8 +79,9 @@ class routing
 		$http_method = $ctx->in->method;
 		if(is_null($ctrl))
 		{
-			$ctx->out->status = 'HTTP/1.1 404 Not Found';
-			$msg = sprintf('Non-supported method \'%s\'', $http_method, $path);
+			$ctx->out->status = 'HTTP/1.1 405 Method Not Allowed';
+			$tpl = 'Non-supported method \'%s\' on \'%s\'';
+			$msg = h\string::format($tpl, $http_method, $path);
 			$ctx->error_handling['status'] = false;
 			$ctx->error_handling['messages'][] = $msg;
 			return false;

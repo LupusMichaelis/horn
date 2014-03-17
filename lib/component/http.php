@@ -44,20 +44,8 @@ class http
 
 	protected	function do_before(context $ctx)
 	{
-		$factory = new h\uri\factory;
-		$factory->do_register_factory(h\string('http')
-				, new h\http\uri_factory($factory));
-		$factory->do_register_factory(h\string('host')
-				, new h\uri\host_factory($factory));
-		$factory->do_register_factory(h\string('port')
-				, new h\uri\port_factory($factory));
-		$factory->do_register_factory(h\string('relative_path')
-				, new h\uri\path_factory($factory));
-		$factory->do_register_factory(h\string('absolute_path')
-				, new h\uri\path_factory($factory));
-
 		// create http_request, http_responce
-		$ctx->in = h\http\create_native($factory);
+		$ctx->in = h\http\create_native();
 		$ctx->out = new h\http\response;
 
 		return true;
@@ -79,7 +67,7 @@ class http
 		header($ctx->out->status);
 		foreach($ctx->out->head as $name => $value)
 			// TODO: escape name and values to avoid header injection
-			header(sprintf('%s: %s', $name, $value));
+			header(sprintf('%s: %s', $name, $value instanceof h\object\base ? $value->_to_string() : (string) $value));
 	}
 
 	private		function do_render_body(context $ctx)

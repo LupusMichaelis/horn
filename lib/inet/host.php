@@ -115,6 +115,7 @@ class host
 	extends h\object\public_
 {
 	protected	$_segments;
+
 	public		function __construct()
 	{
 		$this->_segments = h\collection();

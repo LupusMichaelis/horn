@@ -31,8 +31,21 @@ use \horn\lib as h;
 h\import('lib/string');
 
 class scheme_specific_part
-	extends h\string
+	extends h\object\wrapper
 {
+	protected	function is_supported(h\object\base $impl)
+	{
+		return parent::is_supported($impl)
+			&& $impl instanceof h\uri\hierarchical_part;
+	}
+
+	public		function _to_string()
+	{
+		try {
+		return $this->_call('_to_string', array());
+		} catch(\exception $e) {
+		}
+	}
 }
 
 

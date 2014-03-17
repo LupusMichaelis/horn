@@ -36,8 +36,8 @@ use horn as h;
 
 import('lib/object');
 
-const KILOBI = 1024;
-const MEGABI = 1048576;
+const kilobi = 1024;
+const megabi = 1048576;
 
 function path($string)
 {
@@ -45,27 +45,22 @@ function path($string)
 		$string = h\string($string);
 
 	$path = new path($string);
+	return $path;
 }
 
 class path
 	extends		h\object_public
 {
-	public		function __construct(string_ex $path)
+	public		function __construct(h\string $path)
 	{
-		$this->_path = $path->explode('/');
+		$this->_literal = $path->explode('/');
 	}
-
-	protected	function _set_path(string $path)
-	{
-	}
-
-	protected	$_path;
 }
 
 class filesystem
 {
 	static
-	public		function exists($filename)
+	public		function exists(h\string $file_path)
 	{
 	}
 }

@@ -33,7 +33,7 @@ class request
 
 	public		function __construct()
 	{
-		$this->_uri = new url(h\string(''));
+		$this->_uri = new h\uri\path();
 		parent::__construct();
 	}
 

@@ -40,14 +40,49 @@ const		PUT = 'PUT';
 const		DELETE = 'DELETE';
 const		OPTIONS = 'OPTIONS';
 
+class request_uri
+	extends h\object_public
+{
+	public $path;
+	public $search;
+
+	public function _to_string()
+	{
+		$string = $this->path->_to_string();
+		if($this->search->count())
+		{
+			$string->append(h\string('?'));
+			$string->append($this->search->_to_string());
+		}
+
+		return $string;
+	}
+}
+
 function create_native()
 {
+	//
 	$native = new request;
-	$native->head['host'] = h\string($_SERVER['HTTP_HOST']);
+	$native->head['host'] = new h\uri\host;
+	// XXX Assume we have a hostname
+	$native->head['host']->set_impl(new h\inet\host);
+	$native->head['host']->segments = h\string($_SERVER['HTTP_HOST'])->explode(h\string('.'));
 	$native->head['cookie'] = h\collection::merge($_COOKIE);
 
 	$native->method = validate_http_method($_SERVER['REQUEST_METHOD']);
-	$native->uri = new uri_request(h\string($_SERVER['REQUEST_URI']));
+	$native->uri = new h\http\request_uri;
+
+	$request_uri = h\string($_SERVER['REQUEST_URI']);
+	if(false !== $request_uri->search('?'))
+		list($path, ) = $request_uri->explode(h\string('?'));
+
+	$native->uri->path = new h\uri\absolute_path;
+	$native->uri->path->segments = $path->explode(h\string('/'));
+	$native->uri->search = new h\uri\query;
+
+	foreach($_GET as $name => $value)
+		$native->uri->search[$name] = $value;
+
 	$native->version = h\string($_SERVER['SERVER_PROTOCOL']);
 
 	$native->body = new body;

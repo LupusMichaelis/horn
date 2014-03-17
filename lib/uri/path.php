@@ -94,7 +94,7 @@ class absolute_path
 
 	public		function _to_string()
 	{
-		return $this->_segments->implode('/')->prepend(h\string('/'));
+		return $this->_segments->implode('/');//->prepend(h\string('/'));
 	}
 }
 
@@ -124,7 +124,6 @@ class path_factory
 			throw $this->_exception('No path');
 
 		$path->set_impl($impl);
-
 
 		return $path;
 	}

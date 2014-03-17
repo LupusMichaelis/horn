@@ -9,53 +9,111 @@ h\import('lib/uri/path');
 class test_suite_path
 	extends t\suite
 {
-	private		$factory;
-
-	public		function __construct($message = 'URL Factory')
+	public		function __construct($message = 'Path')
 	{
 		parent::__construct($message);
 
-		$factory = new h\uri\factory;
-		$factory->do_register_factory(h\string('path')
-				, new h\uri\path_factory($factory));
-		$factory->do_register_factory(h\string('port')
-				, new h\uri\port_factory($factory));
-		$factory->do_register_factory(h\string('host')
-				, new h\uri\host_factory($factory));
-		$factory->do_register_factory(h\string('authority')
-				, new h\uri\authority_factory($factory));
-		$factory->do_register_factory(h\string('hierarchical_part')
-				, new h\uri\hierarchical_part_factory($factory));
-
-		$this->providers[] = function() { return '/'; };
-		$this->providers[] = function() { return '/toto'; };
-		$this->providers[] = function() { return '//toto'; };
-		$this->providers[] = function() { return '//toto/tata'; };
-		$this->providers[] = function() { return '//toto/tata/'; };
-		$this->providers[] = function() { return '//toto/tata/tutu'; };
-		$this->providers[] = function() { return '//example.com/tata/tutu'; };
-		//$this->providers[] = function() { return '//example.com:8080/tata/tutu'; };
-		$this->factory = $factory;
+		$this->providers[] = function() { null; };
 	}
 
 	protected	function _test_create_http_uri()
 	{
-
 		$messages = array('Path');
 		$expected_exception = null;
 
-		$factory = $this->factory;
-		$suspect = $this->target;
-
-		$callback = function () use ($factory, $suspect)
+		$callback = function()
 		{
-			$suspect = h\string($suspect);
-			$url = $factory->create(clone $suspect);
-			return $url instanceof h\uri\hierarchical_part
-				&& h\string($url)->is_equal($suspect);
+			$path = new h\uri\path;
+			$path->set_impl(new h\uri\net_path);
+
+			$path->authority->host->set_impl(new h\inet\host);
+			$path->path->set_impl(new h\uri\empty_path);
+
+			return h\string('//')->is_equal($path->_to_string());
+		};
+		$this->add_test($callback, $messages, $expected_exception);
+	}
+
+	protected	function _test_create_http_uri_localhost()
+	{
+		$messages = array('Path with //localhost');
+		$expected_exception = null;
+
+		$callback = function()
+		{
+			$path = new h\uri\path;
+			$path->set_impl(new h\uri\net_path);
+
+			$path->authority->host->set_impl(new h\inet\host);
+			$path->authority->host->segments[] = 'localhost';
+			$path->path->set_impl(new h\uri\empty_path);
+
+			return h\string('//localhost')->is_equal($path->_to_string());
+		};
+		$this->add_test($callback, $messages, $expected_exception);
+	}
+
+	protected	function _test_create_http_uri_example_com()
+	{
+		$messages = array('Path with //example.com');
+		$expected_exception = null;
+
+		$callback = function()
+		{
+			$path = new h\uri\path;
+			$path->set_impl(new h\uri\net_path);
+
+			$path->authority->host->set_impl(new h\inet\host);
+			$path->authority->host->segments[] = 'example';
+			$path->authority->host->segments[] = 'com';
+			$path->path->set_impl(new h\uri\empty_path);
+
+			return h\string('//example.com')->is_equal($path->_to_string());
+		};
+		$this->add_test($callback, $messages, $expected_exception);
+	}
+
+	protected	function _test_create_http_uri_example_com_here()
+	{
+		$messages = array('Path with //example.com/here');
+		$expected_exception = null;
+
+		$callback = function()
+		{
+			$path = new h\uri\path;
+			$path->set_impl(new h\uri\net_path);
+
+			$path->authority->host->set_impl(new h\inet\host);
+			$path->authority->host->segments[] = 'example';
+			$path->authority->host->segments[] = 'com';
+			$path->path->set_impl(new h\uri\absolute_path);
+			$path->path->segments[] = 'here';
+
+			return h\string('//example.com/here')->is_equal($path->_to_string());
+		};
+		$this->add_test($callback, $messages, $expected_exception);
+	}
+
+	protected	function _test_create_http_uri_example_com_here_params()
+	{
+		$messages = array('Path with //example.com/here?first=one');
+		$expected_exception = null;
+
+		$callback = function()
+		{
+			$wrapper = new h\uri\path;
+			$wrapper->set_impl(new h\uri\hierarchical_part);
+			$wrapper->path->set_impl(new h\uri\net_path);
+			$wrapper->authority->host->set_impl(new h\inet\host);
+
+			$wrapper->authority->host->segments[] = 'example';
+			$wrapper->authority->host->segments[] = 'com';
+			$wrapper->path->path->set_impl(new h\uri\absolute_path);
+			$wrapper->path->path->segments[] = 'here';
+			$wrapper->query['first'] = 'one';
+
+			return h\string('//example.com/here?first=one')->is_equal($wrapper->_to_string());
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}
 }
-
-

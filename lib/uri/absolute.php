@@ -45,10 +45,11 @@ class absolute
 	abstract
 	protected function is_scheme_supported(h\string $scheme);
 
-	protected	function _to_string()
+	public	function _to_string()
 	{
 		$literal = h\string::format('%s:%s', $this->scheme, $this->scheme_specific_part);
-		return (string) $literal;
+
+		return $literal;
 	}
 
 	protected	function _set_scheme(h\string $scheme)
