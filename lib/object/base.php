@@ -209,7 +209,7 @@ class base
 			$s = $this->_to_string();
 		} catch(\exception $e) {
 			/// @todo better format
-			die($e->xdebug_message or $this->getMessage());
+			die('' . $e->xdebug_message . $this->getMessage());
 		}
 
 		return (string) $s;
@@ -257,6 +257,8 @@ class base
 		return $this->is_same($compared) || $this == $compared;
 	}
 
+	/**
+	 */
 	final
 	public		function get_attributes_default_values()
 	{
@@ -265,6 +267,8 @@ class base
 		return $defaults;
 	}
 
+	/**
+	 */
 	final
 	public		function get_attributes_class()
 	{
@@ -272,6 +276,8 @@ class base
 				(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED);
 	}
 
+	/**
+	 */
 	final
 	public		function get_attributes_object()
 	{
@@ -461,6 +467,8 @@ class base
 		throw $this->_exception_format('Function \'%s\'::\'%s\' can\'t be handled', get_class($this), $method_name);
 	}
 
+	/**
+	 */
 	protected	function _call_exception($method_name, $arguments, &/*out*/$result)
 	{
 		$pos = strpos($method_name, '_exception');
@@ -481,19 +489,21 @@ class base
 		return true;
 	}
 
+	/**
+	 */
 	private		function get_exception_class()
 	{
 		return $this->exception_class;
 	}
 
-	/** \throw	exception
+	/**
 	 */
 	protected	function _exception_ex($exception_class, $msg)
 	{
 		return new $exception_class($msg, h\dump($this));
 	}
 
-	/** \throw	exception
+	/**
 	 */
 	protected	function _exception_format_ex($exception_class, $fmt)
 	{
@@ -503,14 +513,14 @@ class base
 		return $this->_exception_ex($exception_class, $msg);
 	}
 
-	/** \throw	exception
+	/**
 	 */
 	protected	function _exception_attribute_missing($name)
 	{
 		return $this->_exception_format('Attribute \'%s\' doesn\'t exist in \'%s\'.', $name, get_class($this)) ;
 	}
 
-	/** \throw exception
+	/**
 	 */
 	protected	function _exception_cant_assign_object($object_source)
 	{
@@ -520,7 +530,7 @@ class base
 				);
 	}
 
-	/** \throw exception
+	/**
 	 */
 	protected	function _exception_cant_set_attribute($object_source, $attr_name)
 	{
@@ -528,25 +538,28 @@ class base
 			 , get_class($object_source), $attr_name);
 	}
 
-	/** \throw exception
+	/**
 	 */
 	protected	function _exception_unexpected()
 	{
 		return $this->_exception('Unexpected happend.');
 	}
 
-	/** \throw exception
+	/**
 	 */
 	protected	function _exception_readonly_attribute($name)
 	{
 		return $this->_exception("Attribute '$name' is readonly.");
 	}
 
-	/** \throw exception
-	 */
 	protected	function _exception_missing_method($name)
 	{
 		return $this->_exception("Instance method '$name' is missing.");
+	}
+
+	protected	function _exception_not_implemented($class_name, $function_name)
+	{
+		return $this->_exception_format('Method \'%s::%s\' isn\'t implemented.', $class_name, $function_name);
 	}
 
 	private		function _reflection_of_object_()
