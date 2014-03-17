@@ -76,7 +76,7 @@ class story_resource
 	{
 		$title = $this->ctrl->get_segments()['title'];
 		$title = h\string($title);
-		$story = $this->ctrl->get_model()->get_by_title($title);
+		$story = $this->get_resource_model()->get_by_title($title);
 
 		if(!$this->is_managed($story))
 			throw $this->_exception_ex('\horn\lib\http\not_found', static::not_found);
@@ -88,7 +88,7 @@ class story_resource
 	{
 		$post = $this->ctrl->get_post_data();
 		$title = h\string($post['story_title']);
-		$story = $this->ctrl->get_model()->get_by_title($title);
+		$story = $this->get_resource_model()->get_by_title($title);
 		return $story;
 	}
 
@@ -102,17 +102,21 @@ class story_resource
 	public		function update_from_http_request_post_data($story)
 	{
 		$post = $this->ctrl->get_post_data();
+
+		if(!isset($post['story_title']) || !isset($post['story_description']))
+			throw $this->_exception('Incorrect POST');
+
 		$story->title = h\string($post['story_title']);
 		$story->description = h\string($post['story_description']);
 		$story->modified = h\today();
-		$this->ctrl->get_model()->update($story);
+		$this->get_resource_model()->update($story);
 	}
 
 	public		function delete($story)
 	{
 		$title = $this->ctrl->get_segments()['title'];
 		$title = h\string($title);
-		return $this->ctrl->get_model()->delete_by_title($title);
+		return $this->get_resource_model()->delete_by_title($title);
 	}
 
 	public		function uri_of($story)
@@ -152,7 +156,7 @@ class stories_resource
 
 	public		function made_of_http_request_uri()
 	{
-		$stories = $this->ctrl->get_model()->get_all();
+		$stories = $this->get_resource_model()->get_all();
 		if(! $this->is_managed($stories))
 			throw $this->_exception_ex('\horn\lib\http\not_found', static::not_found);
 
@@ -166,7 +170,7 @@ class stories_resource
 		for($idx = 0; $idx < $stories->count(); ++$idx)
 		{
 			$title = h\string($post['story_title'][$idx]);
-			$stories[$idx]->assign($this->ctrl->get_model()->get_by_title($title));
+			$stories[$idx]->assign($this->get_resource_model()->get_by_title($title));
 		}
 		return $stories;
 	}
@@ -181,7 +185,7 @@ class stories_resource
 			$stories[$idx]->title = h\string($post['story_title'][$idx]);
 			$stories[$idx]->description = h\string($post['story_description'][$idx]);
 			$stories[$idx]->modified = h\today();
-			$this->ctrl->get_model()->insert($stories[$idx]);
+			$this->get_resource_model()->insert($stories[$idx]);
 		}
 
 		return $stories;

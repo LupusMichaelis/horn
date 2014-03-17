@@ -25,7 +25,7 @@
  *
  */
 
-namespace horn\apps\user;
+namespace horn\apps\account;
 use \horn\lib as h;
 
 h\import('lib/collection');
@@ -86,6 +86,7 @@ class source
 	public		function get_all()
 	{
 		$rows = $this->source->query(h\string('select * from accounts'));
+
 		return $this->accounts_from_select($rows);
 	}
 

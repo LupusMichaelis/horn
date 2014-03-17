@@ -34,7 +34,7 @@
   <div>
     <ul>
       <li><a href='/stories'>Stories</a></li>
-      <li><a href='/users'>Users</a></li>
+      <li><a href='/accounts'>Accounts</a></li>
     </ul>
   </div>
 
@@ -58,9 +58,9 @@
         <div class='error'>
           <h2><?php echo $e->t($c->errors[0]);?></h2>
         </div>
-<?php else: ?>
+<?php endif ?>
         <div>
-<?php if($c->results->has_key($c->params['resource'])): ?>
+<?php if($c->results && $c->results->has_key($c->params['resource'])): ?>
 <?php    echo $this->r($c->params['resource']
             , $c->params['action']
             , $c->params['type']

@@ -32,16 +32,16 @@ return array
 
 	, 'locale' => 'en_US.UTF-8'
 
-/* XXX legacy
-	 'scheme' => 'http'
+	, 'scheme' => 'http'
 	, 'domain' => 'horn.localhost'
+/* XXX legacy
 	, 'base' => '/fakeroot'
 */
 
 	, 'db' => array
 		( 'type' => 'mysql' //\horn\lib\db\MYSQL
 		, 'host' => 'localhost'
-		, 'user' => null
+		, 'account' => null
 		, 'password' => null
 		, 'base' => null
 		, 'charset' => 'utf8'
@@ -56,7 +56,7 @@ return array
 		( 'read' => array
 			( 'type' => \horn\lib\db\MYSQL
 			, 'host' => 'localhost'
-			, 'user' => null
+			, 'account' => null
 			, 'password' => null
 			, 'base' => null
 			, 'charset' => 'utf8'
@@ -77,12 +77,14 @@ return array
 
 	, 'routes' => array
 		( '/'		=> '\horn\apps\blog\portal_controller'
-		, '/stories/(?<title>\w+)'
+		, '/stories/(?<title>.+)'
 					=> '\horn\apps\blog\story_controller'
 		, '/stories'
 					=> '\horn\apps\blog\stories_controller'
-		, '/users/(?<name>\w+)'
-					=> '\horn\apps\user\user_controller'
+		, '/accounts/(?<name>.+)'
+					=> '\horn\apps\blog\account_controller'
+		, '/accounts'
+					=> '\horn\apps\blog\accounts_controller'
 		, null		=> '\horn\apps\blog\legacy_controller'
 		)
 	, 'content_type' => array
@@ -122,7 +124,7 @@ return array
 		, 'type' => 'file'
 		, 'filename' => null
 		)
-	, 'model' => '\horn\apps\blog\source'
+	, 'model' => '\horn\apps\blog\model'
 	, 'scripts' => array()
 	, 'styles' => array()
 	);

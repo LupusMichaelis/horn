@@ -32,34 +32,136 @@ h\import('lib/collection');
 h\import('lib/string');
 h\import('lib/model');
 
-class source
-	extends h\model
+class account_data
+	extends h\model_data
 {
-	protected	$_source;
-	private		$cache;
+	const name = 'account';
 
-	public		function __construct(h\service_provider $service)
+	public		function get_all()
 	{
-		$this->_source = $service->get('db');
-		$this->cache = h\collection();
-		parent::__construct($service);
+		$db = $this->model->services->get('db');
+
+		$rows = $db->query(h\string('select * from accounts'));
+		return $this->create_accounts_from_select($rows);
 	}
 
-	public		function insert(story $story)
+	public		function get_by_name(h\string $name)
 	{
+		$db = $this->model->services->get('db');
+
+		$sql = h\string::format('select * from accounts where name = %s'
+				, $db->escape($name));
+		$rows = $db->query($sql);
+		$accounts = $this->create_accounts_from_select($rows);
+
+		return isset($accounts[0])
+			? $accounts[0]
+			: null;
+	}
+
+	public		function delete_by_name(h\string $name)
+	{
+		$db = $this->model->services->get('db');
+
+		$sql = h\string::format('delete from accounts where name=%s'
+				, $db->escape($name));
+		return $db->query($sql);
+	}
+
+	public		function insert(account $account)
+	{
+		$db = $this->model->services->get('db');
+
+		$sql = h\string::format(
+				'insert into accounts (name, email, created, modified)'
+				.'	values (%s, %s, %s, %s)'
+				, $db->escape($account->name)
+				, $db->escape($account->email)
+				, $db->escape($account->created->format(h\date::FMT_YYYY_MM_DD))
+				, $db->escape($account->modified->format(h\date::FMT_YYYY_MM_DD))
+				);
+		$db->query($sql);
+	}
+
+	public		function update(account $account)
+	{
+		$db = $this->model->services->get('db');
+
+		$id = $this->cache->search_first($account);
+		$sql = h\string::format(
+				'update accounts set name = %s'
+				.', email = %s'
+				.', created = %s'
+				.', modified = %s'
+				.' where id = %d'
+				, $db->escape($account->name)
+				, $db->escape($account->email)
+				, $db->escape($account->created->format(h\date::FMT_YYYY_MM_DD))
+				, $db->escape($account->modified->format(h\date::FMT_YYYY_MM_DD))
+				, $id
+				);
+		$db->query($sql);
+	}
+
+	public		function delete(account $account)
+	{
+		$db = $this->model->services->get('db');
+
+		$id = $this->cache->search_first($account);
+		$sql = h\string::format('delete from stories where id=%d', $id);
+		$db->query($sql);
+	}
+
+	private		function create_accounts_from_select($rows)
+	{
+		$accounts = new accounts;
+
+		foreach($rows as $row)
+		{
+			if(isset($this->cache[$row['id']]))
+				$new = $this->cache[$row['id']];
+			else
+			{
+				$new = account::create
+					( $row['name']
+					, $row['email']
+					, $row['created']
+					, $row['modified']
+					);
+				$this->cache[$row['id']] = $new;
+			}
+
+			$accounts->push($new);
+		}
+
+		return $accounts;
+	}
+}
+
+class story_data
+	extends h\model_data
+{
+	const name = 'story';
+
+	private		function insert(story $story)
+	{
+		$db = $this->model->services->get('db');
+
 		$sql = h\string::format(
 				'insert into stories (caption, description, created, modified)'
 				.'	values (%s, %s, %s, %s)'
-				, $this->source->escape($story->title)
-				, $this->source->escape($story->description)
-				, $this->source->escape($story->created->format(h\date::FMT_YYYY_MM_DD))
-				, $this->source->escape($story->modified->format(h\date::FMT_YYYY_MM_DD))
+				, $db->escape($story->title)
+				, $db->escape($story->description)
+				, $db->escape($story->created->format(h\date::FMT_YYYY_MM_DD))
+				, $db->escape($story->modified->format(h\date::FMT_YYYY_MM_DD))
 				);
-		$this->source->query($sql);
+		$db->query($sql);
 	}
 
 	public		function update(story $story)
 	{
+		$db = $this->model->services->get('db');
+
 		$id = $this->cache->search_first($story);
 		$sql = h\string::format(
 				'update stories set caption = %s'
@@ -67,41 +169,49 @@ class source
 				.', created = %s'
 				.', modified = %s'
 				.' where id = %d'
-				, $this->source->escape($story->title)
-				, $this->source->escape($story->description)
-				, $this->source->escape($story->created->format(h\date::FMT_YYYY_MM_DD))
-				, $this->source->escape($story->modified->format(h\date::FMT_YYYY_MM_DD))
+				, $db->escape($story->title)
+				, $db->escape($story->description)
+				, $db->escape($story->created->format(h\date::FMT_YYYY_MM_DD))
+				, $db->escape($story->modified->format(h\date::FMT_YYYY_MM_DD))
 				, $id
 				);
-		$this->source->query($sql);
+		$db->query($sql);
 	}
 
 	public		function delete(story $story)
 	{
+		$db = $this->model->services->get('db');
+
 		$id = $this->cache->search_first($story);
 		$sql = h\string::format('delete from stories where id=%d', $id);
-		$this->source->query($sql);
+		$db->query($sql);
 	}
 
 	public		function delete_by_title(h\string $title)
 	{
+		$db = $this->model->services->get('db');
+
 		$sql = h\string::format('delete from stories where caption=%s'
-				, $this->source->escape($title));
-		$this->source->query($sql);
+				, $db->escape($title));
+		return $db->query($sql);
 	}
 
 	public		function get_all()
 	{
-		$rows = $this->source->query(h\string('select * from stories'));
-		return $this->stories_from_select($rows);
+		$db = $this->model->services->get('db');
+
+		$rows = $db->query(h\string('select * from stories'));
+		return $this->create_stories_from_select($rows);
 	}
 
 	public		function get_by_title(h\string $title)
 	{
+		$db = $this->model->services->get('db');
+
 		$sql = h\string::format('select * from stories where caption = %s'
-				, $this->source->escape($title));
-		$rows = $this->source->query($sql);
-		$stories = $this->stories_from_select($rows);
+				, $db->escape($title));
+		$rows = $db->query($sql);
+		$stories = $this->create_stories_from_select($rows);
 
 		return isset($stories[0])
 			? $stories[0]
@@ -110,25 +220,21 @@ class source
 
 	public		function get_by_legacy_path(h\string $legacy_path)
 	{
+		$db = $this->model->services->get('db');
+
 		$sql = h\string::format
 			('select * from stories s right join legacy_stories ls'
 				.'	on s.id = ls.story_id where path = %s'
-				, $this->source->escape($legacy_path));
-		$rows = $this->source->query($sql);
-		$stories = $this->stories_from_select($rows);
+				, $db->escape($legacy_path));
+		$rows = $db->query($sql);
+		$stories = $this->create_stories_from_select($rows);
 
 		return isset($stories[0])
 			? $stories[0]
 			: null;
 	}
 
-	public		function user_is_granted(story $story, h\http\user $user, h\acl $rights = null)
-	{
-		// XXX By default, deny access
-		return false;
-	}
-
-	private		function stories_from_select($rows)
+	private		function create_stories_from_select($rows)
 	{
 		$stories = new stories;
 
@@ -154,6 +260,52 @@ class source
 	}
 }
 
+class model
+	extends h\model
+{
+	protected	$_source;
+
+	public		function __construct(h\service_provider $service)
+	{
+		$this->_source = $service->get('db');
+
+		parent::__construct($service);
+
+		$this->add_data(new story_data($this));
+		$this->add_data(new account_data($this));
+	}
+
+	public		function is_user_granted(story $story, h\http\user $user, h\acl $rights = null)
+	{
+		// XXX By default, deny access
+		return false;
+	}
+
+	public		function delete_story_by_title(h\string $title)
+	{
+		return $this->data['story']->delete_by_title($title);
+	}
+
+	public		function get_stories_all()
+	{
+		return $this->data['story']->get_all();
+	}
+
+	public		function get_accounts_all()
+	{
+		return $this->data['account']->get_all();
+	}
+
+	public		function get_story_by_title(h\string $title)
+	{
+		return $this->data['story']->get_by_title($title);
+	}
+
+	public		function get_story_by_legacy_path(h\string $legacy_path)
+	{
+		return $this->data['story']->get_by_legacy_path($legacy_path);
+	}
+}
 
 class story
 	extends h\object_public
@@ -188,6 +340,43 @@ class story
 }
 
 class stories
+	extends h\collection
+{
+}
+
+
+class account
+	extends h\object_public
+{
+	protected	$_name;
+	protected	$_email;
+	protected	$_created;
+	protected	$_modified;
+
+	public		function __construct()
+	{
+		$this->_name = new h\string;
+		$this->_email = new h\string;
+		$this->_created = h\today();
+		$this->_modified = h\today();
+
+		parent::__construct();
+	}
+
+	static
+	public		function create($name, $email, $created, $modified)
+	{
+		$new = new static;
+		$new->name = h\string($name);
+		$new->email = h\string($email);
+		$new->created = h\date::new_from_sql($created); // XXX or null
+		$new->modified = h\date::new_from_sql($modified); // XXX or null
+
+		return $new;
+	}
+}
+
+class accounts
 	extends h\collection
 {
 }

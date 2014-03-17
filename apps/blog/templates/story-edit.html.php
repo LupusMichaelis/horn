@@ -1,4 +1,4 @@
-          <form action='?edit' method='POST' accept-charset='utf-8'>
+          <form action='<?php echo $e->a($c['story']->title) ?>?edit' method='POST' accept-charset='utf-8'>
             <p>
               <input type='submit' value='Update'>
             </p>

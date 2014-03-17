@@ -24,16 +24,6 @@ main();
 function main()
 {
 	$ctx = new h\component\context;
-	@$ctx->in;
-	@$ctx->out;
-	@$ctx->services;
-	@$ctx->results;
-	@$ctx->content_type;
-	@$ctx->template;
-	@$ctx->template_name;
-	@$ctx->template_action;
-	@$ctx->error_handling;
-
 	$config = h\make_configuration(require '../blog.config.php');
 	$component = h\component\build($config, $ctx);
 	$component->do_process($ctx);

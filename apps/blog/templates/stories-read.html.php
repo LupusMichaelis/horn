@@ -7,7 +7,7 @@
 			  <td><?php echo $e->t($story->title) ?></td>
               <td>
 			    <ul>
-				  <li><a href='/stories/<?php echo rawurlencode($e->t($story->title)) ?>?edit'>Edit</a</li>
+				  <li><a href='/stories/<?php echo rawurlencode($story->title) ?>?edit'>Edit</a</li>
 				</ul>
 			  </td>
 			</tr>

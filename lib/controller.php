@@ -1,9 +1,9 @@
 <?php
 /** blog application controller
  *
- *  Project	Horn Framework <http://horn.lupusmic.org>
+ *  \project	Horn Framework <http://horn.lupusmic.org>
  *  \author		Lupus Michaelis <mickael@lupusmic.org>
- *  Copyright	2011, Lupus Michaelis
+ *  \copyright	2013, Lupus Michaelis
  *  License	AGPL <http://www.fsf.org/licensing/licenses/agpl-3.0.html>
  */
 
@@ -76,16 +76,6 @@ class controller
 	public		function get_segments()
 	{
 		return $this->context->segments;
-	}
-
-	public		function get_search_part()
-	{
-		// XXX that should've belong in a searchpart object
-		$searchpart = array();
-		if(0 === $this->context->in->uri->searchpart->search('?'))
-			parse_str($this->context->in->uri->searchpart->tail(1), $searchpart);
-
-		return h\c($searchpart);
 	}
 
 	public		function get_post_data()
@@ -176,10 +166,24 @@ class resource
 	abstract public function made_of_http_request_uri();
 	abstract public function made_of_http_request_post_data();
 	abstract public function create_from_http_request_post_data();
-	abstract public function update_from_http_request_post_data($story);
+	abstract public function update_from_http_request_post_data($one);
 
 	abstract public function uri_of($managed);
 	abstract public function uri_of_parent();
+
+	protected	function get_resource_model()
+	{
+		// XXX This shouldn't be
+		$mapping = array('stories' => h\string('story'), 'accounts' => h\string('account'));
+		$name = (string) $this->_name;
+		if(isset($mapping[$name]))
+			$name = $mapping[$name];
+		else
+			$name = h\string($name);
+		// /XXX
+
+		return $this->ctrl->get_model()->get_data($name);
+	}
 }
 
 abstract
@@ -197,7 +201,7 @@ class crud_controller
 		parent::__construct($context);
 
 		foreach(array('edit', 'delete', 'add') as $action)
-			if($this->get_search_part()->has_key($action))
+			if($context->in->uri->search->has_key($action))
 			{
 				$this->action = h\string($action);
 				break;
