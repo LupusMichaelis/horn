@@ -30,8 +30,10 @@
  */
 namespace horn\lib;
 
+using \horn\lib as h;
+
 require 'horn/lib/module.php';
-import('lib/object');
+h\import('lib/object');
 
 function dump($variable)
 {

@@ -20,6 +20,9 @@ function cli_renderer(t\suite $suite)
 			, $case->message
 			, $case->success ? $case->on_true : $case->on_false);
 		$case->success or ++$errors;
+
+		if($case->caught_exception instanceof \exception)
+			print $case->caught_exception->xdebug_message;
 	}
 
 	print "\n".implode($out, "\n")."\n";

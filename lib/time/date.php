@@ -26,6 +26,7 @@
  */
 
 namespace horn\lib;
+use \horn\lib as h;
 
 import('lib/collection');
 
@@ -147,7 +148,7 @@ class date
 		return $new;
 	}
 
-	public		function is_equal(object_base $right)
+	public		function is_equal(h\object\base $right)
 	{
 		if(! $right instanceof date)
 			throw $this->_exception_not_date_object();
