@@ -60,6 +60,11 @@ class model
 		parent::__construct();
 	}
 
+	public		function get_data(h\string $data_name)
+	{
+		return $this->_data[$data_name];
+	}
+
 	protected	function add_data(model_data $data)
 	{
 		$this->_data[$data::name] = $data;
