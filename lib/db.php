@@ -37,10 +37,9 @@ class url_db
 	protected	$_space;
 	protected	$_table;
 
-    protected   function is_scheme_supported()
+    public   function is_scheme_supported(h\string $candidate)
     {
-        // TODO check mysql scheme
-        return true;
+        return \string('mysql')->is_equal($candidate);
     }
 
 	protected	function parse()
