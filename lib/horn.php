@@ -30,7 +30,7 @@
  */
 namespace horn\lib;
 
-using \horn\lib as h;
+use \horn\lib as h;
 
 require 'horn/lib/module.php';
 h\import('lib/object');
