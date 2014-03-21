@@ -85,12 +85,12 @@ class controller
 
 	public		function get_cookie_data()
 	{
-		return $this->context->in->head->cookies;
+		return $this->context->in->head['cookie'];
 	}
 
 	public		function get_put_data()
 	{
-		return $this->context->in->body->post;
+		return $this->context->in->body->content;
 	}
 
 	private		function location($uri)
