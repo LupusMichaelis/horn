@@ -464,7 +464,7 @@ class base
 		if(method_exists($this, '_call'))
 			return $this->_call($method_name, $arguments);
 
-		throw $this->_exception_format('Function \'%s\'::\'%s\' can\'t be handled', get_class($this), $method_name);
+		throw $this->_exception_format_ex('\horn\lib\exception_method_not_exists', 'Function \'%s\'::\'%s\' can\'t be handled', get_class($this), $method_name);
 	}
 
 	/**

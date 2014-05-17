@@ -71,10 +71,8 @@ class base
 			return; // The component failed, thus we shan't continue in inconsistant state
 
 		if($this->has_next())
-		{
-			//var_dump(get_class($this->next));
 			$this->next->do_process($ctx);
-		}
+
 		$this->do_after($ctx);
 
 		return $ctx;

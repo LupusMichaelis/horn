@@ -51,3 +51,5 @@ class exception
 	}
 }
 
+class exception_method_not_exists extends exception { }
+

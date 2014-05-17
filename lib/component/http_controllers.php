@@ -95,8 +95,8 @@ class http_controllers
 		}
 
 		$ctx->error_handling['status'] = $result[0];
-		isset($result[1]) && $ctx->results->join($result[1]);
-		isset($result[2]) && $ctx->error_handling['messages']->join($result[2]);
+		isset($result[1]) and $ctx->results->join($result[1]);
+		isset($result[2]) and $ctx->error_handling['messages']->join($result[2]);
 
 		return true;
 	}
