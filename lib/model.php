@@ -27,49 +27,31 @@
 
 namespace horn\lib;
 use \horn\lib as h;
+use \horn\lib\model as m;
 
 h\import('lib/object');
 h\import('lib/services');
-
-class model_data
-	extends h\object_public
-{
-	public		function __construct(h\model $parent)
-	{
-		$this->_model = $parent;
-		$this->_cache = h\collection();
-		parent::__construct();
-	}
-
-	protected	$_name;
-
-	protected	$_cache;
-	protected	$_model;
-}
+h\import('lib/model/details');
 
 class model
 	extends h\object_public
 {
-	/// TODO readonly
-	protected	$_data;
-
 	public		function __construct(h\service_provider $services)
 	{
-		$this->_data = h\collection();
+		$this->_data = new h\collection;
 		$this->_services = $services;
+
 		parent::__construct();
 	}
 
-	public		function get_data(h\string $data_name)
+	public		function add_data($name, $data)
 	{
-		return $this->_data[$data_name];
+		$this->_data[$name] = $data;
 	}
 
-	protected	function add_data(model_data $data)
-	{
-		$this->_data[$data::name] = $data;
-	}
-
+	/// TODO readonly
+	protected	$_data;
 	protected	$_services;
+
 }
 
