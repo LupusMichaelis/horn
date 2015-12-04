@@ -41,8 +41,24 @@ class model
 
 	protected		function do_before(context $ctx)
 	{
-		$model_class = $this->configuration['model'];
+		$config = $this->configuration['model'];
+		$model_class = $config['master'];
+		$proxy_class = $config['proxy'];
+
 		$ctx->model = new $model_class($ctx->services);
+
+		foreach($config['data'] as $data_name => $data)
+		{
+			$proxy = new $proxy_class;
+
+			foreach($data as $source_name => $source_class)
+			{
+				$source = new $source_class($ctx->model);
+				$proxy->sources[$source_name] = $source;
+			}
+
+			$ctx->model->data[$data_name] = $proxy;
+		}
 	}
 
 	protected		function do_after(context $ctx)
