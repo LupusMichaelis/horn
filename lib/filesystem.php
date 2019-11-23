@@ -41,8 +41,8 @@ const megabi = 1048576;
 
 function path($string)
 {
-	if(! $string instanceof h\string)
-		$string = h\string($string);
+	if(! $string instanceof h\text)
+		$string = h\text($string);
 
 	$path = new path($string);
 	return $path;
@@ -51,7 +51,7 @@ function path($string)
 class path
 	extends		h\object_public
 {
-	public		function __construct(h\string $path)
+	public		function __construct(h\text $path)
 	{
 		$this->_literal = $path->explode('/');
 	}
@@ -60,7 +60,7 @@ class path
 class filesystem
 {
 	static
-	public		function exists(h\string $file_path)
+	public		function exists(h\text $file_path)
 	{
 	}
 }

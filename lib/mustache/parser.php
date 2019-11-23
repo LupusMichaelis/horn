@@ -105,7 +105,7 @@ class parser
 	const		OPENING_DELIMITER = '{{';
 	const		CLOSING_DELIMITER = '}}';
 
-	public		function do_parse(h\string $template)
+	public		function do_parse(h\text $template)
 	{
 		$begin = 0;
 		$end = 0;
@@ -137,31 +137,31 @@ class parser
 
 			$first = $template[$begin];
 			++$begin;
-			if($first->is_equal(h\string('#')))
+			if($first->is_equal(h\text('#')))
 			{
 				$element =  new tag\section;
 				$element->name = $template->slice($begin, $end);
 				$parser_stack[] = $element;
 			}
-			elseif($first->is_equal(h\string('^')))
+			elseif($first->is_equal(h\text('^')))
 			{
 				$element = new tag\inverted;
 				$element->name = $template->slice($begin, $end);
 				$parser_stack[] = $element;
 			}
-			elseif($first->is_equal(h\string('/')))
+			elseif($first->is_equal(h\text('/')))
 			{
 				$element = new tag\close;
 				$element->name = $template->slice($begin, $end);
 				$parser_stack[] = $element;
 			}
-			elseif($first->is_equal(h\string('!')))
+			elseif($first->is_equal(h\text('!')))
 			{
 				$element = new tag\comment;
 				$element->content = $template->slice($begin, $end);
 				$parser_stack[] = $element;
 			}
-			elseif($first->is_equal(h\string('{')))
+			elseif($first->is_equal(h\text('{')))
 			{
 				if('}' !== $template[++$end])
 					throw 'Ill-formed';
@@ -170,17 +170,17 @@ class parser
 				$element->name = $template->slice($begin, $end - 1)->trimmed();
 				$parser_stack[] = $element;
 			}
-			elseif($first->is_equal(h\string('&')))
+			elseif($first->is_equal(h\text('&')))
 			{
 				$element = new tag\unescaped;
 				$element->name = $template->slice($begin, $end - 1)->trimmed();
 				$parser_stack[] = $element;
 			}
-			elseif($first->is_equal(h\string('>')))
+			elseif($first->is_equal(h\text('>')))
 			{
 				throw 'TODO';
 			}
-			elseif($first->is_equal(h\string('=')))
+			elseif($first->is_equal(h\text('=')))
 			{
 				throw 'TODO';
 			}

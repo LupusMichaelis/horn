@@ -84,7 +84,7 @@ class proxy
 {
 	public		function __construct()
 	{
-		$this->_name = h\string('');
+		$this->_name = h\text('');
 		$this->_sources = h\collection();
 		parent::__construct();
 	}

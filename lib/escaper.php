@@ -33,9 +33,9 @@ h\import('lib/regex');
 
 interface escaper
 {
-	function __construct(h\string $charset);
-	function do_escape(h\string $subject);
-	function do_unescape(h\string $subject);
+	function __construct(h\text $charset);
+	function do_escape(h\text $subject);
+	function do_unescape(h\text $subject);
 }
 
 h\import('lib/escaper/base');

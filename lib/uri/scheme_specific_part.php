@@ -28,7 +28,7 @@
 namespace horn\lib\uri;
 use \horn\lib as h;
 
-h\import('lib/string');
+h\import('lib/text');
 
 class scheme_specific_part
 	extends h\object\wrapper

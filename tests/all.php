@@ -44,7 +44,7 @@ $available_units = array
 	, 'wrapper'
 	, 'collection'
 	, 'stack'
-	, 'string'
+	, 'text'
 
 	, 'time'
 	, 'date'

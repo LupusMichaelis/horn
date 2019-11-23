@@ -39,7 +39,7 @@ class legacy_controller
 
 	public		function do_control()
 	{
-		$path = h\string($this->app->request->uri->path);
+		$path = h\text($this->app->request->uri->path);
 		$legacy = $this->model->get_by_legacy_path($path);
 
 		if(! $legacy instanceof story)

@@ -4,7 +4,7 @@ namespace horn\lib\markup;
 use \horn\lib as h;
 
 h\import('lib/object');
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/collection');
 h\import('lib/markup/rss');
 
@@ -52,10 +52,10 @@ class rss
 		return $e;
 	}
 
-	protected	function _set_title(h\string $text)
+	protected	function _set_title(h\text $text)
 	{
-		$c = $this->create_element(h\string('channel'), h\c(array('rdf:about' => '/')));
-		$t = $this->create_element(h\string('title'), h\c(array($text)));
+		$c = $this->create_element(h\text('channel'), h\c(array('rdf:about' => '/')));
+		$t = $this->create_element(h\text('title'), h\c(array($text)));
 
 		$c->appendChild($t);
 

@@ -29,7 +29,7 @@ class test_suite_path
 			$path->authority->host->set_impl(new h\inet\host);
 			$path->path->set_impl(new h\uri\empty_path);
 
-			return h\string('//')->is_equal($path->_to_string());
+			return h\text('//')->is_equal($path->_to_string());
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}
@@ -48,7 +48,7 @@ class test_suite_path
 			$path->authority->host->segments[] = 'localhost';
 			$path->path->set_impl(new h\uri\empty_path);
 
-			return h\string('//localhost')->is_equal($path->_to_string());
+			return h\text('//localhost')->is_equal($path->_to_string());
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}
@@ -68,7 +68,7 @@ class test_suite_path
 			$path->authority->host->segments[] = 'com';
 			$path->path->set_impl(new h\uri\empty_path);
 
-			return h\string('//example.com')->is_equal($path->_to_string());
+			return h\text('//example.com')->is_equal($path->_to_string());
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}
@@ -89,7 +89,7 @@ class test_suite_path
 			$path->path->set_impl(new h\uri\absolute_path);
 			$path->path->segments[] = 'here';
 
-			return h\string('//example.com/here')->is_equal($path->_to_string());
+			return h\text('//example.com/here')->is_equal($path->_to_string());
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}
@@ -112,7 +112,7 @@ class test_suite_path
 			$wrapper->path->path->segments[] = 'here';
 			$wrapper->query['first'] = 'one';
 
-			return h\string('//example.com/here?first=one')->is_equal($wrapper->_to_string());
+			return h\text('//example.com/here?first=one')->is_equal($wrapper->_to_string());
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}

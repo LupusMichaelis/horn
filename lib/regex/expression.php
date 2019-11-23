@@ -39,17 +39,17 @@ class expression
 	protected	$_delimiter;
 	private		$escaper;
 
-	public		function __construct(h\string $pattern, h\string $delimiter = null)
+	public		function __construct(h\text $pattern, h\text $delimiter = null)
 	{
 		$this->_delimiter = is_null($delimiter)
-			? h\string(static::default_delemeter)
+			? h\text(static::default_delemeter)
 			: $delimiter;
-		$this->_pattern = new h\string();
+		$this->_pattern = new h\text();
 
 		parent::__construct();
 
 		$this->_pattern = $pattern;
-		$this->escaper = new escaper(h\string($pattern->charset));
+		$this->escaper = new escaper(h\text($pattern->charset));
 	}
 	
 	protected	function _clone()
@@ -60,31 +60,31 @@ class expression
 
 	protected	function &_get_pattern()
 	{
-		$pattern = h\string::format("%1\$s%2\$s%1\$s", $this->delimiter, $this->_pattern);
+		$pattern = h\text::format("%1\$s%2\$s%1\$s", $this->delimiter, $this->_pattern);
 		return $pattern;
 	}
 
-	protected	function _set_pattern(h\string $pattern)
+	protected	function _set_pattern(h\text $pattern)
 	{
 		$pattern = $this->escaper->do_escape($pattern, $this->delimiter);
 		$this->_pattern->assign($pattern);
 	}
 
-	protected	function _set_delimiter(h\string $delimiter)
+	protected	function _set_delimiter(h\text $delimiter)
 	{
 		$pattern = $this->escaper->do_unescape($pattern, $this->delimiter);
 		$this->delimiter = $delimiter;
 		$this->_set_pattern($this->_pattern);
 	}
 
-	public		function is_matching(h\string $subject)
+	public		function is_matching(h\text $subject)
 	{
 		$result = $this->do_execute($subject);
 		return $result->is_match();
 	}
 
 
-	public		function do_execute(h\string $subject)
+	public		function do_execute(h\text $subject)
 	{
 		$result = new result($this, $subject);
 		return $result;

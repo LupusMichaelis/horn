@@ -43,16 +43,16 @@ class absolute
 	}
 
 	abstract
-	protected function is_scheme_supported(h\string $scheme);
+	protected function is_scheme_supported(h\text $scheme);
 
 	public	function _to_string()
 	{
-		$literal = h\string::format('%s:%s', $this->scheme, $this->scheme_specific_part);
+		$literal = h\text::format('%s:%s', $this->scheme, $this->scheme_specific_part);
 
 		return $literal;
 	}
 
-	protected	function _set_scheme(h\string $scheme)
+	protected	function _set_scheme(h\text $scheme)
 	{
 		if(!$this->is_scheme_supported($scheme))
 			throw $this->_exception('Scheme is not supported');

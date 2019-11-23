@@ -5,7 +5,7 @@ namespace horn\lib\test;
 use horn\lib as h;
 
 h\import('lib/object');
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/collection');
 h\import('lib/callback');
 
@@ -25,7 +25,7 @@ class suite
 	{
 		$this->_providers = new h\collection();
 		$this->_cases = new h\collection();
-		$this->_name = h\string($name);
+		$this->_name = h\text($name);
 		parent::__construct();
 		$this->run();
 	}

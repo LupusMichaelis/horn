@@ -33,12 +33,12 @@ h\import('lib/inet/url');
 class port_factory
 	extends h\uri\specific_factory
 {
-	public function	do_feed(h\string $meat)
+	public function	do_feed(h\text $meat)
 	{
 		if($meat->length() < 1)
 			return null;
 
-		if(h\string(':')->is_equal($meat[0]))
+		if(h\text(':')->is_equal($meat[0]))
 			$meat->behead(1); // Drop semicolon
 		else
 			return null;

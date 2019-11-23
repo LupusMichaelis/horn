@@ -38,7 +38,7 @@ class template_strategy
 	extends h\object_public
 {
 	abstract
-	public		function do_parse(h\string $content);
+	public		function do_parse(h\text $content);
 	abstract
 	public		function do_process($context);
 }

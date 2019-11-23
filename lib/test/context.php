@@ -5,7 +5,7 @@ namespace horn\lib\test;
 use horn\lib as h;
 
 h\import('lib/object');
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/collection');
 h\import('lib/callback');
 

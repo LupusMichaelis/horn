@@ -27,7 +27,7 @@
 namespace horn\lib;
 
 import('lib/object');
-import('lib/string');
+import('lib/text');
 import('lib/future');
 
 function is_collection($variable)
@@ -108,22 +108,22 @@ class collection
 	 *  to others with the given glue parameter. 
 	 *	\bug	Assume we have a collection of strings
 	 *  \param	$glue		mixed	A castable in string.
-	 *  \return	string			The imploded representation of the current
+	 *  \return	h\text				The imploded representation of the current
 	 *  							collection
 	 */
 	public		function implode($glue)
 	{
-		if(!($glue instanceof string))
-			$glue = string($glue);
+		if(!($glue instanceof h\text))
+			$glue = h\text($glue);
 
-		$crunch = string('');
+		$crunch = h\text('');
 		$length = $this->count();
 		$i = 0;
 		foreach($this as $bit)
 		{
-			$bit = string($bit);
+			$bit = h\text($bit);
 			$crunch->append($bit);
-			// No glue at back of string
+			// Now glue at back of h\text
 			if($i < $length - 1)
 				$crunch->append($glue);
 

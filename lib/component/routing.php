@@ -81,7 +81,7 @@ class routing
 		{
 			$ctx->out->status = 'HTTP/1.1 405 Method Not Allowed';
 			$tpl = 'Non-supported method \'%s\' on \'%s\'';
-			$msg = h\string::format($tpl, $http_method, $path);
+			$msg = h\text::format($tpl, $http_method, $path);
 			$ctx->error_handling['status'] = false;
 			$ctx->error_handling['messages'][] = $msg;
 			return false;

@@ -44,8 +44,8 @@ class template
 	protected		function do_before(context $ctx)
 	{
 		$ctx->template = new $this->configuration['template']['engine']($this->configuration['template']);
-		$ctx->template_name = h\string($this->configuration['template']['name']);
-		$ctx->template_action = h\string($this->configuration['template']['action']);
+		$ctx->template_name = h\text($this->configuration['template']['name']);
+		$ctx->template_action = h\text($this->configuration['template']['action']);
 
 		return true;
 	}

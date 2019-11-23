@@ -43,7 +43,7 @@ class result
 	private		$captures;		/**< collection of iterators by capture index or name */
 	private		$records;		/**< collection of matching records */
 
-	public		function __construct(expression $expression, h\string $subject)
+	public		function __construct(expression $expression, h\text $subject)
 	{
 		$this->_expression = clone $expression;
 		$this->_subject = clone $subject;
@@ -101,7 +101,7 @@ class result
 		return $this->ref_records()->get_column($index);
 	}
 
-	public		function iterate_captures_by_name(h\string $name)
+	public		function iterate_captures_by_name(h\text $name)
 	{
 		return $this->iterate_captures_by_index($name);
 	}

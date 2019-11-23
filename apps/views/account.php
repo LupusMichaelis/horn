@@ -29,7 +29,7 @@ namespace horn\apps\user;
 use \horn\lib as h;
 
 h\import('lib/collection');
-h\import('lib/string');
+h\import('lib/text');
 
 h\import('lib/render/html');
 h\import('lib/render/rss');
@@ -165,7 +165,7 @@ class account_html_renderer
 
 	public		function itemise(accounts $accounts, $mode)
 	{
-		if($mode->is_equal(h\string('add')))
+		if($mode->is_equal(h\text('add')))
 			$this->entry_add(new account);
 
 		$canvas = $this->canvas;

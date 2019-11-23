@@ -10,9 +10,9 @@ h\import('lib/test');
 class tested_a_uri
     extends h\uri\absolute
 {
-	protected function is_scheme_supported(h\string $candidate)
+	protected function is_scheme_supported(h\text $candidate)
     {
-        return h\string('a')->is_equal($candidate);
+        return h\text('a')->is_equal($candidate);
     }
 }
 
@@ -20,7 +20,7 @@ class tested_a_factory
 
     extends h\uri\specific_factory
 {
-	public		function do_feed(h\string $meat)
+	public		function do_feed(h\text $meat)
 	{
 	}
 }
@@ -35,8 +35,8 @@ class test_suite_uri
 		$this->providers[] = function()
 		{
 			$uri = new tested_a_uri;
-			$uri->scheme = h\string('a');
-			$uri->scheme_specific_part = h\string('b');
+			$uri->scheme = h\text('a');
+			$uri->scheme_specific_part = h\text('b');
 			return $uri;
 		};
 	}
@@ -50,7 +50,7 @@ class test_suite_uri
 		$u = $this->target;
 		$callback = function () use ($u)
 		{
-			return h\string($u->scheme)->is_equal(h\string('a'))
+			return h\text($u->scheme)->is_equal(h\text('a'))
 				&& 'a:b' === (string) $u;
 		};
 		$this->add_test($callback, $messages, $expected_exception);
@@ -67,9 +67,9 @@ class test_suite_uri
 		{
 			$factory = new h\uri\factory;
 			$factory->base_uri = new tested_a_uri;
-			$factory->do_register_factory(h\string('scheme'), new h\uri\scheme_factory($factory));
+			$factory->do_register_factory(h\text('scheme'), new h\uri\scheme_factory($factory));
 
-			$factory->create(h\string('a:plop'));
+			$factory->create(h\text('a:plop'));
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}
@@ -88,15 +88,15 @@ class test_suite_path
 		$factory = new h\uri\factory;
 		$factory->base_url = new h\uri\absolute;
 		$factory->base_url->scheme = new h\scheme('http');
-		$factory->do_register_factory(h\string('path')
+		$factory->do_register_factory(h\text('path')
 				, new h\uri\path_factory($factory));
-		$factory->do_register_factory(h\string('port')
+		$factory->do_register_factory(h\text('port')
 				, new h\uri\port_factory($factory));
-		$factory->do_register_factory(h\string('host')
+		$factory->do_register_factory(h\text('host')
 				, new h\uri\host_factory($factory));
-		$factory->do_register_factory(h\string('authority')
+		$factory->do_register_factory(h\text('authority')
 				, new h\uri\authority_factory($factory));
-		$factory->do_register_factory(h\string('hierarchical_part')
+		$factory->do_register_factory(h\text('hierarchical_part')
 				, new h\uri\hierarchical_part_factory($factory));
 
 		$this->providers[] = function() { return '/'; };
@@ -121,10 +121,10 @@ class test_suite_path
 
 		$callback = function () use ($factory, $suspect)
 		{
-			$suspect = h\string($suspect);
+			$suspect = h\text($suspect);
 			$url = $factory->create(clone $suspect);
 			return $url instanceof h\uri\hierarchical_part
-				&& h\string($url)->is_equal($suspect);
+				&& h\text($url)->is_equal($suspect);
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}

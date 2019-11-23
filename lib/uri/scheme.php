@@ -28,19 +28,17 @@
 namespace horn\lib\uri;
 use \horn\lib as h;
 
-h\import('lib/string');
+h\import('lib/text');
 
 class scheme
-	extends h\string
+	extends h\text
 {
 }
 
 class scheme_factory
 	extends specific_factory
 {
-	public		function do_feed(h\string $meat)
+	public		function do_feed(h\text $meat)
 	{
 	}
 }
-
-

@@ -3,7 +3,7 @@
 namespace horn\lib;
 
 import('lib/object');
-import('lib/string');
+import('lib/text');
 import('lib/collection');
 import('lib/markup/rss');
 

@@ -14,7 +14,7 @@ class user
 
 	public		function __construct()
 	{
-		$this->_ip = h\string('');
+		$this->_ip = h\text('');
 		$this->_cookie = h\collection();
 
 		parent::__construct();
@@ -24,7 +24,7 @@ class user
 	public		function create_native()
 	{
 		$u = new self;
-		$u->ip = h\string($_SERVER['REMOTE_ADDR']);
+		$u->ip = h\text($_SERVER['REMOTE_ADDR']);
 		$u->cookie = h\collection($_COOKIE);
 
 		return $u;

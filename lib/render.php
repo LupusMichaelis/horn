@@ -78,7 +78,7 @@ class html
 	{
 		//$this->configuration['template']['path'];
 		$this->_strategy = new php_include_strategy;
-		$this->strategy->escaper = new h\render\html_escaper_helper(h\string('UTF-8'));
+		$this->strategy->escaper = new h\render\html_escaper_helper(h\text('UTF-8'));
 		$this->strategy->path = $this->configuration['template']['path'];
 	}
 
@@ -119,21 +119,21 @@ class php_include_strategy
 	protected	$_escaper;
 	protected	$_path;
 
-	public		function template_for(h\string $resource, h\string $action, h\string $type)
+	public		function template_for(h\text $resource, h\text $action, h\text $type)
 	{
-		return h\string::format('%s-%s.%s', $resource, $action, $type);
+		return h\text::format('%s-%s.%s', $resource, $action, $type);
 	}
 
-	public		function do_render(h\string $name, $c)
+	public		function do_render(h\text $name, $c)
 	{
 		$e = $this->escaper;
-		include h\string::format('%s/%s.php', $this->path, $name);
+		include h\text::format('%s/%s.php', $this->path, $name);
 	}
 
 	public		function r($resource, $action, $type, $context)
 	{
 		foreach(array('resource', 'action', 'type') as $var)
-			$$var instanceof h\string or $$var = h\string($$var);
+			$$var instanceof h\text or $$var = h\text($$var);
 
 		$template_file = $this->template_for($resource, $action, $type);
 		return $this->do_render($template_file, $context);

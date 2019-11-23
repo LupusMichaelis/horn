@@ -44,7 +44,7 @@ class processor
 		parent::__construct();
 	}
 
-	public		function do_process(h\string $template, /*context*/ $context)
+	public		function do_process(h\text $template, /*context*/ $context)
 	{
 		$parsed = $this->parser->do_parse($template);
 		return $this->render_template($parsed, $context);
@@ -55,7 +55,7 @@ class processor
 		return $this->render_template_recursive(clone $parser_stack, $context);
 	}
 
-	private		function render_extract_section(h\collection $parser_stack, h\string $section_name)
+	private		function render_extract_section(h\collection $parser_stack, h\text $section_name)
 	{
 		$depth = 1;
 		$sub_parser_stack = h\collection();

@@ -36,7 +36,7 @@ class html_escaper_helper
 	private		$escapers = array();
 	protected	$_charset;
 
-	public		function __construct(h\string $charset)
+	public		function __construct(h\text $charset)
 	{
 		$this->_charset = clone $charset;
 		parent::__construct();
@@ -45,23 +45,23 @@ class html_escaper_helper
 		$this->escapers['attribute'] = new h\escaper\html\attribute($this->_charset);
 	}
 
-	private		function copy_and_convert(h\string $text)
+	private		function copy_and_convert(h\text $text)
 	{
 		return $text->to_converted($this->charset);
 	}
 
 	public		function t($text)
 	{
-		if(! $text instanceof h\string)
-			$text = h\string($text);
+		if(! $text instanceof h\text)
+			$text = h\text($text);
 
 		return $this->escapers['text']->do_escape($text);
 	}
 
 	public		function a($text)
 	{
-		if(! $text instanceof h\string)
-			$text = h\string($text);
+		if(! $text instanceof h\text)
+			$text = h\text($text);
 
 		return $this->escapers['attribute']->do_escape($text);
 	}

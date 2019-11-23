@@ -75,7 +75,7 @@ class net_path
 
 	public		function _to_string()
 	{
-		return h\string('//')
+		return h\text('//')
 			->append($this->authority->_to_string())
 			->append($this->path->_to_string());
 	}
@@ -94,7 +94,7 @@ class absolute_path
 
 	public		function _to_string()
 	{
-		return $this->_segments->implode('/');//->prepend(h\string('/'));
+		return $this->_segments->implode('/');//->prepend(h\text('/'));
 	}
 }
 
@@ -103,22 +103,22 @@ class empty_path
 {
 	public		function _to_string()
 	{
-		return h\string('');
+		return h\text('');
 	}
 }
 
 class path_factory
 	extends h\uri\specific_factory
 {
-	public function	do_feed(h\string $meat)
+	public function	do_feed(h\text $meat)
 	{
 		$path = new path;
 
-		if(0 === $meat->search(h\string('//')))
+		if(0 === $meat->search(h\text('//')))
 			$impl = $this->do_create_net_path($meat);
-		elseif(0 === $meat->search(h\string('/')))
+		elseif(0 === $meat->search(h\text('/')))
 			$impl = $this->do_create_absolute_path($meat);
-		elseif(0 === $meat->search(h\string('.')))
+		elseif(0 === $meat->search(h\text('.')))
 			$impl = $this->do_create_relative_path($meat);
 		else
 			throw $this->_exception('No path');
@@ -128,17 +128,17 @@ class path_factory
 		return $path;
 	}
 
-	public	function do_create_net_path(h\string $meat)
+	public	function do_create_net_path(h\text $meat)
 	{
 		$impl = new net_path;
 
 		$slashes = $meat->behead(2);
-		if(!h\string('//')->is_equal($slashes))
+		if(!h\text('//')->is_equal($slashes))
 			throw $this->_exception('Not a net path');
 
 		$impl->authority->assign($this->master->factories['authority']->do_feed($meat));
 
-		if(0 === $meat->search(h\string('/')))
+		if(0 === $meat->search(h\text('/')))
 			$impl->path = $this->do_feed($meat);
 		else
 			$impl->path->set_impl(new empty_path);
@@ -146,7 +146,7 @@ class path_factory
 		return $impl;
 	}
 
-	public	function do_create_absolute_path(h\string $meat)
+	public	function do_create_absolute_path(h\text $meat)
 	{
 		$impl = new absolute_path;
 
@@ -162,7 +162,7 @@ class path_factory
 		return $impl;
 	}
 
-	public	function do_create_relative_path(h\string $meat)
+	public	function do_create_relative_path(h\text $meat)
 	{
 		$impl = new relative_path;
 

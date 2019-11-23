@@ -28,33 +28,33 @@
 namespace horn\lib;
 use \horn\lib as h;
 
-import('lib/string');
+import('lib/text');
 import('lib/regex/expression');
 import('lib/regex/result');
 
 function regex($pattern)
 {
-	$pattern = h\string($pattern);
+	$pattern = h\text($pattern);
 	return new h\regex\expression($pattern);
 }
 
 function regex_execute($pattern, $subject)
 {
 	$re = regex($pattern);
-	$subject = h\string($subject);
+	$subject = h\text($subject);
 	return $re->do_execute($subject);
 }
 
 function regex_match($pattern, $subject)
 {
 	$re = regex($pattern);
-	$subject = h\string($subject);
+	$subject = h\text($subject);
 	return $re->is_matching($subject);
 }
 
 function regex_find($pattern, $haystack)
 {
 	$re = regex($pattern);
-	$haystack = h\string($haystack);
+	$haystack = h\text($haystack);
 	return $re->find($haystack);
 }

@@ -30,7 +30,7 @@ namespace horn\lib\component;
 use \horn\lib as h;
 
 h\import('lib/component');
-h\import('lib/string');
+h\import('lib/text');
 
 class content_type
 	extends base
@@ -54,7 +54,7 @@ class content_type
 
 	private		function do_deduce_content_type(context $ctx)
 	{
-		$ctx->out->head['Content-type'] = h\string::format
+		$ctx->out->head['Content-type'] = h\text::format
 			( '%s; charset=%s'
 			, $this->configuration['content_type']['mime_type']
 			, $this->configuration['content_type']['encoding']

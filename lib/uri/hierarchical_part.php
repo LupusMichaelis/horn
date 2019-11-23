@@ -41,8 +41,8 @@ class authority
 
 	public		function __construct()
 	{
-		$this->_user		= h\string('');
-		$this->_password	= h\string('');
+		$this->_user		= h\text('');
+		$this->_password	= h\text('');
 		$this->_host		= new h\uri\host;
 		parent::__construct();
 	}
@@ -51,18 +51,18 @@ class authority
 	{
 		$authority = $this->_host->_to_string();
 		is_null($this->port)
-			or $authority->append(h\string::format(':%d', $this->port));
+			or $authority->append(h\text::format(':%d', $this->port));
 		if(0 < $this->password->length())
 		{
 			if(0 < $this->user->length())
-				$authority->prepend(h\string::format('%s:%s@'
+				$authority->prepend(h\text::format('%s:%s@'
 							, $this->user , $this->password));
 			else
 				throw $this->_exception('Malformed authority: password but no username');
 
 		}
 		elseif(0 < $this->user->length())
-			$authority->prepend(h\string::format('%s@', $this->user));
+			$authority->prepend(h\text::format('%s@', $this->user));
 
 		return $authority;
 	}
@@ -84,7 +84,7 @@ class hierarchical_part
 	{
 		$s = $this->_path->_to_string();
 		if($this->_query->count())
-			$s->append(h\string('?'))->append($this->_query->_to_string());
+			$s->append(h\text('?'))->append($this->_query->_to_string());
 
 		return $s;
 	}
@@ -122,7 +122,7 @@ class authority_factory
 	extends h\uri\specific_factory
 {
 	public		$secured = false;
-	public		function	do_feed(h\string $meat)
+	public		function	do_feed(h\text $meat)
 	{
 		$authority = new authority;
 
@@ -142,7 +142,7 @@ class authority_factory
 class hierarchical_part_factory
 	extends h\uri\specific_factory
 {
-	public function	do_feed(h\string $meat)
+	public function	do_feed(h\text $meat)
 	{
 		$hierarchical_part = new hierarchical_part;
 		$hierarchical_part->path->set_impl($this->master->factories['path']->do_feed($meat)->get_impl());

@@ -32,7 +32,7 @@ h\import('lib/uri');
 h\import('lib/uri/host');
 h\import('lib/uri/hierarchical_part');
 h\import('lib/uri/path');
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/collection');
 h\import('lib/regex');
 h\import('lib/regex-defs');
@@ -69,11 +69,11 @@ class search_part
 /*
 	protected	function &_get_scheme_specific_part()
 	{
-		$specific_part = h\string('//');
+		$specific_part = h\text('//');
 
 		if(0 < $this->user->length())
 		{
-			$auth = h\string(\rawurlencode($this->user));
+			$auth = h\text(\rawurlencode($this->user));
 			if(0 < $this->password->length())
 			{
 				$auth->append(':');
@@ -84,20 +84,20 @@ class search_part
 			$specific_part->append('@');
 		}
 
-		$specific_part->append(h\string($this->host));
+		$specific_part->append(h\text($this->host));
 
-		if(80 !== $this->port && h\string('http')->is_equal($this->scheme)
-				|| 443 !== $this->port && h\string('https')->is_equal($this->scheme))
+		if(80 !== $this->port && h\text('http')->is_equal($this->scheme)
+				|| 443 !== $this->port && h\text('https')->is_equal($this->scheme))
 		{
-			$specific_part->append(h\string(':'));
-			$specific_part->append(h\string($this->port));
+			$specific_part->append(h\text(':'));
+			$specific_part->append(h\text($this->port));
 		}
 
-		$path = h\string($this->path);
+		$path = h\text($this->path);
 		if(0 < $path->length())
 			$specific_part->append($path);
 
-		$search_part = h\string($this->search);
+		$search_part = h\text($this->search);
 		if(0 < $search_part->length())
 			$specific_part->append($search_part);
 

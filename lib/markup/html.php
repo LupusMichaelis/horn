@@ -20,7 +20,7 @@ class html4
 		return $title;
 	}
 
-	protected	function _set_title(h\string $text)
+	protected	function _set_title(h\text $text)
 	{
 		$titleElement = $this->title;
 		$newTitleTxt = $this->document->createTextNode($text);
@@ -39,16 +39,16 @@ class html4
 
 	public		function create_div_element(h\collection $attrs = null)
 	{
-		return $this->create_element(h\string('div'), $attrs);
+		return $this->create_element(h\text('div'), $attrs);
 	}
 
 	public		function create_anchor_element(h\collection $attrs = null)
 	{
-		return $this->create_element(h\string('a'), $attrs);
+		return $this->create_element(h\text('a'), $attrs);
 	}
 
 	static
-	public		function new_from_file(h\string $template_filename)
+	public		function new_from_file(h\text $template_filename)
 	{
 		$document = new \domdocument('1.1', 'UTF-8');
 		$document->loadHtmlFile($template_filename);
@@ -56,7 +56,7 @@ class html4
 	}
 
 	static
-	public		function new_from_string(h\string $template)
+	public		function new_from_text(h\text $template)
 	{
 		$document = new \domdocument('1.1', 'UTF-8');
 		$document->loadHTML($template);
@@ -67,12 +67,12 @@ class html4
 	static
 	public		function create_strict()
 	{
-		$template = h\string(
+		$template = h\text(
 			'<!DOCTYPE HTML PUBLIC ' . "\n"
 			. '	"-//W3C//DTD HTML 4.01//EN"' . "\n"
 			. '	"http://www.w3.org/TR/html4/strict.dtd">' . "\n"
 			. '<html><head><title><body>');
-		return self::new_from_string($template);
+		return self::new_from_text($template);
 	}
 }
 
@@ -82,19 +82,19 @@ class xhtml11
 	static
 	public		function create()
 	{
-		$template = h\string('<!DOCTYPE html><html><head><title><body>');
-		return self::new_from_string($template);
+		$template = h\text('<!DOCTYPE html><html><head><title><body>');
+		return self::new_from_text($template);
 	}
 
 	static
-	public		function new_from_file(h\string $template_filename)
+	public		function new_from_file(h\text $template_filename)
 	{
 		$document = \domdocument::loadFile($template_filename);
 		return new static($document);
 	}
 
 	static
-	public		function new_from_string(h\string $template)
+	public		function new_from_text(h\text $template)
 	{
 		$document = \domdocument::load($template);
 		return new static($document);
@@ -108,8 +108,8 @@ class html5
 	static
 	public		function create()
 	{
-		$template = h\string('<!DOCTYPE html><html><head><title><body>');
-		return self::new_from_string($template);
+		$template = h\text('<!DOCTYPE html><html><head><title><body>');
+		return self::new_from_text($template);
 	}
 
 }

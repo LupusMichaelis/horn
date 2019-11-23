@@ -30,7 +30,7 @@ namespace horn\lib\http;
 use horn\lib as h;
 
 h\import('lib/object');
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/exception');
 h\import('lib/http/message');
 
@@ -51,7 +51,7 @@ class request_uri
 		$string = $this->path->_to_string();
 		if($this->search->count())
 		{
-			$string->append(h\string('?'));
+			$string->append(h\text('?'));
 			$string->append($this->search->_to_string());
 		}
 
@@ -66,24 +66,24 @@ function create_native()
 	$native->head['host'] = new h\uri\host;
 	// XXX Assume we have a hostname
 	$native->head['host']->set_impl(new h\inet\host);
-	$native->head['host']->segments = h\string($_SERVER['HTTP_HOST'])->explode(h\string('.'));
+	$native->head['host']->segments = h\text($_SERVER['HTTP_HOST'])->explode(h\text('.'));
 	$native->head['cookie'] = h\collection::merge($_COOKIE);
 
 	$native->method = validate_http_method($_SERVER['REQUEST_METHOD']);
 	$native->uri = new h\http\request_uri;
 
-	$request_uri = h\string($_SERVER['REQUEST_URI']);
+	$request_uri = h\text($_SERVER['REQUEST_URI']);
 	if(false !== $request_uri->search('?'))
-		list($path, ) = $request_uri->explode(h\string('?'));
+		list($path, ) = $request_uri->explode(h\text('?'));
 
 	$native->uri->path = new h\uri\absolute_path;
-	$native->uri->path->segments = $path->explode(h\string('/'));
+	$native->uri->path->segments = $path->explode(h\text('/'));
 	$native->uri->search = new h\uri\query;
 
 	foreach($_GET as $name => $value)
 		$native->uri->search[$name] = $value;
 
-	$native->version = h\string($_SERVER['SERVER_PROTOCOL']);
+	$native->version = h\text($_SERVER['SERVER_PROTOCOL']);
 
 	$native->body = new body;
 
@@ -113,6 +113,6 @@ function validate_http_method($candidate)
 	if(isset($methods[strtoupper($candidate)]))
 		return $methods[strtoupper($candidate)];
 
-	throw new h\exception(h\string::format('Method verb \'%s\' is not supported', $candidate));
+	throw new h\exception(h\text::format('Method verb \'%s\' is not supported', $candidate));
 }
 

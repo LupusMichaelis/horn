@@ -29,7 +29,7 @@ namespace horn\apps\blog;
 use \horn\lib as h;
 
 h\import('lib/collection');
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/regex');
 
 h\import('lib/db/connect');
@@ -69,13 +69,13 @@ class story_resource
 
 	public		function __construct(h\crud_controller $ctrl)
 	{
-		parent::__construct($ctrl, h\string(self::name), h\string(self::target_class));
+		parent::__construct($ctrl, h\text(self::name), h\text(self::target_class));
 	}
 
 	public		function made_of_http_request_uri()
 	{
 		$title = $this->ctrl->get_segments()['title'];
-		$title = h\string($title);
+		$title = h\text($title);
 		$story = $this->get_resource_model()->get_by_title($title);
 
 		if(!$this->is_managed($story))
@@ -87,7 +87,7 @@ class story_resource
 	public		function made_of_http_request_post_data()
 	{
 		$post = $this->ctrl->get_post_data();
-		$title = h\string($post['story_title']);
+		$title = h\text($post['story_title']);
 		$story = $this->get_resource_model()->get_by_title($title);
 		return $story;
 	}
@@ -106,8 +106,8 @@ class story_resource
 		if(!isset($post['story_title']) || !isset($post['story_description']))
 			throw $this->_exception('Incorrect POST');
 
-		$story->title = h\string($post['story_title']);
-		$story->description = h\string($post['story_description']);
+		$story->title = h\text($post['story_title']);
+		$story->description = h\text($post['story_description']);
 		$story->modified = h\today();
 		$this->get_resource_model()->update($story);
 	}
@@ -115,19 +115,19 @@ class story_resource
 	public		function delete($story)
 	{
 		$title = $this->ctrl->get_segments()['title'];
-		$title = h\string($title);
+		$title = h\text($title);
 		return $this->get_resource_model()->delete_by_title($title);
 	}
 
 	public		function uri_of($story)
 	{
-		$uri = h\string::format('/stories/%s', rawurlencode($story->title));
+		$uri = h\text::format('/stories/%s', rawurlencode($story->title));
 		return $uri;
 	}
 
 	public		function uri_of_parent()
 	{
-		return h\string('/stories');
+		return h\text('/stories');
 	}
 }
 
@@ -142,7 +142,7 @@ class stories_resource
 
 	public		function __construct(h\crud_controller $ctrl)
 	{
-		parent::__construct($ctrl, h\string(self::name), h\string(self::target_class));
+		parent::__construct($ctrl, h\text(self::name), h\text(self::target_class));
 	}
 
 	public		function create_bare(/*$howmany*/)
@@ -169,7 +169,7 @@ class stories_resource
 		$stories = $this->create_bare(count($post['story_title']));
 		for($idx = 0; $idx < $stories->count(); ++$idx)
 		{
-			$title = h\string($post['story_title'][$idx]);
+			$title = h\text($post['story_title'][$idx]);
 			$stories[$idx]->assign($this->get_resource_model()->get_by_title($title));
 		}
 		return $stories;
@@ -182,8 +182,8 @@ class stories_resource
 
 		for($idx = 0; $idx < $stories->count(); ++$idx)
 		{
-			$stories[$idx]->title = h\string($post['story_title'][$idx]);
-			$stories[$idx]->description = h\string($post['story_description'][$idx]);
+			$stories[$idx]->title = h\text($post['story_title'][$idx]);
+			$stories[$idx]->description = h\text($post['story_description'][$idx]);
 			$stories[$idx]->modified = h\today();
 			$this->get_resource_model()->insert($stories[$idx]);
 		}
@@ -205,12 +205,12 @@ class stories_resource
 
 	public		function uri_of($story)
 	{
-		$uri = h\string::format('/stories/%s', rawurlencode($story->title));
+		$uri = h\text::format('/stories/%s', rawurlencode($story->title));
 		return $uri;
 	}
 
 	public		function uri_of_parent()
 	{
-		return h\string('/');
+		return h\text('/');
 	}
 }

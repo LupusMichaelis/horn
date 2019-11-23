@@ -34,12 +34,12 @@ class escaper
 	extends		h\object\public_
 	implements	h\escaper
 {
-	public function		__construct(h\string $charset)
+	public function		__construct(h\text $charset)
 	{
 		parent::__construct();
 	}
 
-	public function		do_escape(h\string $subject)
+	public function		do_escape(h\text $subject)
 	{
 		$escaped = clone $subject;
 		$escaped->scalar = preg_quote($escaped->scalar);
@@ -47,7 +47,7 @@ class escaper
 		return $escaped;
 	}
 
-	public function		do_unescape(h\string $subject)
+	public function		do_unescape(h\text $subject)
 	{
 		throw $this->_exception('Unescape is not supported');
 	}

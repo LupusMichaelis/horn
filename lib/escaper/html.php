@@ -69,7 +69,7 @@ class base
 			throw $this->_exception('Encoding issue while escaping an HTML string');
 	}
 
-	protected	function copy_and_convert(h\string $from)
+	protected	function copy_and_convert(h\text $from)
 	{
 		return $from->charset != $this->charset
 			? $from->to_converted($this->charset)
@@ -80,7 +80,7 @@ class base
 class text
 	extends base
 {
-	public		function do_escape(h\string $text)
+	public		function do_escape(h\text $text)
 	{
 		$result = $this->copy_and_convert($text);
 		$result->scalar = $this->php_htmlentities($result->scalar, ENT_NOQUOTES, $result->charset);
@@ -88,7 +88,7 @@ class text
 		return $result;
 	}
 
-	public		function do_unescape(h\string $text)
+	public		function do_unescape(h\text $text)
 	{
 		$result = $this->copy_and_convert($text);
 		$result->scalar = $this->php_html_entity_decode($result->scalar, ENT_NOQUOTES, $result->charset);
@@ -100,14 +100,14 @@ class text
 class attribute
 	extends base
 {
-	public		function do_escape(h\string $text)
+	public		function do_escape(h\text $text)
 	{
 		$result = $this->copy_and_convert($text);
 		$result->scalar = $this->php_htmlentities($result->scalar, ENT_QUOTES, $result->charset);
 		return $result;
 	}
 
-	public		function do_unescape(h\string $text)
+	public		function do_unescape(h\text $text)
 	{
 		$result = $this->copy_and_convert($text);
 		$result->scalar = $this->php_html_entity_decode($result->scalar, ENT_QUOTES, $result->charset);

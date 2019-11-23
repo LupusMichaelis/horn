@@ -29,13 +29,13 @@ namespace horn\apps\blog;
 use \horn\lib as h;
 
 h\import('lib/collection');
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/regex');
 
 h\import('lib/controller');
 
 h\import('lib/time/date_time');
-h\import('lib/string');
+h\import('lib/text');
 
 h\import('apps/models/account');
 h\import('apps/views/account');
@@ -69,13 +69,13 @@ class account_resource
 
 	public		function __construct(h\crud_controller $ctrl)
 	{
-		parent::__construct($ctrl, h\string(self::name), h\string(self::target_class));
+		parent::__construct($ctrl, h\text(self::name), h\text(self::target_class));
 	}
 
 	public		function made_of_http_request_uri()
 	{
 		$name = $this->ctrl->get_segments()['name'];
-		$name = h\string($name);
+		$name = h\text($name);
 		$account = $this->get_resource_model()->get_by_name($name);
 
 		if(!$this->is_managed($account))
@@ -87,7 +87,7 @@ class account_resource
 	public		function made_of_http_request_post_data()
 	{
 		$post = $this->ctrl->get_post_data();
-		$name = h\string($post['account_name']);
+		$name = h\text($post['account_name']);
 		$account = $this->get_resource_model()->get_by_name($name);
 		return $account;
 	}
@@ -106,8 +106,8 @@ class account_resource
 		if(!isset($post['account_name']) || !isset($post['account_email']))
 			throw $this->_exception('Incorrect POST');
 
-		$account->name = h\string($post['account_name']);
-		$account->email = h\string($post['account_email']);
+		$account->name = h\text($post['account_name']);
+		$account->email = h\text($post['account_email']);
 		$account->modified = h\today();
 		$this->get_resource_model()->update($account);
 	}
@@ -115,19 +115,19 @@ class account_resource
 	public		function delete($account)
 	{
 		$name = $this->ctrl->get_segments()['name'];
-		$name = h\string($name);
+		$name = h\text($name);
 		return $this->get_resource_model()->delete_by_name($name);
 	}
 
 	public		function uri_of($account)
 	{
-		$uri = h\string::format('/accounts/%s', rawurlencode($account->name));
+		$uri = h\text::format('/accounts/%s', rawurlencode($account->name));
 		return $uri;
 	}
 
 	public		function uri_of_parent()
 	{
-		return h\string('/accounts');
+		return h\text('/accounts');
 	}
 }
 
@@ -142,7 +142,7 @@ class accounts_resource
 
 	public		function __construct(h\crud_controller $ctrl)
 	{
-		parent::__construct($ctrl, h\string(self::name), h\string(self::target_class));
+		parent::__construct($ctrl, h\text(self::name), h\text(self::target_class));
 	}
 
 	public		function create_bare(/*$howmany*/)
@@ -170,7 +170,7 @@ class accounts_resource
 		$accounts = $this->create_bare(count($post['account_name']));
 		for($idx = 0; $idx < $accounts->count(); ++$idx)
 		{
-			$name = h\string($post['account_name'][$idx]);
+			$name = h\text($post['account_name'][$idx]);
 			$accounts[$idx]->assign($this->get_resource_model()->get_by_name($name));
 		}
 		return $accounts;
@@ -183,8 +183,8 @@ class accounts_resource
 
 		for($idx = 0; $idx < $accounts->count(); ++$idx)
 		{
-			$accounts[$idx]->name = h\string($post['account_name'][$idx]);
-			$accounts[$idx]->email = h\string($post['account_email'][$idx]);
+			$accounts[$idx]->name = h\text($post['account_name'][$idx]);
+			$accounts[$idx]->email = h\text($post['account_email'][$idx]);
 			$accounts[$idx]->modified = h\today();
 			$this->get_resource_model()->insert($accounts[$idx]);
 		}
@@ -206,12 +206,12 @@ class accounts_resource
 
 	public		function uri_of($account)
 	{
-		$uri = h\string::format('/accounts/%s', rawurlencode($account->name));
+		$uri = h\text::format('/accounts/%s', rawurlencode($account->name));
 		return $uri;
 	}
 
 	public		function uri_of_parent()
 	{
-		return h\string('/');
+		return h\text('/');
 	}
 }

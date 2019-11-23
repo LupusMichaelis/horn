@@ -30,7 +30,7 @@ use \horn\lib as h;
 
 h\import('lib/object');
 h\import('lib/collection');
-h\import('lib/string');
+h\import('lib/text');
 
 abstract
 class base
@@ -39,7 +39,7 @@ class base
 {
 	protected	$_charset;
 
-	public		function __construct(h\string $charset)
+	public		function __construct(h\text $charset)
 	{
 		$this->_charset = clone $charset;
 		parent::__construct();
@@ -52,7 +52,7 @@ class generic
 {
 	protected	$_map;
 
-	public		function __construct(h\string $charset)
+	public		function __construct(h\text $charset)
 	{
 		$this->_map = h\collection();
 		parent::__construct($charset);
@@ -66,18 +66,18 @@ class generic
 		$this->_map = $pairs;
 	}
 
-	public		function do_escape(h\string $subject)
+	public		function do_escape(h\text $subject)
 	{
 		$escaped = strtr($subject, $this->_map);
 
 		if(false === $escaped)
 			throw $this->_exception_invalid_map();
 
-		$escaped = h\string($escaped);
+		$escaped = h\text($escaped);
 		return $escaped;
 	}
 
-	public		function do_unescape(h\string $subject)
+	public		function do_unescape(h\text $subject)
 	{
 	}
 

@@ -29,7 +29,7 @@ namespace horn\apps\blog;
 use \horn\lib as h;
 
 h\import('lib/collection');
-h\import('lib/string');
+h\import('lib/text');
 
 h\import('lib/render/html');
 h\import('lib/render/rss');
@@ -164,7 +164,7 @@ class story_html_renderer
 
 	public		function itemise(stories $stories, $mode)
 	{
-		if($mode->is_equal(h\string('add')))
+		if($mode->is_equal(h\text('add')))
 			$this->entry_add(new story);
 
 		$canvas = $this->canvas;

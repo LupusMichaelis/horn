@@ -50,7 +50,7 @@ abstract class inet
 		$this->_words = new collection;
 	}
 
-	static		function new_(h\string $literal, $version=inet_4::version)
+	static		function new_(h\text $literal, $version=inet_4::version)
 	{
 		if($version == inet_4::version)
 			$inet = new inet_4($literal);
@@ -81,7 +81,7 @@ class inet_4
 		$exp_200_255	= "(?:2(?:5[0-5]|[0-4]\d))";
 		$exp_0_255		= sprintf("(?:%s|%s)", $exp_0_199, $exp_200_255);
 
-		$re = new regex(h\string::format($exp_ip, $exp_0_255));
+		$re = new regex(h\text::format($exp_ip, $exp_0_255));
 		*/
 
 		$re = new regex(RE_INET4);
@@ -154,14 +154,14 @@ class host
 
 
 	{
-		$this->_name = new h\string;
+		$this->_name = new h\text;
 
 		/** \todo RE_INET6_S
-		$re = new regex(h\string::format
+		$re = new regex(h\text::format
 				("(?<inet4>%s)|(?<inet6>%s)|(?<host>%s)"
 				, RE_INET4_S, RE_INET6_S, RE_HOST));
 		*/
-		$re = new regex(h\string::format
+		$re = new regex(h\text::format
 				("(?<inet4>%s)|(?<host>%s)"
 				, RE_INET4_S, RE_HOST));
 		if($re->match($literal))
@@ -180,7 +180,7 @@ class host
 
 	public		function _to_string()
 	{
-		if($this->name instanceof h\string)
+		if($this->name instanceof h\text)
 			$string = (string) $this->name;
 		elseif($this->ip instanceof inet)
 			$string = (string) $this->ip;
@@ -202,7 +202,7 @@ class host
 			$ret = gethostbyname($this->name);
 			if($ret != $this->name)
 			{
-				$ip = new h\string($ret);
+				$ip = new h\text($ret);
 				$this->ip = inet::new_($ip, inet_4::version);
 				return true;
 			}
@@ -220,7 +220,7 @@ class host
 			if($name == $this->ip)
 				return false;
 
-			$this->reverse = new host(new h\string($name));
+			$this->reverse = new host(new h\text($name));
 
 			return true;
 		}

@@ -4,7 +4,7 @@ namespace horn\lib\markup;
 use \horn\lib as h;
 
 h\import('lib/object');
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/collection');
 
 class xml
@@ -23,7 +23,7 @@ class xml
 		return $this->document->saveHTML();
 	}
 
-	public		function create_element(h\string $element_name, h\collection $attrs = null)
+	public		function create_element(h\text $element_name, h\collection $attrs = null)
 	{
 		$od = $this->document;
 		$e = $od->createElement($element_name);
@@ -37,14 +37,14 @@ class xml
 		return $e;
 	}
 
-	public		function create_entity_reference(h\string $name)
+	public		function create_entity_reference(h\text $name)
 	{
 		return $this->document->createEntityReference($name);
 	}
 
 	public		function create_nbsp()
 	{
-		return $this->create_entity_reference(h\string('nbsp'));
+		return $this->create_entity_reference(h\text('nbsp'));
 	}
 
 }

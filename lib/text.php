@@ -37,31 +37,31 @@ import('lib/collection');
  */
 function is_string($variable)
 {
-	return $variable instanceof string || \is_string($variable);
+	return $variable instanceof text || \is_string($variable);
 }
 
-/** Cast $converted in a string
+/** Cast $converted in a text
  */
-function string($converted)
+function text($converted)
 {
-	return new string($converted);
+	return new text($converted);
 }
 
 /** Concatenate two strings
  */
 function concatenate($lhs, $rhs)
 {
-	return string($lhs)->append(string($rhs));
+	return text($lhs)->append(text($rhs));
 }
 
-/** 	Implementation of a string class that handle encoding issues. The API try
+/** 	Implementation of a text class that handle encoding issues. The API try
  *				to reach a consistency.
  *
  *  \todo		refactor prepend, append and append_list method to check encoding issues
  *  \todo		write specific exception classes (stringception for offset and charset
  *  			issues)
  */
-class string
+class text
 	extends		object_public
 	implements	\arrayaccess, \countable, \jsonserializable
 {
@@ -103,11 +103,11 @@ class string
 			throw $this->_exception('Charset detection failed');
 	}
 
-	/** Factory method to forge string from a format string
+	/** Factory method to forge text from a format string
 	 *
 	 *	\see	http://php.net/sprintf
 	 *	\todo	Catch sprintf error
-	 *	\param	$format		(string|string)	format string
+	 *	\param	$format		(string|text)	format string
 	 *	\param	$arg1..n	any arguments
 	 */
 	static
@@ -142,31 +142,31 @@ class string
 	}
 
 	/**	Stick $sticker at begin of string.
-	 *	\param	$sticker	string	The string to be pretend to $this.
+	 *	\param	$sticker	text	The text to be pretend to $this.
 	 *	\return	$this
 	 */
-	public		function prepend(string $sticker)
+	public		function prepend(text $sticker)
 	{
 		$this->_scalar = $sticker->_scalar . $this->_scalar;
 		$this->_auto_charset();
 		return $this;
 	}
 
-	/**	Concatenate $sticker at back of string.
-	 *	\param	$sticker	string	The string to be pretend to $this.
+	/**	Concatenate $sticker at back of text.
+	 *	\param	$sticker	text	The text to be pretend to $this.
 	 *	\return	$this
 	 */
-	public		function append(string $sticker)
+	public		function append(text $sticker)
 	{
 		$this->_scalar .= $sticker->_scalar;
 		$this->_auto_charset();
 		return $this;
 	}
 
-	/**	Factory method that gets caracters from 0 to $offset position from $this string.
+	/**	Factory method that gets caracters from 0 to $offset position from $this text.
 	 *	\warning	It is the position, not the size that is requested !
-	 *	\param		$offset	int		Position of the end of fetched string.
-	 *	\return		string
+	 *	\param		$offset	int		Position of the end of fetched text.
+	 *	\return		text
 	 *	\throw		exception	On overrun.
 	 */
 	public		function head($offset)
@@ -205,9 +205,9 @@ class string
 		return h\collection($head, $tail);
 	}
 
-	/** Remove part of the string before $offset
-	 *	\param		$offset	int		Position of the end of fetched string.
-	 *	\return		string		The head of the string
+	/** Remove part of the text before $offset
+	 *	\param		$offset	int		Position of the end of fetched text.
+	 *	\return		text		The head of the text
 	 *	\throw		exception	On overrun or bug
 	 */
 	public		function behead($offset)
@@ -221,9 +221,9 @@ class string
 		return $head;
 	}
 
-	/**	Factory method that gets caracters from $offset to last position from $this string.
-	 *	\param		$offset	int		Position of the start of fetched string.
-	 *	\return		string
+	/**	Factory method that gets caracters from $offset to last position from $this text.
+	 *	\param		$offset	int		Position of the start of fetched text.
+	 *	\return		text
 	 *	\throw		exception	On overrun.
 	 */
 	public		function tail($offset)
@@ -233,9 +233,9 @@ class string
 		return $new;
 	}
 
-	/**	Cut off the tail of that string from $offset
+	/**	Cut off the tail of that text from $offset
 	 *	\param		$offset	int		Position of the first caracter removed
-	 *	\return		string			The tail of the string
+	 *	\return		text			The tail of the text
 	 *	\throw		exception	On overrun.
 	 */
 	public		function betail($offset)
@@ -249,18 +249,18 @@ class string
 		return $tail;
 	}
 
-	/** Factory method that creates a new string [$begin,$end[
+	/** Factory method that creates a new text [$begin,$end[
 	 *	\code
-	 *			$s = new string("My pretty string.");
+	 *			$s = new text("My pretty text.");
 	 *			$s->slice(0,2) ; // "My"
 	 *			$s->slice(3,9) ; // "pretty"
-	 *			$s->slice($s->search("str"), $s->length() - 1) ; // "string"
+	 *			$s->slice($s->search("str"), $s->length() - 1) ; // "text"
 	 *	\endcode
 	 *
-	 * \param	$begin		int		First position (included) of the fetched string.
-	 * \param	$end		int		Last position (exluded) of the fetched string.
+	 * \param	$begin		int		First position (included) of the fetched text.
+	 * \param	$end		int		Last position (exluded) of the fetched text.
 	 *
-	 * \return	string	The string corresponding to the interval
+	 * \return	text	The text corresponding to the interval
 	 * \throw	exception	On bad index
 	 */
 	public		function slice($begin, $end)
@@ -275,15 +275,15 @@ class string
 		return new static(substr($this->_scalar, $begin, $end - $begin));
 	}
 
-	/** Removes spaces and tabs from edges of the string
+	/** Removes spaces and tabs from edges of the text
 	 */
 	public		function trim()
 	{
 		$this->_scalar = trim($this->_scalar);
 	}
 
-	/** Clone the current string and return it trimmed
-	 *  \return	The trimmed string
+	/** Clone the current text and return it trimmed
+	 *  \return	The trimmed text
 	 */
 	public		function trimmed()
 	{
@@ -294,7 +294,7 @@ class string
 
 	/** Search $needle from $offset to end until a match.
 	 *
-	 * \param	$needle		string
+	 * \param	$needle		text
 	 * \param	$offset		int
 	 *
 	 * \return	Found offset.
@@ -311,19 +311,19 @@ class string
 	}
 	
 	/** 
-	 *	\param	$rhs 	string
+	 *	\param	$rhs 	text
 	 *	\return	int		0 on equal, -1 if $this is before $rhs, 1 else.
 	 *	\see http://php.net/strcmp
 	 */
-	public		function compare(string $rhs)
+	public		function compare(text $rhs)
 	{
 		return strcmp($this->_scalar, $rhs->_scalar);
 	}
 
 	/** Explode.
 	  *
-	  * \param	$c4		string	Pattern that must be user to cut $this
-	  * \return	collection of string
+	  * \param	$c4		text	Pattern that must be user to cut $this
+	  * \return	collection of text
 	  */
 	public		function explode($c4)
 	{
@@ -346,9 +346,9 @@ class string
 		return $this;
 	}
 
-	/** Factory that creates a new string from $this, and set every alphabetic characters to lower case.
+	/** Factory that creates a new text from $this, and set every alphabetic characters to lower case.
 	  *
-	  * \return string	The lowred case clone of $this.
+	  * \return text	The lowred case clone of $this.
 	  */
 	public		function to_lower()
 	{
@@ -365,10 +365,10 @@ class string
 		return $this;
 	}
 
-	/** Factory that creates a new string from $this, and set every alphabetic characters of the new
-	  *	string to upper case.
+	/** Factory that creates a new text from $this, and set every alphabetic characters of the new
+	  *	text to upper case.
 	  *
-	  * \return The upped case string
+	  * \return The upped case text
 	  */
 	public		function to_upper()
 	{
@@ -376,9 +376,9 @@ class string
 		return $new->upcase();
 	}
 
-	/** Convert scalar string to the requiered encoding and set $this to the charset.
+	/** Convert scalar text to the requiered encoding and set $this to the charset.
 	 *	\todo	Ensure charset.
-	 *	\param	$charset	string	The requiered charset to imbue in $this string.
+	 *	\param	$charset	text	The requiered charset to imbue in $this text.
 	 *	\return	$this
 	 */
 	public		function convert($charset)

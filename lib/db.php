@@ -37,7 +37,7 @@ class url_db
 	protected	$_space;
 	protected	$_table;
 
-    public   function is_scheme_supported(h\string $candidate)
+    public   function is_scheme_supported(h\text $candidate)
     {
         return \string('mysql')->is_equal($candidate);
     }
@@ -47,7 +47,7 @@ class url_db
 		parent::parse();
 
         // XXX ???
-		$this->space = new h\string($this->path);
+		$this->space = new h\text($this->path);
 		$this->space = $this->space->tail(1);
 	}
 }

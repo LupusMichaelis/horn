@@ -62,8 +62,8 @@ class null_escaper
 
 function parse($template)
 {
-	if(! $template instanceof h\string)
-		$template = h\string($template);
+	if(! $template instanceof h\text)
+		$template = h\text($template);
 
 	$parser = new parser;
 	return $parser->do_parse($template);
@@ -71,11 +71,11 @@ function parse($template)
 
 function process($template, $context)
 {
-	if(! $template instanceof h\string)
-		$template = h\string($template);
+	if(! $template instanceof h\text)
+		$template = h\text($template);
 
 	$parser = new parser;
-	$escaper = new html_escaper(h\string('UTF-8'));
+	$escaper = new html_escaper(h\text('UTF-8'));
 	$processor = new processor($parser, $escaper);
 	return $processor->do_process($template, $context);
 }

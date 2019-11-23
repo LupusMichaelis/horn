@@ -28,7 +28,7 @@
 namespace horn\lib\uri;
 use \horn\lib as h;
 
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/collection');
 h\import('lib/regex');
 h\import('lib/regex-defs');
@@ -37,17 +37,17 @@ h\import('lib/uri');
 function create_generic()
 {
 	$factory = new h\uri\factory;
-	$factory->do_register_factory(h\string('scheme')
+	$factory->do_register_factory(h\text('scheme')
 			, new h\uri\scheme_factory($factory));
-	$factory->do_register_factory(h\string('http')
+	$factory->do_register_factory(h\text('http')
 			, new h\http\uri_factory($factory));
-	$factory->do_register_factory(h\string('host')
+	$factory->do_register_factory(h\text('host')
 			, new h\uri\host_factory($factory));
-	$factory->do_register_factory(h\string('port')
+	$factory->do_register_factory(h\text('port')
 			, new h\uri\port_factory($factory));
-	$factory->do_register_factory(h\string('relative_path')
+	$factory->do_register_factory(h\text('relative_path')
 			, new h\uri\path_factory($factory));
-	$factory->do_register_factory(h\string('absolute_path')
+	$factory->do_register_factory(h\text('absolute_path')
 			, new h\uri\path_factory($factory));
 
 	return $factory;
@@ -66,7 +66,7 @@ class specific_factory
 	}
 
 	abstract
-	public		function do_feed(h\string $meat);
+	public		function do_feed(h\text $meat);
 }
 
 /** \see http://www.ietf.org/rfc/rfc2396.txt
@@ -129,7 +129,7 @@ class factory
 		return clone $this->base_uri;
 	}
 
-	public		function create(h\string $literal, h\uri\absolute $base = null)
+	public		function create(h\text $literal, h\uri\absolute $base = null)
 	{
 		// Try to find a scheme, meaning we have an absolutea. If not, we'll try to guess
 		// what's the URI related to.
@@ -144,7 +144,7 @@ class factory
 		return $base;
 	}
 
-	public		function create_relative_part(h\string $literal, h\uri\absolute $base = null)
+	public		function create_relative_part(h\text $literal, h\uri\absolute $base = null)
 	{
 		$scheme_sep_pos = $literal->search(':');
 		if(-1 === $scheme_sep_pos)
@@ -161,23 +161,23 @@ class factory
 		throw $this->_exception_format('Scheme \'%s\' not supported', $scheme);
 	}
 
-	public		function create_scheme(h\string $literal, h\uri\absolute $base = null)
+	public		function create_scheme(h\text $literal, h\uri\absolute $base = null)
 	{
 		return $this->factories['scheme']->do_feed($literal);
 	}
 
-	public		function create_absolute_path(h\string $literal, h\uri\absolute $base = null)
+	public		function create_absolute_path(h\text $literal, h\uri\absolute $base = null)
 	{
 		return $this->factories['absolute_path']->do_feed($literal);
 	}
 
-	public		function create_relative(h\string $literal, h\uri\absolute $base)
+	public		function create_relative(h\text $literal, h\uri\absolute $base)
 	{
 		$relative_path = $this->factories['relative_path']->do_feed($literal);
 		return $relative_path;
 	}
 
-	public		function do_register_factory(h\string $entity, specific_factory $factory)
+	public		function do_register_factory(h\text $entity, specific_factory $factory)
 	{
 		$this->factories[$entity] = $factory;
 	}

@@ -56,7 +56,7 @@ class http_cors
 			, 'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, DELETE'
 			, 'Access-Control-Allow-Headers' => 'Content-Type'
 			, 'Access-Control-Allow-Origin' =>
-				h\string::format('https://%s', $this->configuration['front_base_url'])
+				h\text::format('https://%s', $this->configuration['front_base_url'])
 			)
 		);
 		$ctx->out->head->join($cors_headers);

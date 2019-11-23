@@ -29,7 +29,7 @@ namespace horn\apps\account;
 use \horn\lib as h;
 
 h\import('lib/collection');
-h\import('lib/string');
+h\import('lib/text');
 
 class source
 	extends h\object_public
@@ -47,7 +47,7 @@ class source
 
 	public		function insert(account $account)
 	{
-		$sql = h\string::format(
+		$sql = h\text::format(
 				'insert into accounts (name, email, created, modified)'
 				.'	values (%s, %s, %s, %s)'
 				, $this->source->escape($account->name)
@@ -61,7 +61,7 @@ class source
 	public		function update(account $account)
 	{
 		$id = $this->cache->search_first($account);
-		$sql = h\string::format(
+		$sql = h\text::format(
 				'update accounts set name = %s'
 				.', email = %s'
 				.', created = %s'
@@ -79,20 +79,20 @@ class source
 	public		function delete(account $account)
 	{
 		$id = $this->cache->search_first($account);
-		$sql = h\string::format('delete from accounts where id=%d', $id);
+		$sql = h\text::format('delete from accounts where id=%d', $id);
 		$this->source->query($sql);
 	}
 
 	public		function get_all()
 	{
-		$rows = $this->source->query(h\string('select * from accounts'));
+		$rows = $this->source->query(h\text('select * from accounts'));
 
 		return $this->accounts_from_select($rows);
 	}
 
-	public		function get_by_name(h\string $name)
+	public		function get_by_name(h\text $name)
 	{
-		$sql = h\string::format('select * from accounts where name = %s'
+		$sql = h\text::format('select * from accounts where name = %s'
 				, $this->source->escape($name));
 		$rows = $this->source->query($sql);
 		$accounts = $this->accounts_from_select($rows);
@@ -102,9 +102,9 @@ class source
 			: null;
 	}
 
-	public		function get_by_email(h\string $email)
+	public		function get_by_email(h\text $email)
 	{
-		$sql = h\string::format('select * from accounts where email = %s'
+		$sql = h\text::format('select * from accounts where email = %s'
 				, $this->source->escape($email));
 		$rows = $this->source->query($sql);
 		$accounts = $this->accounts_from_select($rows);
@@ -152,8 +152,8 @@ class account
 	// public	$owner;
 	public		function __construct()
 	{
-		$this->_name = new h\string;
-		$this->_email = new h\string;
+		$this->_name = new h\text;
+		$this->_email = new h\text;
 		$this->_created = h\today();
 		$this->_modified = h\today();
 
@@ -164,8 +164,8 @@ class account
 	public		function create($name, $email, $created, $modified)
 	{
 		$new = new static;
-		$new->name = h\string($name);
-		$new->email = h\string($email);
+		$new->name = h\text($name);
+		$new->email = h\text($email);
 		$new->created = h\date::new_from_sql($created);
 		$new->modified = h\date::new_from_sql($modified);
 

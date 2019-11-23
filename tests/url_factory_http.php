@@ -21,17 +21,17 @@ class test_suite_url_factory_http
 		parent::__construct($message);
 
 		$factory = new h\uri\factory;
-		$factory->do_register_factory(h\string('http')
+		$factory->do_register_factory(h\text('http')
 				, new h\http\uri_factory($factory));
-		$factory->do_register_factory(h\string('net_path')
+		$factory->do_register_factory(h\text('net_path')
 				, new h\uri\net_path_factory($factory));
-		$factory->do_register_factory(h\string('hierarchical_part')
+		$factory->do_register_factory(h\text('hierarchical_part')
 				, new h\uri\hierarchical_part_factory($factory));
-		$factory->do_register_factory(h\string('host')
+		$factory->do_register_factory(h\text('host')
 				, new h\uri\host_factory($factory));
-		$factory->do_register_factory(h\string('port')
+		$factory->do_register_factory(h\text('port')
 				, new h\uri\port_factory($factory));
-		$factory->do_register_factory(h\string('absolute_path')
+		$factory->do_register_factory(h\text('absolute_path')
 				, new h\uri\path_factory($factory));
 
 		$this->factory = $factory;
@@ -47,14 +47,14 @@ class test_suite_url_factory_http
 		$messages = array('HTTP URL');
 		$expected_exception = null;
 
-		$literal = h\string($this->target);
+		$literal = h\text($this->target);
 		$factory = $this->factory;
 
 		$callback = function () use ($literal, $factory)
 		{
 			$url = $factory->create($literal);
-			return $url->scheme->is_equal(h\string('http'))
-				&& h\string($url)->is_equal($literal);
+			return $url->scheme->is_equal(h\text('http'))
+				&& h\text($url)->is_equal($literal);
 		};
 		$this->add_test($callback, $messages, $expected_exception);
 	}

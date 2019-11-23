@@ -10,16 +10,16 @@ h\import('lib/test');
 class test_escaper
 	extends h\escaper\base
 {
-	public		function do_escape(h\string $text)
+	public		function do_escape(h\text $text)
 	{
 		$text = strtr($text, array('\\' => '\\\\'));
-		return h\string($text);
+		return h\text($text);
 	}
 
-	public		function do_unescape(h\string $text)
+	public		function do_unescape(h\text $text)
 	{
 		$text = strtr($text, array('\\\\' => '\\'));
-		return h\string($text);
+		return h\text($text);
 	}
 }
 
@@ -29,7 +29,7 @@ class test_suite_escaper
 	public		function __construct($message = 'Escaper')
 	{
 		parent::__construct($message);
-		$this->providers[] = function() { return new test_escaper(h\string('UTF-8')); };
+		$this->providers[] = function() { return new test_escaper(h\text('UTF-8')); };
 	}
 
 	protected	function _test_escape()
@@ -38,9 +38,9 @@ class test_suite_escaper
 		$e = $this->target;
 		$callback = function () use($e)
 			{
-				$s = h\string('\\$');
+				$s = h\text('\\$');
 				$es = $e->do_escape($s);
-				return h\string('\\\\$')->is_equal($es);
+				return h\text('\\\\$')->is_equal($es);
 			};
 		$this->add_test($callback, $messages);
 
@@ -48,9 +48,9 @@ class test_suite_escaper
 		$e = $this->target;
 		$callback = function () use($e)
 			{
-				$s = h\string('\\\\$');
+				$s = h\text('\\\\$');
 				$ues = $e->do_unescape($s);
-				return h\string('\\$')->is_equal($ues);
+				return h\text('\\$')->is_equal($ues);
 			};
 		$this->add_test($callback, $messages);
 

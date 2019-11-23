@@ -30,7 +30,7 @@ use \horn\lib as h;
 
 import('lib/http/url');
 import('lib/inet/host');
-import('lib/string');
+import('lib/text');
 import('lib/collection');
 import('lib/regex');
 import('lib/regex-defs');

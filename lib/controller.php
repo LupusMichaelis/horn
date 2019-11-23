@@ -30,7 +30,7 @@ use \horn\lib as h;
 
 h\import('lib/object');
 h\import('lib/collection');
-h\import('lib/string');
+h\import('lib/text');
 h\import('lib/model');
 h\import('lib/http/error');
 h\import('lib/http/url');
@@ -95,7 +95,7 @@ class controller
 
 	private		function location($uri)
 	{
-		$to = new h\http\url(h\string::format
+		$to = new h\http\url(h\text::format
 				( '%s://%s%s'
 				, 'http'//$this->context->in->scheme
 				, 'blog.localhost'//$this->context->in->host
@@ -135,7 +135,7 @@ class resource
 	protected	$_name;
 
 	public		function __construct(h\crud_controller $ctrl
-			, h\string $name, h\string $class)
+			, h\text $name, h\text $class)
 	{
 		$this->_ctrl = $ctrl;
 		$this->_class = $class;
@@ -174,12 +174,12 @@ class resource
 	protected	function get_resource_model()
 	{
 		// XXX This shouldn't be
-		$mapping = array('stories' => h\string('story'), 'accounts' => h\string('account'));
+		$mapping = array('stories' => h\text('story'), 'accounts' => h\text('account'));
 		$name = (string) $this->_name;
 		if(isset($mapping[$name]))
 			$name = $mapping[$name];
 		else
-			$name = h\string($name);
+			$name = h\text($name);
 		// /XXX
 
 		return $this->ctrl->get_model()->get_data($name);
@@ -197,13 +197,13 @@ class crud_controller
 	public		function __construct(h\component\context $context, h\resource $resource)
 	{
 		$this->_resource = $resource;
-		$this->_action = h\string('read');
+		$this->_action = h\text('read');
 		parent::__construct($context);
 
 		foreach(array('edit', 'delete', 'add') as $action)
 			if($context->in->uri->search->has_key($action))
 			{
-				$this->action = h\string($action);
+				$this->action = h\text($action);
 				break;
 			}
 		$this->context->template_action = $this->action;
@@ -229,25 +229,25 @@ class crud_controller
 	// XXX This should be configured or set in context
 	protected		function &_get_create_verb()
 	{
-		$s = h\string('add');
+		$s = h\text('add');
 		return $s;
 	}
 
 	protected		function &_get_read_verb()
 	{
-		$s = h\string('read');
+		$s = h\text('read');
 		return $s;
 	}
 
 	protected		function &_get_update_verb()
 	{
-		$s = h\string('edit');
+		$s = h\text('edit');
 		return $s;
 	}
 
 	protected		function &_get_delete_verb()
 	{
-		$s = h\string('delete');
+		$s = h\text('delete');
 		return $s;
 	}
 

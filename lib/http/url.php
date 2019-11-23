@@ -47,7 +47,7 @@ class url
 		$this->port = static::default_port;
 	}
 
-	public		function is_scheme_supported(h\string $scheme)
+	public		function is_scheme_supported(h\text $scheme)
 	{
 		return in_array($scheme->to_lower(), array('http', 'https'));
 	}
@@ -58,10 +58,10 @@ class uri_factory
 {
 	public			$secured = false;
 
-	public function	do_feed(h\string $meat)
+	public function	do_feed(h\text $meat)
 	{
 		$uri = new url;
-		$uri->scheme = h\string($this->secured ? 'https' : 'http');
+		$uri->scheme = h\text($this->secured ? 'https' : 'http');
 		$uri->hierarchical_part = $this->master->factories['hierarchical_part']->do_feed($meat);
 		// XXX check authority is present and throw an error if not
 		$uri->query = $this->master->factories['query']->do_feed($meat);

@@ -11,19 +11,19 @@ h\import('lib/test');
 class tested_uri
     extends h\uri_absolute
 {
-	public		function is_scheme_supported(h\string $candidate)
+	public		function is_scheme_supported(h\text $candidate)
     {
-        return h\string('a')->is_equal($candidate);
+        return h\text('a')->is_equal($candidate);
     }
 }
 
 class tested_uri_factory
 	extends h\uri\specific_factory
 {
-	public		function do_feed(h\string $scheme_specific_part)
+	public		function do_feed(h\text $scheme_specific_part)
 	{
 		$uri = new tested_uri;
-		$uri->scheme = h\string('a');
+		$uri->scheme = h\text('a');
 		$uri->scheme_specific_part = $scheme_specific_part;
 		return $uri;
 	}
@@ -37,11 +37,11 @@ class test_suite_uri_factory
 		parent::__construct($message);
 
 		$factory = new h\uri\factory;
-		$factory->do_register_factory(h\string('a'), new tested_uri_factory($factory));
+		$factory->do_register_factory(h\text('a'), new tested_uri_factory($factory));
 
 		$this->providers[] = function() use ($factory)
 		{
-			$uri = $factory->create(h\string('a:b'));
+			$uri = $factory->create(h\text('a:b'));
 			return $uri;
 		};
 	}
@@ -55,7 +55,7 @@ class test_suite_uri_factory
 		$u = $this->target;
 		$callback = function () use ($u)
 		{
-			return h\string('a')->is_equal(h\string($u->scheme))
+			return h\text('a')->is_equal(h\text($u->scheme))
 				&& 'a:b' === (string) $u;
 		};
 		$this->add_test($callback, $messages, $expected_exception);

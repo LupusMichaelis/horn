@@ -50,7 +50,7 @@ class host
 class host_factory
 	extends h\uri\specific_factory
 {
-	public function	do_feed(h\string $meat)
+	public function	do_feed(h\text $meat)
 	{
 		$host = new host;
 		$impl = $this->create_impl_from_string($meat);
@@ -59,7 +59,7 @@ class host_factory
 		return $host;
 	}
 
-	private		function create_impl_from_string(h\string $literal)
+	private		function create_impl_from_string(h\text $literal)
 	{
 		if($literal[0]->__toString() === '[')
 			return $this->create_ipv6_host_from_string($literal);
@@ -71,7 +71,7 @@ class host_factory
 		throw $this->_exception('Can\'t find any host in URI');
 	}
 
-	private		function create_named_host_from_string(h\string $literal)
+	private		function create_named_host_from_string(h\text $literal)
 	{
 
 		$end = $literal->search(':');

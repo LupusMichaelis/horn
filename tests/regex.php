@@ -31,7 +31,7 @@ class test_suite_regex
 			{
 				list ($re, $subject, $expected_exit) = $target;
 				$re = h\regex($re);
-				$subject = h\string($subject);
+				$subject = h\text($subject);
 				$result = $re->do_execute($subject);
 				return $expected_exit === $result->is_match() ;
 			};
@@ -59,7 +59,7 @@ class test_suite_regex
 					) = $target;
 
 				$re = h\regex($re);
-				$subject = h\string($subject);
+				$subject = h\text($subject);
 				$result = $re->do_execute($subject);
 
 				return $expected_matching === $result->is_match()
