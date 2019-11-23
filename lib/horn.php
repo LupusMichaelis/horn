@@ -44,6 +44,3 @@ function dump($variable)
 
 	return $desc;
 }
-
-
-

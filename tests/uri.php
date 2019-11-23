@@ -129,7 +129,4 @@ class test_suite_path
 		$this->add_test($callback, $messages, $expected_exception);
 	}
 }
-
-
-<?php  endif// false
-
+<?php  endif;// false

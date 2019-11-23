@@ -314,7 +314,7 @@ class week
 		throw new exception('Read-only collection');
 	}
 
-	public		function offsetGet($offset)
+	public		function &offsetGet($offset)
 	{
 		if(!is_integer($offset))
 		{
@@ -322,7 +322,7 @@ class week
 			$days = array
 				( 'monday' => 0
 				, 'tuesday' => 1
-				, 'wenesday' => 2
+				, 'wednesday' => 2
 				, 'tuesday' => 3
 				, 'friday' => 4
 				, 'saturday' => 5
@@ -340,7 +340,7 @@ class week
 		return parent::offsetGet($offset);
 	}
 
-	public		function offsetExits($offset)
+	public		function offsetExist($offset)
 	{
 		return !($offset < 0 && 7 < $offset);
 	}

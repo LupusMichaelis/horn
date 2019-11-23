@@ -25,6 +25,7 @@
  *
  */
 namespace horn\lib;
+use \horn\lib as h;
 
 import('lib/object');
 import('lib/text');
@@ -63,7 +64,8 @@ function c($a)
   */
 class collection
 	extends		object_public
-	implements	\Iterator
+	implements
+        \Iterator
 		, \ArrayAccess
 		, \Countable
 		, \JsonSerializable

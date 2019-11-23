@@ -7,6 +7,8 @@ use horn\lib\test as t;
 h\import('lib/object/wrapper');
 h\import('lib/test');
 
+h\import('tests/object');
+
 // Test class
 class thing_wrapped
 	extends h\object\public_
