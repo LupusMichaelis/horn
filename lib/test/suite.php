@@ -17,7 +17,7 @@ class suite
 	extends h\object_public
 {
 	protected	$_cases;
-	protected	$_providers = array(null);
+	protected	$_providers = [null];
 	protected	$_name ;		
 	protected	$_target;
 
@@ -27,11 +27,7 @@ class suite
 		$this->_cases = new h\collection();
 		$this->_name = h\text($name);
 		parent::__construct();
-		$this->run();
 	}
-
-	public		function __destruct()
-	{ }
 
 	final
 	public		function run()
@@ -61,18 +57,18 @@ class suite
 	}
 	*/
 
-	protected	function assert($test_true, $messages = array())
+	protected	function assert($test_true, $messages = [])
 	{
 		$callback = function () use ($test_true) { return $test_true ; };
 		$this->add_test($callback, $messages);
 	}
 
-	protected	function add_test($callback, $messages = array(), $expected_exception = array())
+	protected	function add_test($callback, $messages = [], $expected_exception = [])
 	{
 		if(!h\is_collection($messages))
 			throw $this->_exception('variable \'messages\' is not a collection.');
 
-		if(empty($messages[0]))		$messages[0] = 'Test case';
+		if(empty($messages[0]))			$messages[0] = 'Test case';
 		if(empty($messages['true']))	$messages['true'] = 'Ok';
 		if(empty($messages['false']))	$messages['false'] = 'Ko';
 		
@@ -89,69 +85,77 @@ class suite
 
 	protected	function _assert_equals($expected, $actual)
 	{
-		$messages = array
-			( 'Testing equality.'
+		$messages =
+			[ 'Testing equality.'
 			, 'true' => 'Equality ok'
 			, 'false' => sprintf('Not equal (expected \'%s\' != actual \'%s\')',
 					var_export($expected, true), var_export($actual, true))
-			);
+			];
 		$this->assert($expected == $actual, $messages);
+	}
+
+	protected	function _assert_not_equals($unexpected, $actual)
+	{
+		$messages =
+			[ 'Testing inequality.'
+			, 'true' => 'Inequality ok'
+			, 'false' => sprintf('Not equal (unexpected \'%s\' == actual \'%s\')',
+					var_export($unexpected, true), var_export($actual, true))
+			];
+		$this->assert($unexpected != $actual, $messages);
 	}
 
 	protected	function _assert_is_set($variable)
 	{
-		$messages = array('Testing is set variable');
+		$messages = ['Testing is set variable'];
 		$this->assert(isset($variable), $messages);
 	}
 
 	protected	function _assert_is_empty($variable)
 	{
-		$messages = array('Testing is empty variable');
+		$messages = ['Testing is empty variable'];
 		$this->assert(empty($variable), $messages);
 	}
 
 	protected	function _assert_is_null($variable)
 	{
-		$messages = array('Testing is null value');
+		$messages = ['Testing is null value'];
 		$this->assert(is_null($variable), $messages);
 	}
 
 	protected	function _assert_is_scalar($variable)
 	{
-		$messages = array
-			( 'Testing is a scalar'
-			#, true => 'Tested variable is a scalar'
-			);
+		$messages = ['Testing is a scalar'];
 		$this->assert(is_scalar($variable), $messages);
 	}
 
 	protected	function _assert_is_resource($variable)
 	{
-		$messages = array('Testing is a resource');
+		$messages = ['Testing is a resource'];
 		$this->assert(is_resource($variable), $messages);
 	}
 
 	protected	function _assert_is_integer($variable)
 	{
-		$messages = array('Testing is an integer');
+		$messages = ['Testing is an integer'];
 		$this->assert(is_integer($variable), $messages);
 	}
 
 	protected	function _assert_is_float($variable)
 	{
-		$messages = array('Testing is a float');
+		$messages = ['Testing is a float'];
 		$this->assert(is_float($variable), $messages);
 	}
 
 	protected	function _assert_is_string($variable)
 	{
-		$messages = array('Testing is a string');
+		$messages = ['Testing is a string'];
 		$this->assert(is_string($variable), $messages);
 	}
 
 	protected	function _assert_is_object($variable)
 	{
-		$messages = array('Testing is an object');
+		$messages = ['Testing is an object'];
 		$this->assert(is_object($variable), $messages);
 	}
 
@@ -159,9 +163,7 @@ class suite
 	{
 		$this->_assert_class_exists($class);
 		$this->_assert_is_object($object);
-		$messages = array
-			( sprintf('Testing is an instance of \'%s\'', $class)
-			); 
+		$messages = [sprintf('Testing is an instance of \'%s\'', $class)];
 		$this->assert(is_a($object, $class), $messages);
 	}
 
@@ -178,19 +180,8 @@ abstract
 class suite_object
 	extends suite
 {
-	/*
-	public		function run()
-	{
-		$this->_test_instanciate();
-
-		foreach($this->providers as $provider)
-			$this->_test_is_a($provider(), 'horn\lib\object_base');
-	}
-	*/
-
 	protected	function _test_instanciate()
 	{
 		$this->_assert_is_object($this->target);
 	}
-
 }

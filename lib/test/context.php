@@ -38,8 +38,15 @@ class context
 	public		function __invoke()
 	{
 		$callback = $this->callback;
-		try { $this->success = $callback() ; $this->on_not_caught_exception() ; }
-		catch(\exception $e) { $this->on_caught_exception($e) ; }
+		try
+		{
+			$this->success = $callback();
+			$this->on_not_caught_exception();
+		}
+		catch(\exception $e)
+		{
+			$this->on_caught_exception($e);
+		}
 
 		return $this;
 	}
@@ -59,5 +66,3 @@ class context
 			$this->success = false;
 	}
 }
-
-

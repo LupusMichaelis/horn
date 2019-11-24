@@ -9,20 +9,23 @@ function cli_renderer(t\suite $suite)
 	$howmany = count($suite->cases);
 	$count = 0;
 	$errors = 0;
-	$out = array();
+	$out = [];
 	foreach($suite->cases as $case)
 	{
-		//assert(!is_null($case->success));
-
 		++$count;
-		$out[] = sprintf('[%d/%d] %s (%s)'
+		$out[] = sprintf
+			( '[%d/%d] %s (%s)'
 			, $count, $howmany
 			, $case->message
-			, $case->success ? $case->on_true : $case->on_false);
-		$case->success or ++$errors;
+			, $case->success ? $case->on_true : $case->on_false
+			);
+		if(!$case->success)
+		{
+			++$errors;
 
-		if($case->caught_exception instanceof \exception)
-			print $case->caught_exception->xdebug_message;
+			if($case->caught_exception instanceof \exception)
+			$out[] = $case->caught_exception->xdebug_message;
+		}
 	}
 
 	print "\n".implode($out, "\n")."\n";
