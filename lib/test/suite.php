@@ -33,12 +33,15 @@ class suite
 	public		function run()
 	{
 		foreach($this->providers as $provider)
-		{
-			$this->target = $provider();
 			foreach(get_class_methods($this) as $fn)
+			{
+				$this->target = $provider();
 				if(0 === strpos($fn, '_test_'))
 					$this->$fn();
-		}
+			}
+
+		foreach($this->cases as $case)
+			$case();
 	}
 
 	/*
@@ -78,8 +81,6 @@ class suite
 		$test->on_false = $messages['false'];
 		$test->expected_exception = $expected_exception;
 
-		$test();
-
 		$this->cases->push($test);
 	}
 
@@ -88,8 +89,11 @@ class suite
 		$messages =
 			[ 'Testing equality.'
 			, 'true' => 'Equality ok'
-			, 'false' => sprintf('Not equal (expected \'%s\' != actual \'%s\')',
-					var_export($expected, true), var_export($actual, true))
+			, 'false' => sprintf
+				( 'Not equal (expected \'%s\' != actual \'%s\')'
+				, var_export($expected, true)
+				, var_export($actual, true)
+				)
 			];
 		$this->assert($expected == $actual, $messages);
 	}
@@ -99,8 +103,10 @@ class suite
 		$messages =
 			[ 'Testing inequality.'
 			, 'true' => 'Inequality ok'
-			, 'false' => sprintf('Not equal (unexpected \'%s\' == actual \'%s\')',
-					var_export($unexpected, true), var_export($actual, true))
+			, 'false' => sprintf('Not equal (unexpected \'%s\' == actual \'%s\')'
+				, var_export($unexpected, true)
+				, var_export($actual, true)
+				)
 			];
 		$this->assert($unexpected != $actual, $messages);
 	}
