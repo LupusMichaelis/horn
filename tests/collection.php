@@ -55,51 +55,30 @@ class test_suite_collection
 
 	protected	function _test_add()
 	{
-		$messages = array('Push an element to a h\collection.');
+		$messages = ['Push an element to a h\collection.'];
 		$o = $this->target;
 		$callback = function () use ($o)
 			{
 				$o[] = 'toto';
-				return $o->count() === 1;
-				//$this->_test_equal($o->count(), 1);
+				return 1 == $o->count();
 			};
 		$this->add_test($callback, $messages);
-		
-		/*
-		$messages = array('Add an element with a numeric index to a h\collection.');
-		try
-		{
-			$o[10] = 'toto';
-			$this->_not_caught_exception($expected_exception);
-		}
-		catch(\exception $e) { $this->_caught_exception($e, $expected_exception) ; }
-		$this->_end();
-		
-		$this->_test_equal($o->count(), 2);
-		
-		$messages = array('Add an element referenced by a key to a h\collection.');
-		try {
-			$o['key'] = 'toto';
-			$this->_not_caught_exception($expected_exception);
-		}
-		catch(\exception $e) { $this->_caught_exception($e, $expected_exception) ; }
-		$this->_end();
-		
-		$this->_test_equal($o->count(), 3);
-		
-		$messages = array('Add an element by push method to a h\collection.');
-		try
-		{
-			$o->push('toto');
-			$this->_not_caught_exception($expected_exception);
-		}
-		catch(\exception $e) { $this->_caught_exception($e, $expected_exception) ; }
-		$this->_end();
-		
-		$this->_test_equal($o->count(), 4);
+	}
 
-		*/
+	protected	function _test_add_element_with_index()
+	{
+		$messages = ['Add an element with a numeric index to a h\collection.'];
+		$o = $this->target;
+		$callback = function () use ($o)
+			{
+				$o[] = 'toto';
+				$o[10] = 'toto';
+				$o['key'] = 'toto';
+				$o->push('toto');
+				return 4 == $o->count();
+			};
 
+		$this->add_test($callback, $messages);
 	}
 
 	function _test_undefined_offset()
@@ -128,16 +107,16 @@ class test_suite_collection
 
 	function _test_init()
 	{
-		$o = h\c(array('key' => 'value', 'first'));
+		$o = h\c(['key' => 'value', 'first']);
 
-		$messages = array('Check key \'key\'.');
+		$messages = ['Check key \'key\'.'];
 		$callback = function () use ($o)
 			{
 				return isset($o['key']);
 			};
 		$this->add_test($callback, $messages);
 
-		$messages = array('Check key \'0\'.');
+		$messages = ['Check key \'0\'.'];
 		$callback = function () use ($o)
 			{
 				return isset($o[0]) && $o->search('first') > -1 && $o[0] === 'first';
@@ -187,6 +166,21 @@ class test_suite_collection
 			};
 		$this->add_test($callback, $messages);
 	}
+
+	public		function _test_column()
+	{
+		$a =
+			[ [ 'key' => 'first', '1' ]
+			, [ 'key' => 'second', '2' ]
+			];
+		$o = h\c($a);
+		$c = $o->get_column('key');
+
+		$messages = ['Try to get the column\'s values from collection'];
+		$callback = function () use ($a, $o)
+			{
+				return $o->get_column(0)->get_stack() === array_column($a, 0);
+			};
+		$this->add_test($callback, $messages);
+	}
 }
-
-

@@ -266,10 +266,9 @@ class collection
 	public		function get_column($key, $index_key=null)
 	{
 		$key = $this->filter_key($key);
-		is_null($index_key) or $index_key = $this->filter_key($index_key);
+		$index_key = $this->filter_key($index_key);
 		$column = \array_column($this->ref_stack(), $key, $index_key);
-		$column = static::merge($column);
-		return $column;
+		return static::merge($column);
 	}
 
 	/** Check for existence of a key that reference an element of the collection.
@@ -364,7 +363,7 @@ class collection
 	 */
 	protected		function _set_stack($rhs)
 	{
-		$a = array();
+		$a = [];
 		$this->set_stack($a);
 		unset($a);
 
