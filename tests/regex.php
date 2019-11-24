@@ -41,14 +41,19 @@ class test_suite_regex
 
 	protected	function _test_match_capture()
 	{
-		$messages = array('Regex capture');
+		$messages = ['Regex capture'];
 		$expected_exception = null;
 
-		foreach(array
-				( array('^(?:(\w+)\s?)*$', 'Bonjour le monde', true, 1, 'monde')
-				) as $target)
+		foreach(
+			[
+				[ '^(?:(\w+)\s?)*$'
+				, 'Bonjour le monde'
+				, true
+				, 1
+				, 'monde'
+				]
+			] as $target)
 		{
-
 			$callback = function () use ($target)
 			{
 				list( $re
@@ -66,17 +71,17 @@ class test_suite_regex
 					&& $result->has_captured(0)
 					&& $result->has_captured($expected_capture_index)
 					&& $subject == $subject->slice
-							( $result->iterate_matches()[0]->begin
-							, $result->iterate_matches()[0]->end
-							)
+						( $result->iterate_records()[0][0]->begin
+						, $result->iterate_records()[0][0]->end
+						)
 					&& $expected_capture == $subject->slice
-							( $result->iterate_captures_by_index($expected_capture_index)[0]->begin
-							, $result->iterate_captures_by_index($expected_capture_index)[0]->end
-							)
+						( $result->iterate_records()[0][1]->begin
+						, $result->iterate_records()[0][1]->end
+						)
 					;
 			};
+
 			$this->add_test($callback, $messages, $expected_exception);
 		}
 	}
 }
-

@@ -55,7 +55,7 @@ class result
 
 	private		function do_execute()
 	{
-		$this->results = null;
+		$this->results = [];
 		$this->result_count = 0;
 		$this->captures = null;
 		$this->records = null;
@@ -85,25 +85,6 @@ class result
 	public		function iterate_records()
 	{
 		return clone $this->ref_records();
-	}
-
-	public		function iterate_matches()
-	{
-		return $this->iterate_captures_by_index(0);
-	}
-
-	public		function iterate_captures_by_index($index)
-	{
-		$capture = new h\collection;
-		if(!isset($this->results[0][$index]))
-			throw $this->_exception_format('Capture \'%s\' doesn\'t exist', $index);
-
-		return $this->ref_records()->get_column($index);
-	}
-
-	public		function iterate_captures_by_name(h\text $name)
-	{
-		return $this->iterate_captures_by_index($name);
 	}
 
 	protected	function _exception_preg_failed()
