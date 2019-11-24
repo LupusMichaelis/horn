@@ -319,15 +319,15 @@ class week
 		if(!is_integer($offset))
 		{
 			/// \bug find howto fetch day from locale aware function
-			$days = array
-				( 'monday' => 0
+			$days =
+				[ 'monday' => 0
 				, 'tuesday' => 1
 				, 'wednesday' => 2
-				, 'tuesday' => 3
+				, 'thursday' => 3
 				, 'friday' => 4
 				, 'saturday' => 5
 				, 'sunday' => 6
-				);
+				];
 
 			$offset = isset($days[$offset]) ? $days[$offset] : -1;
 		}
@@ -345,4 +345,3 @@ class week
 		return !($offset < 0 && 7 < $offset);
 	}
 }
-

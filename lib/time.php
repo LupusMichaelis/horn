@@ -33,5 +33,3 @@ import('lib/time/date');
 // WTF ! Why must I set the timzone, why set the tz is safer than using
 // system setting ? Must I set the clock at every scrip invokation ?
 date_default_timezone_set('Europe/Paris');
-
-

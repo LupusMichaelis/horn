@@ -65,12 +65,12 @@ class test_suite_date
 		$this->_assert_equals(7, $week->count());
 		$this->assert(!isset($week[7]));
 
-		$messages = array('Week overflow.');
+		$messages = ['Week overflow.'];
 		$expected_exception = '\horn\lib\exception';
 		$callback = function () use ($week) { return $week[7] ; };
 		$this->add_test($callback, $messages, $expected_exception);
 
-		$messages = array('Undefined offset');
+		$messages = ['Undefined offset'];
 		$expected_exception = '\horn\lib\exception';
 		$callback = function () use ($week) { return $week['mon'] ; };
 		$this->add_test($callback, $messages, $expected_exception);
@@ -82,7 +82,7 @@ class test_suite_date
 
 	protected	function _test_today()
 	{
-		$messages = array('Testing today');
+		$messages = ['Testing today'];
 		$suite = $this;
 		$o = $this->target;
 		$callback = function () use ($o, $suite)
